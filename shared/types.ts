@@ -7,6 +7,7 @@ export interface SessionUser {
   email: string
   emailVerified: boolean
   avatarUrl: string | null
+  bio: string | null
   role: 'user' | 'admin'
 }
 

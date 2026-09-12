@@ -13,6 +13,13 @@ export default defineNitroPlugin(async () => {
     if (applied.length) {
       console.log(`[db] 已自动应用 ${applied.length} 个迁移`)
     }
+
+    // 空库首次启动时补上默认分类，否则发布项目时无分类可选
+    const { ensureDefaultCategories } = await import('../db/defaults.ts')
+    const created = await ensureDefaultCategories()
+    if (created) {
+      console.log(`[db] 已写入 ${created} 个默认分类`)
+    }
   }
   catch (error) {
     console.error('[db] 自动迁移失败，请检查数据库状态：', error)

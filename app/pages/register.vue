@@ -129,7 +129,7 @@ async function submit() {
         >
       </FormField>
 
-      <FormField label="用户名" hint="3-20 位小写字母、数字、下划线或连字符，会出现在你的主页地址里">
+      <FormField label="用户名" hint="唯一标识，3-20 位小写字母、数字、下划线或连字符；会出现在主页地址 /u/用户名，注册后不可修改">
         <input
           v-model="form.username"
           required
@@ -138,7 +138,7 @@ async function submit() {
         >
       </FormField>
 
-      <FormField label="昵称" hint="其他用户看到的名字，最多 16 个字">
+      <FormField label="昵称" hint="展示给别人的名字，可以用中文，最多 16 个字；注册后随时可以改">
         <input
           v-model="form.nickname"
           required

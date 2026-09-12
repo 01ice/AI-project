@@ -12,6 +12,43 @@ const code = ref('')
 const sending = ref(false)
 const verifying = ref(false)
 const countdown = ref(0)
+const editing = ref(false)
+const savingProfile = ref(false)
+const profileMessage = ref('')
+
+const profileForm = reactive({
+  nickname: user.value?.nickname ?? '',
+  bio: user.value?.bio ?? '',
+  avatarUrl: user.value?.avatarUrl ?? '',
+})
+
+function openEditor() {
+  profileForm.nickname = user.value?.nickname ?? ''
+  profileForm.bio = user.value?.bio ?? ''
+  profileForm.avatarUrl = user.value?.avatarUrl ?? ''
+  profileMessage.value = ''
+  editing.value = true
+}
+
+async function saveProfile() {
+  savingProfile.value = true
+  profileMessage.value = ''
+  try {
+    const res = await $fetch<{ user: SessionUser }>('/api/me/profile', {
+      method: 'POST',
+      body: profileForm,
+    })
+    user.value = res.user
+    editing.value = false
+    profileMessage.value = '资料已更新'
+  }
+  catch (err) {
+    profileMessage.value = authErrorMessage(err)
+  }
+  finally {
+    savingProfile.value = false
+  }
+}
 
 let timer: ReturnType<typeof setInterval> | null = null
 
@@ -121,6 +158,54 @@ async function logout() {
           </dd>
         </div>
       </dl>
+
+      <div class="mt-4 flex flex-wrap items-center gap-2 border-t border-border-muted pt-4">
+        <button
+          type="button"
+          class="h-8 rounded-md border border-border-default px-3 text-sm hover:border-accent hover:text-accent"
+          @click="editing ? (editing = false) : openEditor()"
+        >
+          {{ editing ? '取消编辑' : '编辑资料' }}
+        </button>
+        <span class="text-xs text-fg-subtle">用户名 @{{ user.username }} 是唯一标识，不可修改</span>
+        <span v-if="profileMessage" class="text-xs text-success">{{ profileMessage }}</span>
+      </div>
+
+      <div v-if="editing" class="mt-3 space-y-3 rounded-md border border-border-default bg-canvas-subtle p-4">
+        <FormField label="昵称" hint="展示给别人的名字，可以用中文，最多 16 个字">
+          <input
+            v-model="profileForm.nickname"
+            maxlength="16"
+            class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+          >
+        </FormField>
+
+        <FormField label="简介" hint="最多 200 字，会显示在你的公开主页上">
+          <textarea
+            v-model="profileForm.bio"
+            rows="3"
+            maxlength="200"
+            placeholder="例如：前端工程师，喜欢写小工具"
+            class="w-full rounded-md border border-border-default bg-canvas px-3 py-2 text-sm focus:border-accent focus:outline-none"
+          />
+        </FormField>
+
+        <div>
+          <p class="mb-1 text-sm font-medium text-fg-default">头像</p>
+          <div class="w-32">
+            <ImageUpload v-model="profileForm.avatarUrl" label="上传头像" aspect="aspect-square" />
+          </div>
+        </div>
+
+        <button
+          type="button"
+          :disabled="savingProfile"
+          class="h-8 rounded-md border border-accent bg-accent px-4 text-sm font-medium text-white disabled:opacity-60"
+          @click="saveProfile"
+        >
+          {{ savingProfile ? '保存中…' : '保存资料' }}
+        </button>
+      </div>
 
       <div v-if="!user.emailVerified" class="mt-4 rounded-md border border-border-default bg-canvas-subtle p-3">
         <p class="text-xs text-fg-muted">

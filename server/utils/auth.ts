@@ -27,6 +27,7 @@ export function toSessionUser(row: {
   email: string
   emailVerifiedAt: Date | null
   avatarUrl: string | null
+  bio: string | null
   role: 'user' | 'admin'
 }): SessionUser {
   return {
@@ -36,6 +37,7 @@ export function toSessionUser(row: {
     email: row.email,
     emailVerified: row.emailVerifiedAt !== null,
     avatarUrl: row.avatarUrl,
+    bio: row.bio,
     role: row.role,
   }
 }
@@ -66,6 +68,7 @@ export async function getCurrentUser(event: H3Event): Promise<SessionUser | null
       email: users.email,
       emailVerifiedAt: users.emailVerifiedAt,
       avatarUrl: users.avatarUrl,
+      bio: users.bio,
       role: users.role,
       status: users.status,
     })

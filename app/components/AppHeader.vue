@@ -7,6 +7,7 @@ const menuOpen = ref(false)
 const menuRef = ref<HTMLElement | null>(null)
 const menuButtonRef = ref<HTMLElement | null>(null)
 const menuStyle = ref<{ top: string, right: string }>({ top: '52px', right: '16px' })
+const mobileNavOpen = ref(false)
 
 const navItems = [
   { label: '项目', to: '/projects' },
@@ -69,6 +70,7 @@ onUnmounted(() => {
 
 watch(() => route.fullPath, () => {
   menuOpen.value = false
+  mobileNavOpen.value = false
 })
 
 onMounted(() => {
@@ -84,7 +86,18 @@ onMounted(() => {
         <span class="text-base font-semibold text-fg-default">栈桥</span>
       </NuxtLink>
 
-      <nav class="flex items-center gap-1">
+      <button
+        type="button"
+        class="rounded-md p-1.5 text-fg-default hover:bg-border-muted/40 sm:hidden"
+        aria-label="打开菜单"
+        @click="mobileNavOpen = !mobileNavOpen"
+      >
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M1.75 3.5h12.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm0 4h12.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm0 4h12.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Z" />
+        </svg>
+      </button>
+
+      <nav class="hidden items-center gap-1 sm:flex">
         <NuxtLink
           v-for="item in navItems"
           :key="item.to"
@@ -95,7 +108,7 @@ onMounted(() => {
         </NuxtLink>
       </nav>
 
-      <form class="ml-auto w-44 sm:w-64" @submit.prevent="submitSearch">
+      <form class="ml-auto hidden w-44 sm:block sm:w-64" @submit.prevent="submitSearch">
         <input
           v-model="keyword"
           type="search"
@@ -194,6 +207,42 @@ onMounted(() => {
             </button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- 移动端导航面板 -->
+    <div v-if="mobileNavOpen" class="border-t border-border-default bg-canvas px-4 py-3 sm:hidden">
+      <form class="mb-3" @submit.prevent="submitSearch">
+        <input
+          v-model="keyword"
+          type="search"
+          placeholder="搜索项目、文章…"
+          class="h-9 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+        >
+      </form>
+      <nav class="grid grid-cols-2 gap-1">
+        <NuxtLink
+          v-for="item in navItems"
+          :key="item.to"
+          :to="item.to"
+          class="rounded-md px-3 py-2 text-sm text-fg-default no-underline hover:bg-canvas-subtle"
+        >
+          {{ item.label }}
+        </NuxtLink>
+      </nav>
+      <div v-if="user" class="mt-3 flex flex-wrap gap-2 border-t border-border-muted pt-3">
+        <NuxtLink
+          to="/projects/new"
+          class="inline-flex h-8 items-center rounded-md border border-border-default px-3 text-sm no-underline"
+        >
+          发布项目
+        </NuxtLink>
+        <NuxtLink
+          to="/blog/new"
+          class="inline-flex h-8 items-center rounded-md border border-border-default px-3 text-sm no-underline"
+        >
+          写文章
+        </NuxtLink>
       </div>
     </div>
   </header>

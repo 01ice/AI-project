@@ -61,6 +61,25 @@ function getCosClient(config: CosConfig): COS {
  * 没配置时退回服务器本地磁盘，方便本地开发。
  * 两种方式返回的 url 契约一致，页面上无需区分。
  */
+/** 校验文件头，避免把改了后缀的任意文件当成图片存进来 */
+function matchesImageSignature(data: Buffer, mimeType: string): boolean {
+  if (data.length < 12) return false
+
+  switch (mimeType) {
+    case 'image/jpeg':
+      return data[0] === 0xFF && data[1] === 0xD8 && data[2] === 0xFF
+    case 'image/png':
+      return data.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]))
+    case 'image/gif':
+      return data.subarray(0, 4).toString('ascii') === 'GIF8'
+    case 'image/webp':
+      return data.subarray(0, 4).toString('ascii') === 'RIFF'
+        && data.subarray(8, 12).toString('ascii') === 'WEBP'
+    default:
+      return false
+  }
+}
+
 export async function saveUpload(data: Buffer, mimeType: string): Promise<SavedFile> {
   const ext = ALLOWED_TYPES.get(mimeType)
   if (!ext) {
@@ -73,6 +92,11 @@ export async function saveUpload(data: Buffer, mimeType: string): Promise<SavedF
 
   if (data.length > MAX_UPLOAD_BYTES) {
     throw createError({ statusCode: 413, statusMessage: '图片不能超过 5MB' })
+  }
+
+  // 浏览器传来的 MIME 可以被伪造，这里再按文件头确认一次
+  if (!matchesImageSignature(data, mimeType)) {
+    throw createError({ statusCode: 415, statusMessage: '文件内容不是有效的图片' })
   }
 
   const now = new Date()

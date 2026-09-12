@@ -53,7 +53,7 @@ useHead({
           </NuxtLink>
         </div>
         <p class="mt-1 text-xs text-fg-muted">
-          所有人登录后都可以写文章，发表后经审核上线；也可以用 Markdown 文件提交 Pull Request。
+          所有人登录后都可以写文章，发表后经审核上线。
         </p>
       </header>
 
@@ -166,12 +166,17 @@ useHead({
         <p v-else class="mt-2 text-xs text-fg-muted">本页还没有标签</p>
       </section>
 
-      <section class="rounded-md border border-border-default bg-canvas-subtle p-4 text-xs leading-5 text-fg-muted">
-        <p class="font-semibold text-fg-default">想写一篇？</p>
-        <p class="mt-1">
-          复制 <code class="rounded bg-canvas px-1">content/posts/_template.md</code>，
-          填好 frontmatter 后提交 Pull Request，合并后文章会自动出现在这里。
+      <section class="rounded-md border border-border-default bg-canvas-subtle p-4">
+        <p class="text-sm font-semibold text-fg-default">有想分享的？</p>
+        <p class="mt-1 text-xs leading-5 text-fg-muted">
+          写下你的做法、成本账或者踩过的坑，关联到项目之后两边会互相导流。
         </p>
+        <NuxtLink
+          to="/blog/new"
+          class="mt-3 inline-flex h-8 items-center rounded-md border border-accent bg-accent px-3 text-xs font-medium text-white no-underline hover:bg-accent/90"
+        >
+          写一篇文章
+        </NuxtLink>
       </section>
     </aside>
   </div>
