@@ -48,7 +48,8 @@ services:
     depends_on:
       - app
     environment:
-      SITE_DOMAIN: ${SITE_DOMAIN:?启用 https 时请在 .env 里设置 SITE_DOMAIN}
+      # 留空时 Caddy 会因为配置无效而启动失败，但不会影响其他 profile 的正常部署
+      SITE_DOMAIN: ${SITE_DOMAIN:-}
       ACME_EMAIL: ${ACME_EMAIL:-}
     ports:
       - "80:80"
