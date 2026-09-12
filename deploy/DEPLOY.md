@@ -52,7 +52,7 @@ vi .env
 
 | 变量 | 说明 |
 | --- | --- |
-| `POSTGRES_PASSWORD` | 数据库密码，自己设一个强密码 |
+| `POSTGRES_PASSWORD` | 数据库密码，建议 16 位以上**字母数字**组合（含 `@ : / ?` 等字符会破坏连接串解析） |
 | `NUXT_PUBLIC_SITE_URL` | `http://服务器公网IP:8080` |
 | `NUXT_SMTP_USER` / `NUXT_SMTP_PASS` | QQ 邮箱与 16 位授权码（不填则邮件只打印在日志里） |
 | `NUXT_DEEPSEEK_API_KEY` | 选填，配好后 AI 审核与文章摘要才能用 |
