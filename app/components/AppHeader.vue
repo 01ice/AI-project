@@ -2,6 +2,7 @@
 const route = useRoute()
 const keyword = ref(typeof route.query.q === 'string' ? route.query.q : '')
 const user = useAuthUser()
+const unread = useUnreadNotifications()
 const menuOpen = ref(false)
 
 const navItems = [
@@ -69,6 +70,20 @@ async function logout() {
       </div>
 
       <div v-else class="relative flex items-center gap-2">
+        <NuxtLink
+          to="/me/notifications"
+          class="relative inline-flex h-8 w-8 items-center justify-center rounded-md text-fg-muted no-underline hover:bg-border-muted/40 hover:text-fg-default"
+          title="我的通知"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2Zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 2.1-1 3h12c-.5-.9-1-1.902-1-3a5.002 5.002 0 0 0-4.005-4.901Z" />
+          </svg>
+          <span
+            v-if="unread"
+            class="absolute -right-0.5 -top-0.5 min-w-[16px] rounded-full bg-danger px-1 text-center text-[10px] font-medium leading-4 text-white"
+          >{{ unread > 99 ? '99+' : unread }}</span>
+        </NuxtLink>
+
         <NuxtLink
           to="/blog/new"
           class="mr-1 hidden h-8 items-center rounded-md border border-border-default px-3 text-sm font-medium text-fg-default no-underline hover:border-accent hover:text-accent sm:inline-flex"

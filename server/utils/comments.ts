@@ -3,27 +3,29 @@ import type { CommentItem, SessionUser, TargetType } from '../../shared/types.ts
 import { db } from '../db/client.ts'
 import { comments, posts, projects, users } from '../db/schema.ts'
 import { refreshProjectCounters } from './interactions.ts'
+import { notifyUser } from './notify.ts'
 
 const MAX_LENGTH = 1000
 
 /** 确认评论目标是存在且公开的内容 */
-async function assertTargetExists(targetType: TargetType, targetId: string): Promise<void> {
+async function resolveTarget(targetType: TargetType, targetId: string) {
   if (targetType === 'project') {
     const [row] = await db
-      .select({ id: projects.id })
+      .select({ id: projects.id, authorId: projects.authorId, title: projects.title, slug: projects.slug })
       .from(projects)
       .where(and(eq(projects.id, targetId), eq(projects.status, 'published')))
       .limit(1)
     if (!row) throw createError({ statusCode: 404, statusMessage: '项目不存在或尚未公开' })
-    return
+    return { authorId: row.authorId, title: row.title, link: `/projects/${row.slug}` }
   }
 
   const [row] = await db
-    .select({ id: posts.id })
+    .select({ id: posts.id, authorId: posts.authorId, title: posts.title, slug: posts.slug })
     .from(posts)
     .where(and(eq(posts.id, targetId), eq(posts.status, 'published')))
     .limit(1)
   if (!row) throw createError({ statusCode: 404, statusMessage: '文章不存在或尚未发布' })
+  return { authorId: row.authorId, title: row.title, link: `/blog/${row.slug}` }
 }
 
 export async function listCommentsFor(targetType: TargetType, targetId: string): Promise<CommentItem[]> {
@@ -89,7 +91,7 @@ export async function createComment(user: SessionUser, input: CreateCommentInput
     throw createError({ statusCode: 400, statusMessage: `评论最多 ${MAX_LENGTH} 个字` })
   }
 
-  await assertTargetExists(input.targetType, input.targetId)
+  const target = await resolveTarget(input.targetType, input.targetId)
 
   // 只支持两级：回复二级评论时，挂到同一个根评论下
   let parentId: string | null = null
@@ -129,6 +131,34 @@ export async function createComment(user: SessionUser, input: CreateCommentInput
 
   if (input.targetType === 'project') {
     await refreshProjectCounters(input.targetId)
+  }
+
+  // 通知：优先通知被回复的人，其次通知内容作者（都不给自己发）
+  const targetLabel = input.targetType === 'project' ? '项目' : '文章'
+  const preview = content.length > 80 ? `${content.slice(0, 80)}…` : content
+
+  if (replyToUserId && replyToUserId !== user.id) {
+    await notifyUser({
+      userId: replyToUserId,
+      type: 'comment_reply',
+      title: `${user.nickname} 回复了你在《${target.title}》下的评论`,
+      body: preview,
+      link: target.link,
+      email: {
+        subject: `${user.nickname} 回复了你的评论`,
+        text: `${user.nickname} 在《${target.title}》下回复了你：\n\n${preview}`,
+      },
+    })
+  }
+
+  if (target.authorId !== user.id && target.authorId !== replyToUserId) {
+    await notifyUser({
+      userId: target.authorId,
+      type: 'content_comment',
+      title: `${user.nickname} 评论了你的${targetLabel}《${target.title}》`,
+      body: preview,
+      link: target.link,
+    })
   }
 
   return {

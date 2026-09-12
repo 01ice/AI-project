@@ -5,6 +5,7 @@ useHead({ title: '个人中心 · 栈桥' })
 
 const route = useRoute()
 const user = useAuthUser()
+const unreadCount = useUnreadNotifications()
 const notice = ref('')
 const message = ref('')
 const code = ref('')
@@ -154,7 +155,17 @@ async function logout() {
       </div>
     </section>
 
-    <section class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <section class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <NuxtLink
+        to="/me/notifications"
+        class="rounded-md border border-border-default bg-canvas p-4 no-underline hover:border-accent"
+      >
+        <h2 class="text-sm font-semibold text-fg-default">
+          我的通知 →
+          <span v-if="unreadCount" class="ml-1 text-xs text-danger">{{ unreadCount }} 条未读</span>
+        </h2>
+        <p class="mt-1 text-xs text-fg-muted">审核结果与回复提醒</p>
+      </NuxtLink>
       <NuxtLink
         to="/me/projects"
         class="rounded-md border border-border-default bg-canvas p-4 no-underline hover:border-accent"

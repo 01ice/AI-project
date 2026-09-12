@@ -3,6 +3,7 @@ import type { ProjectStatus, TagGroup } from '../../shared/types.ts'
 import { db } from '../db/client.ts'
 import { categories, postProjects, posts, projectTags, projects, tags, users } from '../db/schema.ts'
 import { countPendingReports } from './reports.ts'
+import { notifyUser } from './notify.ts'
 
 export interface AdminProjectItem {
   id: string
@@ -136,7 +137,7 @@ export async function reviewProject(
   note: string,
 ): Promise<ReviewResult> {
   const [existing] = await db
-    .select({ id: projects.id })
+    .select({ id: projects.id, authorId: projects.authorId, title: projects.title })
     .from(projects)
     .where(eq(projects.slug, slug))
     .limit(1)
@@ -169,6 +170,27 @@ export async function reviewProject(
     .where(eq(projectTags.projectId, existing.id))
 
   await refreshTagUsage(tagRows.map(row => row.tagId))
+
+  // 通知作者审核结果
+  const approved = action === 'approve'
+  await notifyUser({
+    userId: existing.authorId,
+    type: approved ? 'project_approved' : 'project_rejected',
+    title: approved
+      ? `你的项目《${existing.title}》已上线`
+      : `你的项目《${existing.title}》未通过审核`,
+    body: moderationNote,
+    link: approved ? `/projects/${slug}` : '/me/projects',
+    email: {
+      subject: approved
+        ? `你的项目《${existing.title}》已上线`
+        : `你的项目《${existing.title}》未通过审核`,
+      text: approved
+        ? `好消息，你的项目《${existing.title}》已通过审核并公开。`
+        : `你的项目《${existing.title}》未通过审核。\n审核意见：${moderationNote}`,
+    },
+  })
+
   void adminId
 
   return { slug, status }

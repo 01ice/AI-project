@@ -47,6 +47,14 @@ export const revenueModelEnum = pgEnum('revenue_model', [
 export const emailCodePurposeEnum = pgEnum('email_code_purpose', ['register', 'reset_password'])
 export const postSourceEnum = pgEnum('post_source', ['git', 'editor'])
 export const postStatusEnum = pgEnum('post_status', ['draft', 'pending', 'published', 'rejected', 'offline'])
+export const notificationTypeEnum = pgEnum('notification_type', [
+  'project_approved',
+  'project_rejected',
+  'post_approved',
+  'post_rejected',
+  'comment_reply',
+  'content_comment',
+])
 
 // ===== 用户 =====
 export const users = pgTable('users', {
@@ -64,6 +72,7 @@ export const users = pgTable('users', {
   bio: varchar('bio', { length: 200 }),
   role: userRoleEnum('role').notNull().default('user'),
   status: userStatusEnum('status').notNull().default('active'),
+  notifyByEmail: boolean('notify_by_email').notNull().default(true),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   lastLoginAt: timestamp('last_login_at', { withTimezone: true }),
   lastLoginIp: varchar('last_login_ip', { length: 64 }),
@@ -269,4 +278,18 @@ export const moderationLogs = pgTable('moderation_logs', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 }, table => [
   index('moderation_logs_target_idx').on(table.targetType, table.targetId),
+])
+
+// ===== 通知 =====
+export const notifications = pgTable('notifications', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  type: notificationTypeEnum('type').notNull(),
+  title: varchar('title', { length: 120 }).notNull(),
+  body: varchar('body', { length: 300 }),
+  link: varchar('link', { length: 200 }),
+  readAt: timestamp('read_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, table => [
+  index('notifications_user_idx').on(table.userId, table.createdAt),
 ])

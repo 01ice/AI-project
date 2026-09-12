@@ -279,6 +279,29 @@ export type PostStatus = 'draft' | 'pending' | 'published' | 'rejected' | 'offli
 
 export type TargetType = 'project' | 'post'
 
+export type NotificationType =
+  | 'project_approved'
+  | 'project_rejected'
+  | 'post_approved'
+  | 'post_rejected'
+  | 'comment_reply'
+  | 'content_comment'
+
+export interface NotificationItem {
+  id: string
+  type: NotificationType
+  title: string
+  body: string | null
+  link: string | null
+  read: boolean
+  createdAt: string
+}
+
+export interface NotificationListResponse {
+  items: NotificationItem[]
+  unread: number
+}
+
 export interface InteractionState {
   liked: boolean
   favorited: boolean

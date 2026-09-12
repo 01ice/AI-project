@@ -1,6 +1,7 @@
 import { asc, desc, eq, inArray } from 'drizzle-orm'
 import { db } from '../db/client.ts'
 import { postProjects, posts, projects, users } from '../db/schema.ts'
+import { notifyUser } from './notify.ts'
 
 export interface AdminPostItem {
   id: string
@@ -88,7 +89,12 @@ export async function reviewPost(
   note: string,
 ): Promise<{ slug: string, status: string }> {
   const [existing] = await db
-    .select({ id: posts.id, publishedAt: posts.publishedAt })
+    .select({
+      id: posts.id,
+      publishedAt: posts.publishedAt,
+      authorId: posts.authorId,
+      title: posts.title,
+    })
     .from(posts)
     .where(eq(posts.slug, slug))
     .limit(1)
@@ -108,6 +114,27 @@ export async function reviewPost(
     publishedAt: action === 'approve' ? (existing.publishedAt ?? new Date()) : null,
     updatedAt: new Date(),
   }).where(eq(posts.id, existing.id))
+
+  const approved = action === 'approve'
+  if (existing.authorId) {
+    await notifyUser({
+      userId: existing.authorId,
+      type: approved ? 'post_approved' : 'post_rejected',
+      title: approved
+        ? `你的文章《${existing.title}》已发布`
+        : `你的文章《${existing.title}》未通过审核`,
+      body: moderationNote,
+      link: approved ? `/blog/${slug}` : '/me/posts',
+      email: {
+        subject: approved
+          ? `你的文章《${existing.title}》已发布`
+          : `你的文章《${existing.title}》未通过审核`,
+        text: approved
+          ? `你的文章《${existing.title}》已通过审核，现在可以在博客里看到了。`
+          : `你的文章《${existing.title}》未通过审核。\n审核意见：${moderationNote}`,
+      },
+    })
+  }
 
   void adminId
 
