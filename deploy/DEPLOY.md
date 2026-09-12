@@ -104,10 +104,41 @@ docker compose exec -T db pg_dump -U zhanqiao zhanqiao | gzip > ~/backup-$(date 
 
 ## 7. 后续：域名与 HTTPS
 
-1. 买域名（`.com` / `.cn` 等能备案的后缀），解析到服务器 IP
-2. 提交 ICP 备案（1～4 周），期间继续用 `IP:8080` 访问
-3. 备案通过后，把 `docker-compose.yml` 的端口改成 `80:3000`（或加一层 Nginx / Caddy 反代）
-4. `NUXT_PUBLIC_SITE_URL` 改成 `https://你的域名`，配置证书
+### 7.1 域名后缀必须能备案
+
+ICP 备案对域名后缀有白名单要求（工信部批复的域名注册管理机构）。常见可备案的后缀：
+`.com` `.cn` `.net` `.top` `.xyz` `.vip` `.club` `.shop` `.tech` 等。
+**`.io`、`.ai`、`.dev`、`.app`、`.cd`、`.me` 这类后缀通常不在名单内，无法备案**——
+在腾讯云备案控制台填写域名时会被直接拒绝。买域名前先确认后缀。
+
+### 7.2 备案流程
+
+1. 域名实名认证（注册后提交，需 1～3 天）
+2. 腾讯云控制台 → 备案 → 用服务器实例申请**备案服务码**
+3. 填写主体信息（个人：身份证、手机号、邮箱、居住地址，需人脸核验）与网站信息
+4. 提交后经腾讯云初审与管局终审，一般 1～20 个工作日
+5. 备案期间**不要让域名解析到境内服务器对外服务**，继续用 `IP:8080` 开发测试
+6. 备案通过后 30 天内完成**公安联网备案**
+
+### 7.3 备案通过后启用 HTTPS
+
+仓库里已经准备好 Caddy（自动申请并续期 Let's Encrypt 证书），切换只需三步：
+
+```bash
+# 1. 域名解析到服务器 IP（A 记录），安全组放行 80 与 443
+# 2. 编辑 .env 追加四行：
+SITE_DOMAIN=你的域名
+ACME_EMAIL=你的邮箱
+NUXT_PUBLIC_SITE_URL=https://你的域名
+NUXT_TRUST_PROXY=1
+
+# 3. 启动 Caddy
+sudo docker compose --profile https up -d
+```
+
+启用后访问 `http://你的域名` 会自动跳转 HTTPS，证书自动续期；站点地址变成 https 后，
+登录 Cookie 会自动带 `Secure` 标记，安全响应头里也会自动加 HSTS。
+建议同时删掉安全组的 8080 规则，只保留 22 / 80 / 443。
 
 ## 8. 图片存储切到 COS
 

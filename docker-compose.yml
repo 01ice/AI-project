@@ -40,6 +40,26 @@ services:
       # 路径必须在 .output 之外：运行时写入的文件不在构建产物里
       - uploads:/app/.data/uploads
 
+  # 域名备案通过后再启用：docker compose --profile https up -d
+  caddy:
+    image: caddy:2-alpine
+    profiles: ["https"]
+    restart: unless-stopped
+    depends_on:
+      - app
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:?启用 https 时请在 .env 里设置 SITE_DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
 volumes:
   pgdata:
   uploads:
+  caddy_data:
+  caddy_config:

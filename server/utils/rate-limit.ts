@@ -27,6 +27,12 @@ export function checkRateLimit(key: string, limit: number, windowMs: number): vo
   }
 }
 
+/**
+ * 取客户端 IP 用于限流。
+ * X-Forwarded-For 是客户端可以伪造的头部，只有在「应用不直接对外、由反向代理转发」时才可信，
+ * 因此默认不信任；部署 Caddy/Nginx 反代后通过 NUXT_TRUST_PROXY=1 打开。
+ */
 export function clientIp(event: Parameters<typeof getRequestIP>[0]): string {
-  return getRequestIP(event, { xForwardedFor: true }) ?? 'unknown'
+  const trustProxy = process.env.NUXT_TRUST_PROXY === '1'
+  return getRequestIP(event, { xForwardedFor: trustProxy }) ?? 'unknown'
 }

@@ -1,0 +1,27 @@
+# 域名备案通过后使用：Caddy 自动申请并续期 Let's Encrypt 证书
+# 启动方式：在 .env 里设置 SITE_DOMAIN=你的域名，然后
+#   sudo docker compose --profile https up -d
+#
+# 注意：
+# 1. 域名必须已备案，且 80 / 443 端口在安全组放行
+# 2. 启用后把 .env 里的 NUXT_PUBLIC_SITE_URL 改成 https://你的域名、NUXT_TRUST_PROXY=1
+# 3. 建议同时关闭 8080 的公网放行，只保留 80 / 443
+
+{
+	email {$ACME_EMAIL}
+}
+
+{$SITE_DOMAIN} {
+	encode gzip zstd
+
+	# 反向代理到应用容器
+	reverse_proxy app:3000 {
+		header_up X-Real-IP {remote_host}
+	}
+
+	# 上传的图片体积较小，缓存交给应用自身的响应头控制
+	log {
+		output stdout
+		format console
+	}
+}
