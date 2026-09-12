@@ -7,6 +7,7 @@ const query = computed(() => ({
   q: typeof route.query.q === 'string' ? route.query.q : undefined,
   category: typeof route.query.category === 'string' ? route.query.category : undefined,
   tag: typeof route.query.tag === 'string' ? route.query.tag : undefined,
+  ai: route.query.ai === '1' ? '1' : undefined,
   sort: typeof route.query.sort === 'string' ? route.query.sort : 'latest',
   page: Number(route.query.page) || 1,
   pageSize: 10,
@@ -14,7 +15,19 @@ const query = computed(() => ({
 
 const { data, pending } = await useFetch<ProjectListResponse>('/api/projects', { query })
 const { data: categories } = await useFetch<CategoryItem[]>('/api/categories')
-const { data: tags } = await useFetch<TagItem[]>('/api/tags', { query: { limit: 24 } })
+const { data: tags } = await useFetch<TagItem[]>('/api/tags', { query: { limit: 100 } })
+
+const tagGroups = computed(() => {
+  const groups: { key: TagItem['group'], label: string }[] = [
+    { key: 'ai_model', label: '模型与供应商' },
+    { key: 'ai_tech', label: 'AI 技术' },
+    { key: 'ai_domain', label: '应用领域' },
+    { key: 'stack', label: '技术栈' },
+  ]
+  return groups
+    .map(group => ({ ...group, items: (tags.value ?? []).filter(tag => tag.group === group.key) }))
+    .filter(group => group.items.length > 0)
+})
 
 const sortOptions = [
   { label: '最新', value: 'latest' },
@@ -68,15 +81,17 @@ useHead({ title: '项目 · 栈桥' })
       </section>
 
       <section>
-        <h2 class="mb-2 text-sm font-semibold text-fg-default">技术栈</h2>
-        <div class="flex flex-wrap gap-1.5">
-          <TagChip
-            v-for="tag in tags ?? []"
-            :key="tag.id"
-            :label="tag.name"
-            :to="withQuery({ tag: tag.slug })"
-            :active="query.tag === tag.slug"
-          />
+        <div v-for="group in tagGroups" :key="group.key" class="mb-4">
+          <h2 class="mb-2 text-sm font-semibold text-fg-default">{{ group.label }}</h2>
+          <div class="flex flex-wrap gap-1.5">
+            <TagChip
+              v-for="tag in group.items"
+              :key="tag.id"
+              :label="tag.name"
+              :to="withQuery({ tag: tag.slug })"
+              :active="query.tag === tag.slug"
+            />
+          </div>
         </div>
       </section>
     </aside>
@@ -84,22 +99,45 @@ useHead({ title: '项目 · 栈桥' })
     <div>
       <div class="mb-4 flex flex-wrap items-center gap-3 border-b border-border-default pb-3">
         <h1 class="text-lg font-semibold text-fg-default">
-          {{ query.q ? `搜索「${query.q}」` : '全部项目' }}
+          {{ query.q ? `搜索「${query.q}」` : (query.ai ? 'AI 项目' : '全部项目') }}
           <span class="ml-1 text-sm font-normal text-fg-muted">{{ data?.total ?? 0 }} 个</span>
         </h1>
 
-        <div class="ml-auto flex items-center gap-1 rounded-md border border-border-default p-0.5">
-          <NuxtLink
-            v-for="option in sortOptions"
-            :key="option.value"
-            :to="withQuery({ sort: option.value })"
-            class="rounded px-2.5 py-1 text-xs no-underline"
-            :class="query.sort === option.value
-              ? 'bg-canvas-subtle font-medium text-fg-default'
-              : 'text-fg-muted hover:text-fg-default'"
-          >
-            {{ option.label }}
-          </NuxtLink>
+        <div class="ml-auto flex items-center gap-2">
+          <div class="flex items-center gap-1 rounded-md border border-border-default p-0.5">
+            <NuxtLink
+              :to="withQuery({ ai: undefined })"
+              class="rounded px-2.5 py-1 text-xs no-underline"
+              :class="!query.ai
+                ? 'bg-accent-subtle font-medium text-accent'
+                : 'text-fg-muted hover:text-fg-default'"
+            >
+              全部
+            </NuxtLink>
+            <NuxtLink
+              :to="withQuery({ ai: '1' })"
+              class="rounded px-2.5 py-1 text-xs no-underline"
+              :class="query.ai
+                ? 'bg-accent-subtle font-medium text-accent'
+                : 'text-fg-muted hover:text-fg-default'"
+            >
+              AI 项目
+            </NuxtLink>
+          </div>
+
+          <div class="flex items-center gap-1 rounded-md border border-border-default p-0.5">
+            <NuxtLink
+              v-for="option in sortOptions"
+              :key="option.value"
+              :to="withQuery({ sort: option.value })"
+              class="rounded px-2.5 py-1 text-xs no-underline"
+              :class="query.sort === option.value
+                ? 'bg-canvas-subtle font-medium text-fg-default'
+                : 'text-fg-muted hover:text-fg-default'"
+            >
+              {{ option.label }}
+            </NuxtLink>
+          </div>
         </div>
       </div>
 

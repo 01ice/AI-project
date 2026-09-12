@@ -1,3 +1,25 @@
+export type AiHosting = 'api' | 'self_hosted' | 'hybrid'
+
+export type RevenueModel =
+  | 'free'
+  | 'freemium'
+  | 'subscription'
+  | 'one_time'
+  | 'ads'
+  | 'service'
+  | 'not_yet'
+
+export interface AiInfo {
+  isAi: boolean
+  models: string[]
+  hosting: AiHosting | null
+  monthlyCostCny: number | null
+  monthlyRevenueCny: number | null
+  revenueModel: RevenueModel | null
+  costNote: string | null
+  revenueNote: string | null
+}
+
 export interface ProjectListItem {
   id: string
   slug: string
@@ -15,6 +37,7 @@ export interface ProjectListItem {
   viewCount: number
   commentCount: number
   publishedAt: string | null
+  ai: AiInfo
 }
 
 export interface ProjectListResponse {
@@ -47,6 +70,7 @@ export interface TagItem {
   id: string
   name: string
   slug: string
+  group: 'stack' | 'ai_model' | 'ai_tech' | 'ai_domain'
   usageCount: number
 }
 

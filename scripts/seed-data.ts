@@ -1,29 +1,63 @@
+import type { RevenueModel } from '../shared/types.ts'
+
 export const seedCategories = [
-  { name: 'Web 应用', slug: 'web', description: '跑在浏览器里的产品与服务', sortOrder: 1 },
-  { name: '移动应用', slug: 'mobile', description: 'iOS、Android 与小程序', sortOrder: 2 },
-  { name: 'AI 工具', slug: 'ai', description: '模型、Agent 与智能化工具', sortOrder: 3 },
-  { name: '开发者工具', slug: 'devtools', description: '提升开发效率的工具链', sortOrder: 4 },
+  { name: 'AI 工具', slug: 'ai', description: '模型、Agent 与智能化产品', sortOrder: 1 },
+  { name: '开发者工具', slug: 'devtools', description: '提升开发效率的工具链', sortOrder: 2 },
+  { name: 'Web 应用', slug: 'web', description: '跑在浏览器里的产品与服务', sortOrder: 3 },
+  { name: '移动应用', slug: 'mobile', description: 'iOS、Android 与小程序', sortOrder: 4 },
   { name: '开源库', slug: 'library', description: '可以被别人引用的代码', sortOrder: 5 },
   { name: '硬件与嵌入式', slug: 'hardware', description: '电路、传感器与机器人', sortOrder: 6 },
 ]
 
-export const seedTags = [
-  { name: 'Vue 3', slug: 'vue3' },
-  { name: 'React', slug: 'react' },
-  { name: 'TypeScript', slug: 'typescript' },
-  { name: 'Node.js', slug: 'nodejs' },
-  { name: 'Go', slug: 'go' },
-  { name: 'Rust', slug: 'rust' },
-  { name: 'Python', slug: 'python' },
-  { name: 'PostgreSQL', slug: 'postgresql' },
-  { name: 'Redis', slug: 'redis' },
-  { name: 'Docker', slug: 'docker' },
-  { name: 'Kubernetes', slug: 'kubernetes' },
-  { name: 'Tailwind CSS', slug: 'tailwindcss' },
-  { name: '微信小程序', slug: 'weapp' },
-  { name: 'Flutter', slug: 'flutter' },
-  { name: 'Electron', slug: 'electron' },
-  { name: 'WebAssembly', slug: 'wasm' },
+export type TagGroup = 'stack' | 'ai_model' | 'ai_tech' | 'ai_domain'
+
+export const seedTags: { name: string, slug: string, group: TagGroup }[] = [
+  // 技术栈
+  { name: 'TypeScript', slug: 'typescript', group: 'stack' },
+  { name: 'Vue 3', slug: 'vue3', group: 'stack' },
+  { name: 'React', slug: 'react', group: 'stack' },
+  { name: 'Node.js', slug: 'nodejs', group: 'stack' },
+  { name: 'Python', slug: 'python', group: 'stack' },
+  { name: 'Go', slug: 'go', group: 'stack' },
+  { name: 'Rust', slug: 'rust', group: 'stack' },
+  { name: 'PostgreSQL', slug: 'postgresql', group: 'stack' },
+  { name: 'Redis', slug: 'redis', group: 'stack' },
+  { name: 'Docker', slug: 'docker', group: 'stack' },
+  { name: 'Tailwind CSS', slug: 'tailwindcss', group: 'stack' },
+  { name: '微信小程序', slug: 'weapp', group: 'stack' },
+  { name: 'Electron', slug: 'electron', group: 'stack' },
+  { name: 'WebAssembly', slug: 'wasm', group: 'stack' },
+
+  // 模型与供应商
+  { name: 'OpenAI', slug: 'openai', group: 'ai_model' },
+  { name: 'Claude', slug: 'claude', group: 'ai_model' },
+  { name: 'DeepSeek', slug: 'deepseek', group: 'ai_model' },
+  { name: '通义千问', slug: 'qwen', group: 'ai_model' },
+  { name: '智谱 GLM', slug: 'glm', group: 'ai_model' },
+  { name: 'Llama', slug: 'llama', group: 'ai_model' },
+  { name: 'Whisper', slug: 'whisper', group: 'ai_model' },
+  { name: 'Stable Diffusion', slug: 'stable-diffusion', group: 'ai_model' },
+  { name: '本地模型', slug: 'local-model', group: 'ai_model' },
+
+  // AI 技术
+  { name: 'RAG', slug: 'rag', group: 'ai_tech' },
+  { name: 'Agent', slug: 'agent', group: 'ai_tech' },
+  { name: '提示词工程', slug: 'prompt-engineering', group: 'ai_tech' },
+  { name: '向量数据库', slug: 'vector-db', group: 'ai_tech' },
+  { name: '图像生成', slug: 'image-generation', group: 'ai_tech' },
+  { name: '语音识别', slug: 'speech-recognition', group: 'ai_tech' },
+  { name: '微调', slug: 'fine-tuning', group: 'ai_tech' },
+  { name: 'MCP', slug: 'mcp', group: 'ai_tech' },
+
+  // 应用领域
+  { name: 'AI 编程', slug: 'ai-coding', group: 'ai_domain' },
+  { name: 'AI 写作', slug: 'ai-writing', group: 'ai_domain' },
+  { name: '知识管理', slug: 'knowledge-base', group: 'ai_domain' },
+  { name: '客服问答', slug: 'chatbot', group: 'ai_domain' },
+  { name: '内容创作', slug: 'content-creation', group: 'ai_domain' },
+  { name: '数据分析', slug: 'data-analysis', group: 'ai_domain' },
+  { name: '图像处理', slug: 'image-tools', group: 'ai_domain' },
+  { name: '效率工具', slug: 'productivity', group: 'ai_domain' },
 ]
 
 export const seedUsers = [
@@ -39,23 +73,33 @@ export const seedUsers = [
     nickname: '林知',
     email: 'linzhi@example.com',
     role: 'user' as const,
-    bio: '前端工程师，喜欢写小工具，也喜欢把工具写到没有为止。',
+    bio: '前端工程师，最近在用 AI 做翻译工具，边做边算账。',
   },
   {
     username: 'chenmo',
     nickname: '陈默',
     email: 'chenmo@example.com',
     role: 'user' as const,
-    bio: '全栈开发，最近在折腾自托管和 RSS。',
+    bio: '全栈开发，做 AI 知识库和自托管服务，喜欢把成本公开出来。',
   },
   {
     username: 'yuhang',
     nickname: '宇航',
     email: 'yuhang@example.com',
     role: 'user' as const,
-    bio: '后端工程师，业余研究怎么把模型塞进浏览器。',
+    bio: '后端工程师，研究模型本地化和推理成本优化。',
   },
 ]
+
+export interface SeedAiInfo {
+  models: string[]
+  hosting: 'api' | 'self_hosted' | 'hybrid'
+  cost: number | null
+  revenue: number | null
+  revenueModel: RevenueModel
+  costNote?: string
+  revenueNote?: string
+}
 
 export interface SeedProject {
   slug: string
@@ -72,93 +116,323 @@ export interface SeedProject {
   likeCount: number
   favoriteCount: number
   body: string
+  ai?: SeedAiInfo
 }
 
 export const seedProjects: SeedProject[] = [
+  {
+    slug: 'star-map',
+    title: '星图',
+    summary: '把 GitHub Star 整理成可检索的 AI 知识库，自动生成标签与摘要，并按调用成本做了缓存。',
+    categorySlug: 'ai',
+    authorUsername: 'chenmo',
+    tags: ['TypeScript', 'Node.js', 'PostgreSQL', 'DeepSeek', 'RAG', '向量数据库', '知识管理'],
+    featured: true,
+    repoUrl: 'https://github.com/example/star-map',
+    daysAgo: 4,
+    viewCount: 3260,
+    likeCount: 226,
+    favoriteCount: 138,
+    ai: {
+      models: ['deepseek-chat', 'bge-m3'],
+      hosting: 'hybrid',
+      cost: 260,
+      revenue: 0,
+      revenueModel: 'free',
+      costNote: '向量库服务器 150 元 + 模型调用约 110 元，摘要只在首次抓取时生成',
+      revenueNote: '目前完全免费，纯自用加开源',
+    },
+    body: `## 问题
+
+我的 GitHub Star 有两千多个，真正要找的时候一个都找不到。星图把这些仓库拉下来，
+生成摘要和标签，变成一个能搜索的库。
+
+## 怎么控制成本
+
+摘要只在**首次抓取**时生成，之后命中缓存不再调用模型；向量只对摘要做一次嵌入，
+仓库更新时按需重算。这样两千个仓库的一次性成本大约 12 元，之后每月只有向量库服务器
+的固定开销。
+
+\`\`\`ts
+const cached = await cache.get(repo.fullName)
+if (cached?.readmeSha === repo.readmeSha) return cached
+const summary = await llm.chat({ model: 'deepseek-chat', prompt: buildPrompt(repo) })
+\`\`\`
+
+## 成本构成
+
+| 项目 | 每月 |
+| --- | --- |
+| 向量库服务器（2 核 2G） | 150 元 |
+| 模型调用 | 约 110 元 |
+| 对象存储与域名 | 少量 |
+
+> 检索完全免费，不打算做付费，因为这东西我自己每天都要用。`,
+  },
+  {
+    slug: 'yidian-translate',
+    title: '译点',
+    summary: '面向技术文档的中英翻译工具，保留代码块与术语表，按 token 计价所以把成本摊开算给用户看。',
+    categorySlug: 'ai',
+    authorUsername: 'linzhi',
+    tags: ['Vue 3', 'Node.js', 'TypeScript', 'OpenAI', 'DeepSeek', '提示词工程', 'AI 写作'],
+    featured: true,
+    demoUrl: 'https://yidian.example.com',
+    daysAgo: 8,
+    viewCount: 2840,
+    likeCount: 198,
+    favoriteCount: 121,
+    ai: {
+      models: ['gpt-4o-mini', 'deepseek-chat'],
+      hosting: 'api',
+      cost: 420,
+      revenue: 1680,
+      revenueModel: 'subscription',
+      costNote: '按 token 计费，长文档翻译高峰集中在晚上，平均 420 元/月',
+      revenueNote: '订阅制，目前 120 位付费用户，月收入约 1680 元',
+    },
+    body: `## 为什么做翻译工具
+
+技术文档最难翻译的是**代码块和专有名词**。译点会把代码、命令、变量名保护起来，
+只翻译正文，术语表可以自己维护。
+
+## 成本与定价
+
+翻译一万字技术文档大约消耗 3 万 token，成本在 0.6 元上下。免费额度给到每月 5 万字，
+超出的部分走订阅。这个定价是倒推出来的：
+
+\`\`\`
+平均成本 420 元/月 ÷ 订阅用户 120 人 ≈ 3.5 元/人
+定价 14 元/月，毛利率约 75%
+\`\`\`
+
+## 收益情况
+
+上线四个月，目前月收入 1680 元，已经覆盖成本。我没有做推广，用户主要来自
+在文档仓库里看到翻译结果后找过来的。
+
+> 收入数据由作者自行提供，仅供参考。`,
+  },
+  {
+    slug: 'wenmai-codebase-qa',
+    title: '问脉',
+    summary: '面向私有代码库的问答机器人，把仓库索引、权限和部署都打包成一套可交付方案。',
+    categorySlug: 'ai',
+    authorUsername: 'yuhang',
+    tags: ['Python', 'PostgreSQL', '通义千问', 'RAG', '向量数据库', 'Agent', 'AI 编程'],
+    featured: true,
+    daysAgo: 12,
+    viewCount: 1980,
+    likeCount: 152,
+    favoriteCount: 97,
+    ai: {
+      models: ['qwen-max', 'bge-large-zh'],
+      hosting: 'hybrid',
+      cost: 900,
+      revenue: 3600,
+      revenueModel: 'service',
+      costNote: '模型调用约 500 元，向量库服务器 400 元，合计 900 元/月',
+      revenueNote: '按项目交付收费，近三个月平均 3600 元/月',
+    },
+    body: `## 做的是什么
+
+企业代码库不方便传到公网模型，问脉支持把索引跑在内网，只把最必要的片段送到模型，
+也可以整体切到本地模型。
+
+## 成本结构
+
+客户越多，成本主要花在**索引重建**和**向量检索**上。索引只在代码变更时增量重建，
+单次全量重建一个十万文件的仓库大约 30 分钟、成本 8 元左右。
+
+## 收益
+
+目前是接单交付：一次性实施费加每月维护费。月均 3600 元，成本 900 元，
+但真正贵的是我自己的时间。
+
+> 收入数据由作者自行提供，仅供参考。`,
+  },
+  {
+    slug: 'huazhong-sdxl',
+    title: '画钟',
+    summary: '基于 SDXL 与 ControlNet 的插画工作流，把提示词模板、批处理和放大串成一条流水线。',
+    categorySlug: 'ai',
+    authorUsername: 'yuhang',
+    tags: ['Python', 'Docker', 'Stable Diffusion', '图像生成', '内容创作'],
+    daysAgo: 16,
+    viewCount: 2460,
+    likeCount: 176,
+    favoriteCount: 112,
+    ai: {
+      models: ['SDXL 1.0', 'ControlNet'],
+      hosting: 'self_hosted',
+      cost: 1500,
+      revenue: 2400,
+      revenueModel: 'one_time',
+      costNote: 'GPU 租用是大头，A10 按小时计费，跑满约 1500 元/月',
+      revenueNote: '卖工作流与配套教程，一次性买断，平均月收入 2400 元',
+    },
+    body: `## 为什么不用在线服务
+
+插画需要反复微调同一个角色，在线服务按张计费很难受。自己租一张卡跑，
+出图不要钱，只付 GPU 时间。
+
+## 成本明细
+
+| 项目 | 每月 |
+| --- | --- |
+| GPU 租用（A10） | 1400 元 |
+| 对象存储 | 60 元 |
+| 其他 | 40 元 |
+
+按每天出图 200 张算，单张成本大概 0.25 元，比按张付费便宜一个数量级，
+前提是卡不能闲着。
+
+## 收益
+
+把工作流和教程打包卖，一次性买断 199 元，目前卖出 60 多份。这属于
+「做完一次卖很久」的模式，和订阅的现金流完全不同。`,
+  },
+  {
+    slug: 'boboke-podcast',
+    title: '播客剪',
+    summary: '长音频自动转写、分段、生成摘要与章节，适合访谈类播客的后期整理。',
+    categorySlug: 'ai',
+    authorUsername: 'linzhi',
+    tags: ['Node.js', 'TypeScript', 'Claude', 'Whisper', '语音识别', '内容创作'],
+    daysAgo: 20,
+    viewCount: 1420,
+    likeCount: 98,
+    favoriteCount: 54,
+    ai: {
+      models: ['whisper-large-v3', 'claude-sonnet'],
+      hosting: 'api',
+      cost: 310,
+      revenue: 0,
+      revenueModel: 'not_yet',
+      costNote: '转写按音频时长计费，一小时节目约 3.5 元，平均每月 310 元',
+      revenueNote: '还没想好怎么收费，先给自己用',
+    },
+    body: `## 用在哪
+
+我做播客剪辑时最烦的是找「那句话在第几分钟」。播客剪会输出带时间戳的转写稿，
+并按话题切段，直接生成章节信息。
+
+## 成本
+
+一小时的音频转写约 3.5 元，摘要和章节生成不到 0.2 元。每月处理 80 多小时，
+总成本 310 元左右。
+
+\`\`\`bash
+podcastcut ./episode-42.mp3 --summary --chapters
+\`\`\`
+
+## 还没解决的
+
+说话人分离还不稳定，两人对谈时经常把话混到一起，这是下一步要处理的。`,
+  },
+  {
+    slug: 'jianli-cat',
+    title: '简历猫',
+    summary: 'AI 简历优化工具：对着岗位描述改写项目经历，明确标出改了哪几句。',
+    categorySlug: 'ai',
+    authorUsername: 'linzhi',
+    tags: ['Vue 3', 'Node.js', 'DeepSeek', '提示词工程', '效率工具'],
+    demoUrl: 'https://jianlimao.example.com',
+    daysAgo: 26,
+    viewCount: 3120,
+    likeCount: 214,
+    favoriteCount: 143,
+    ai: {
+      models: ['deepseek-chat'],
+      hosting: 'api',
+      cost: 150,
+      revenue: 780,
+      revenueModel: 'freemium',
+      costNote: '单次优化约 0.02 元，每月 150 元左右',
+      revenueNote: '免费 3 次后付费，9.9 元解锁，月收入约 780 元',
+    },
+    body: `## 做对的一件事
+
+很多简历工具会整段重写，用户不敢用。简历猫只做**逐句改写**，每处修改都标出理由，
+你可以逐条接受或拒绝。
+
+## 成本与收入
+
+一次完整的简历优化大概消耗 4000 token，成本 0.02 元。免费三次后收费 9.9 元，
+毛利基本等于定价。目前每月成本 150 元，收入 780 元。
+
+## 数据与隐私
+
+简历是敏感信息。默认不落库，处理完立即丢弃，只有用户主动保存的版本才会留存。`,
+  },
+  {
+    slug: 'pocket-ml',
+    title: '掌上机器学习',
+    summary: '把常用模型量化后编译成 WebAssembly，在浏览器里做图像分类和文本相似度，推理零服务器成本。',
+    categorySlug: 'ai',
+    authorUsername: 'yuhang',
+    tags: ['WebAssembly', 'Python', 'TypeScript', '本地模型', '效率工具'],
+    daysAgo: 32,
+    viewCount: 1680,
+    likeCount: 128,
+    favoriteCount: 72,
+    ai: {
+      models: ['MobileNetV3（量化）', 'MiniLM'],
+      hosting: 'self_hosted',
+      cost: 80,
+      revenue: 0,
+      revenueModel: 'free',
+      costNote: '只有对象存储与域名开销，推理全在用户浏览器里，约 80 元/月',
+      revenueNote: '开源免费',
+    },
+    body: `## 思路
+
+很多场景不需要把图片传到服务器再等结果。掌上机器学习把模型量化后编译成 WebAssembly，
+推理全部在浏览器完成，数据不出本机。
+
+## 成本的优势
+
+因为推理在客户端，服务器只负责分发静态文件，所以**没有按调用量增长的成本**。
+每月固定开销不到 100 元，这正是把模型搬到端上的最大收益。
+
+## 体积控制
+
+模型按需加载，首屏 JS 控制在 60KB 以内。首次加载约 4MB 模型文件，之后走浏览器缓存。
+
+\`\`\`ts
+const model = await loadModel('mobilenet-v3', { quantized: true })
+const result = await model.predict(imageElement)
+\`\`\``,
+  },
   {
     slug: 'moji-note',
     title: '墨记',
     summary: '本地优先的 Markdown 笔记应用，支持双向链接、全文搜索和纯文本存储。',
     categorySlug: 'devtools',
     authorUsername: 'linzhi',
-    tags: ['Vue 3', 'TypeScript', 'Electron'],
-    featured: true,
+    tags: ['Vue 3', 'TypeScript', 'Electron', '效率工具'],
     repoUrl: 'https://github.com/example/moji-note',
-    demoUrl: 'https://moji.example.com',
-    daysAgo: 3,
-    viewCount: 2841,
-    likeCount: 186,
-    favoriteCount: 94,
+    daysAgo: 38,
+    viewCount: 2210,
+    likeCount: 164,
+    favoriteCount: 96,
     body: `## 为什么做墨记
 
-我用了三年云端笔记，最大的不安是「我的文字不在我手里」。墨记把所有内容存成本地 Markdown 文件，
-一个文件夹就是全部数据，随时能用别的工具打开。
+我用了三年云端笔记，最大的不安是「我的文字不在我手里」。墨记把所有内容存成本地
+Markdown 文件，一个文件夹就是全部数据，随时能用别的工具打开。
 
 ## 核心特性
 
 - **双向链接**：输入 \`[[\` 就能链接到另一篇笔记，反向链接面板自动汇总
 - **全文搜索**：基于 SQLite FTS5，几万篇笔记也是毫秒级
 - **纯文本存储**：所有笔记就是 \`.md\` 文件，不锁定格式
-- **可选同步**：接自己的 WebDAV 或对象存储，没有账号也能用
-
-## 快速开始
 
 \`\`\`bash
 git clone https://github.com/example/moji-note.git
-cd moji-note && npm install
-npm run dev
+cd moji-note && npm install && npm run dev
 \`\`\`
 
-## 一些取舍
-
-没有做云同步的账号体系，是因为不想让一个本地工具依赖服务器。如果你需要多端同步，
-用 iCloud、坚果云这类共享文件夹就能解决。
-
-> 目前还在早期阶段，欢迎提 Issue 说你的用法。`,
-  },
-  {
-    slug: 'star-map',
-    title: '星图',
-    summary: '把 GitHub Star 整理成可检索的知识库，自动打标签、写摘要、生成索引。',
-    categorySlug: 'devtools',
-    authorUsername: 'chenmo',
-    tags: ['TypeScript', 'Node.js', 'PostgreSQL'],
-    featured: true,
-    repoUrl: 'https://github.com/example/star-map',
-    daysAgo: 6,
-    viewCount: 1976,
-    likeCount: 142,
-    favoriteCount: 88,
-    body: `## 问题
-
-我的 GitHub Star 有 2000 多个，真正找的时候一个都找不到。星图做的事情很简单：
-把这些仓库拉下来，加上标签和摘要，变成一个能搜索的库。
-
-## 工作方式
-
-1. 用 GitHub API 拉取你 Star 过的仓库
-2. 抓取 README，用模型生成一句话摘要和候选标签
-3. 全部存进 PostgreSQL，提供网页和 API 两种检索方式
-
-## 检索示例
-
-\`\`\`sql
-select name, summary
-from repositories
-where tags @> array['cli']
-order by starred_at desc
-limit 20;
-\`\`\`
-
-## 部署
-
-支持一条命令起服务，数据库和索引都在同一个容器里：
-
-\`\`\`bash
-docker compose up -d
-\`\`\`
-
-> 摘要生成是可选的，不配模型 Key 时只做标签提取。`,
+> 没做云同步的账号体系，是因为不想让一个本地工具依赖服务器。`,
   },
   {
     slug: 'lighthouse-panel',
@@ -166,10 +440,10 @@ docker compose up -d
     summary: '给个人服务器用的轻量监控：CPU、内存、磁盘、进程与自定义探针，单二进制部署。',
     categorySlug: 'devtools',
     authorUsername: 'yuhang',
-    tags: ['Go', 'Docker', 'Kubernetes'],
+    tags: ['Go', 'Docker', 'PostgreSQL'],
     repoUrl: 'https://github.com/example/lighthouse-panel',
     demoUrl: 'https://lighthouse.example.com',
-    daysAgo: 10,
+    daysAgo: 44,
     viewCount: 3420,
     likeCount: 254,
     favoriteCount: 130,
@@ -189,77 +463,7 @@ Prometheus + Grafana 很强，但对一台 2 核 2G 的小服务器来说太重�
 
 ## 告警
 
-支持 Webhook 和邮件两种通知方式。阈值可以按指标单独设置，避免半夜被无关告警吵醒。`,
-  },
-  {
-    slug: 'pocket-ml',
-    title: '掌上机器学习',
-    summary: '把常用模型编译成 WebAssembly，在浏览器里做图像分类和文本相似度计算。',
-    categorySlug: 'ai',
-    authorUsername: 'yuhang',
-    tags: ['Python', 'WebAssembly', 'React'],
-    repoUrl: 'https://github.com/example/pocket-ml',
-    daysAgo: 14,
-    viewCount: 1568,
-    likeCount: 118,
-    favoriteCount: 62,
-    body: `## 思路
-
-很多场景不需要把图片传到服务器再等结果。掌上机器学习把模型量化后编译成 WebAssembly，
-推理全部在浏览器完成，数据不出本机。
-
-## 已支持的模型
-
-- 图像分类（MobileNet 系列）
-- 文本相似度（轻量句向量）
-- 手写数字识别（教学用）
-
-## 体积控制
-
-模型放在 CDN 上按需加载，首屏 JS 控制在 60KB 以内。
-
-\`\`\`ts
-const model = await loadModel('mobilenet-v3', { quantized: true })
-const result = await model.predict(imageElement)
-\`\`\`
-
-> 首次加载需要下载 4MB 左右的模型文件，之后会走浏览器缓存。`,
-  },
-  {
-    slug: 'yangpi-rss',
-    title: '羊皮卷',
-    summary: '自托管的 RSS 阅读器，支持全文抓取、规则过滤和多端同步。',
-    categorySlug: 'web',
-    authorUsername: 'linzhi',
-    tags: ['Vue 3', 'Node.js', 'Redis'],
-    repoUrl: 'https://github.com/example/yangpi-rss',
-    demoUrl: 'https://yangpi.example.com',
-    daysAgo: 18,
-    viewCount: 2210,
-    likeCount: 163,
-    favoriteCount: 101,
-    body: `## 特点
-
-大部分阅读器的问题是要么太慢，要么把文章压在云端不能导出。羊皮卷用 Redis 做队列，
-抓取和阅读互不阻塞，同时保留完整的 OPML 导入导出。
-
-## 过滤规则
-
-支持按标题、正文关键词、作者做黑白名单。规则写在一个 YAML 文件里：
-
-\`\`\`yaml
-rules:
-  - match: title
-    contains: 招聘
-    action: hide
-  - match: feed
-    url: example.com
-    action: mark_read
-\`\`\`
-
-## 同步
-
-实现了 Fever API，可以和 Reeder、NetNewsWire 这类客户端配合使用。`,
+支持 Webhook 和邮件两种通知方式，阈值可按指标单独设置。`,
   },
   {
     slug: 'tunnel',
@@ -269,7 +473,7 @@ rules:
     authorUsername: 'chenmo',
     tags: ['Go', 'Docker'],
     repoUrl: 'https://github.com/example/tunnel',
-    daysAgo: 24,
+    daysAgo: 52,
     viewCount: 4120,
     likeCount: 312,
     favoriteCount: 175,
@@ -290,64 +494,9 @@ tunnel 3000
 
 ## 自建服务端
 
-服务端也是同一个二进制，部署在你自己的服务器上：
-
 \`\`\`bash
 tunnel server --domain tunnel.example.com
 \`\`\``,
-  },
-  {
-    slug: 'codesnap',
-    title: '代码快照',
-    summary: '把代码片段渲染成漂亮的图片，支持主题、行号、窗口边框和水印。',
-    categorySlug: 'web',
-    authorUsername: 'linzhi',
-    tags: ['TypeScript', 'React', 'Tailwind CSS'],
-    demoUrl: 'https://codesnap.example.com',
-    daysAgo: 30,
-    viewCount: 1890,
-    likeCount: 137,
-    favoriteCount: 71,
-    body: `## 使用场景
-
-写文章、发推、做分享的时候，一张排版干净的代码图比截图体面得多。
-
-## 支持
-
-- 30 多种语法高亮主题
-- 可切换的窗口标题栏样式
-- 行号、高亮行、折行
-- 导出 PNG 与 SVG，SVG 可以无损缩放
-
-## 实现说明
-
-渲染用 Canvas 而不是截图，所以在任何浏览器里结果都一致，也方便服务端渲染用于生成分享图。`,
-  },
-  {
-    slug: 'micro-diary',
-    title: '微日记',
-    summary: '微信小程序里的日记本，支持日历回看、心情标签和图片记录。',
-    categorySlug: 'mobile',
-    authorUsername: 'chenmo',
-    tags: ['微信小程序', 'TypeScript'],
-    daysAgo: 38,
-    viewCount: 980,
-    likeCount: 64,
-    favoriteCount: 35,
-    body: `## 为什么做小程序
-
-写日记最大的障碍是打开成本。小程序在微信里一点就开，比装一个 App 现实得多。
-
-## 功能
-
-- 日历视图，有记录的日期会标点
-- 心情标签，支持自定义
-- 图片最多 9 张，压缩后存云存储
-- 全部内容支持导出为 Markdown
-
-## 隐私
-
-数据存在用户自己的云开发环境里，开发者看不到任何日记内容。`,
   },
 ]
 
@@ -355,17 +504,56 @@ export interface SeedComment {
   projectSlug: string
   authorUsername: string
   content: string
-  /** 回复目标：留空表示一级评论，否则是同一项目下某条评论的作者用户名 */
+  /** 回复目标：留空表示一级评论，否则指向同一项目下某条评论的作者用户名 */
   replyToUsername?: string
   hoursAgo: number
 }
 
 export const seedComments: SeedComment[] = [
   {
+    projectSlug: 'star-map',
+    authorUsername: 'linzhi',
+    content: '把摘要缓存在 readmeSha 上这个思路很省，我也去改一下自己的抓取脚本。',
+    hoursAgo: 70,
+  },
+  {
+    projectSlug: 'star-map',
+    authorUsername: 'chenmo',
+    content: '对，README 没变就不用重新摘要，两千个仓库跑完只花了十几块。',
+    replyToUsername: 'linzhi',
+    hoursAgo: 62,
+  },
+  {
+    projectSlug: 'star-map',
+    authorUsername: 'yuhang',
+    content: '向量库那 150 元是固定开销吗？如果换成 pgvector 是不是可以省掉。',
+    replyToUsername: 'chenmo',
+    hoursAgo: 40,
+  },
+  {
+    projectSlug: 'yidian-translate',
+    authorUsername: 'chenmo',
+    content: '把成本结构和毛利都写出来，这种坦诚很难得。技术文档的术语表能导入吗？',
+    hoursAgo: 30,
+  },
+  {
+    projectSlug: 'yidian-translate',
+    authorUsername: 'linzhi',
+    content: '可以，支持 CSV 导入术语表，也可以直接读仓库里的 glossary 文件。',
+    replyToUsername: 'chenmo',
+    hoursAgo: 26,
+  },
+  {
+    projectSlug: 'huazhong-sdxl',
+    authorUsername: 'yuhang',
+    content: 'GPU 一千五、收入两千四，等于给自己发了份零花钱，但成本结构很清楚。',
+    hoursAgo: 18,
+  },
+  {
     projectSlug: 'moji-note',
     authorUsername: 'chenmo',
     content: '本地优先这一点很戳我。请问同步到 WebDAV 之后，多端同时编辑会冲突吗？',
-    hoursAgo: 60,
+    hoursAgo: 58,
   },
   {
     projectSlug: 'moji-note',
@@ -373,19 +561,6 @@ export const seedComments: SeedComment[] = [
     content: '目前是文件级 last-write-wins，有冲突会保留一份带时间戳的副本，不会直接覆盖。',
     replyToUsername: 'chenmo',
     hoursAgo: 52,
-  },
-  {
-    projectSlug: 'moji-note',
-    authorUsername: 'yuhang',
-    content: '试了一下搜索确实快，一万多篇笔记没有卡顿。期待 Windows 客户端的安装包。',
-    replyToUsername: 'linzhi',
-    hoursAgo: 30,
-  },
-  {
-    projectSlug: 'star-map',
-    authorUsername: 'linzhi',
-    content: '摘要生成的成本大概是多少？两千个仓库会不会一次性烧掉很多额度。',
-    hoursAgo: 20,
   },
   {
     projectSlug: 'tunnel',

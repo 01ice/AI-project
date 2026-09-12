@@ -32,6 +32,8 @@ defineProps<{ project: ProjectListItem }>()
         {{ project.summary }}
       </p>
 
+      <AiMeta v-if="project.ai.isAi" :ai="project.ai" class="mt-2" />
+
       <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-fg-muted">
         <TagChip
           v-for="tag in project.tags.slice(0, 3)"

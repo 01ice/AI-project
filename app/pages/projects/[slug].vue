@@ -43,6 +43,8 @@ useHead(() => ({
           <h1 class="mt-2 text-2xl font-semibold text-fg-default">{{ project.title }}</h1>
           <p class="mt-2 text-sm leading-6 text-fg-muted">{{ project.summary }}</p>
 
+          <AiMeta v-if="project.ai.isAi" :ai="project.ai" :max-models="3" class="mt-3" />
+
           <div class="mt-3 flex flex-wrap items-center gap-2">
             <a
               v-if="project.repoUrl"
@@ -155,6 +157,58 @@ useHead(() => ({
     </div>
 
     <aside class="space-y-4">
+      <section v-if="project.ai.isAi" class="rounded-md border border-border-default bg-canvas p-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-semibold text-fg-default">AI 信息</h2>
+          <span class="rounded-full bg-accent-subtle px-2 py-0.5 text-[11px] font-medium text-accent">AI 项目</span>
+        </div>
+
+        <dl class="mt-3 space-y-2 text-xs">
+          <div>
+            <dt class="text-fg-muted">使用模型</dt>
+            <dd class="mt-1 flex flex-wrap gap-1">
+              <span
+                v-for="model in project.ai.models"
+                :key="model"
+                class="rounded-full border border-border-muted px-2 py-0.5 text-fg-default"
+              >{{ model }}</span>
+              <span v-if="!project.ai.models.length" class="text-fg-subtle">未填写</span>
+            </dd>
+          </div>
+          <div v-if="project.ai.hosting" class="flex items-center justify-between">
+            <dt class="text-fg-muted">使用方式</dt>
+            <dd class="text-fg-default">{{ aiHostingLabels[project.ai.hosting] }}</dd>
+          </div>
+          <div class="flex items-center justify-between">
+            <dt class="text-fg-muted">每月成本</dt>
+            <dd class="font-medium text-fg-default">{{ formatCny(project.ai.monthlyCostCny) }}</dd>
+          </div>
+          <div class="flex items-center justify-between">
+            <dt class="text-fg-muted">每月收益</dt>
+            <dd class="font-medium text-fg-default">{{ formatCny(project.ai.monthlyRevenueCny) }}</dd>
+          </div>
+          <div v-if="project.ai.revenueModel" class="flex items-center justify-between">
+            <dt class="text-fg-muted">商业模式</dt>
+            <dd class="text-fg-default">{{ revenueModelLabels[project.ai.revenueModel] }}</dd>
+          </div>
+          <div class="flex items-center justify-between">
+            <dt class="text-fg-muted">当前状态</dt>
+            <dd :class="profitClass(profitState(project.ai))">{{ profitLabel(profitState(project.ai)) }}</dd>
+          </div>
+        </dl>
+
+        <p v-if="project.ai.costNote" class="mt-3 text-xs leading-5 text-fg-muted">
+          <span class="text-fg-default">成本说明：</span>{{ project.ai.costNote }}
+        </p>
+        <p v-if="project.ai.revenueNote" class="mt-2 text-xs leading-5 text-fg-muted">
+          <span class="text-fg-default">收益说明：</span>{{ project.ai.revenueNote }}
+        </p>
+
+        <p class="mt-3 border-t border-border-muted pt-2 text-[11px] text-fg-subtle">
+          成本与收益由作者自行填写，栈桥不做审计。
+        </p>
+      </section>
+
       <section class="rounded-md border border-border-default bg-canvas p-4">
         <h2 class="text-sm font-semibold text-fg-default">作者</h2>
         <div class="mt-3 flex items-center gap-3">

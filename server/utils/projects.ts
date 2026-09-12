@@ -15,6 +15,7 @@ export interface ListProjectsParams {
   category?: string
   tag?: string
   q?: string
+  ai?: boolean
   sort?: 'latest' | 'hot' | 'featured'
   page?: number
   pageSize?: number
@@ -46,7 +47,33 @@ function buildProjectConditions(params: ListProjectsParams) {
     conditions.push(or(ilike(projects.title, keyword), ilike(projects.summary, keyword))!)
   }
 
+  if (params.ai) {
+    conditions.push(eq(projects.isAi, true))
+  }
+
   return and(...conditions)
+}
+
+function toAiInfo(row: {
+  isAi: boolean
+  aiModels: string[] | null
+  aiHosting: 'api' | 'self_hosted' | 'hybrid' | null
+  monthlyCostCny: number | null
+  monthlyRevenueCny: number | null
+  revenueModel: 'free' | 'freemium' | 'subscription' | 'one_time' | 'ads' | 'service' | 'not_yet' | null
+  costNote: string | null
+  revenueNote: string | null
+}) {
+  return {
+    isAi: row.isAi,
+    models: row.aiModels ?? [],
+    hosting: row.aiHosting,
+    monthlyCostCny: row.monthlyCostCny,
+    monthlyRevenueCny: row.monthlyRevenueCny,
+    revenueModel: row.revenueModel,
+    costNote: row.costNote,
+    revenueNote: row.revenueNote,
+  }
 }
 
 function projectOrder(sort: ListProjectsParams['sort']) {
@@ -82,6 +109,14 @@ export async function listProjects(params: ListProjectsParams): Promise<ProjectL
       viewCount: projects.viewCount,
       commentCount: projects.commentCount,
       publishedAt: projects.publishedAt,
+      isAi: projects.isAi,
+      aiModels: projects.aiModels,
+      aiHosting: projects.aiHosting,
+      monthlyCostCny: projects.monthlyCostCny,
+      monthlyRevenueCny: projects.monthlyRevenueCny,
+      revenueModel: projects.revenueModel,
+      costNote: projects.costNote,
+      revenueNote: projects.revenueNote,
     })
     .from(projects)
     .innerJoin(users, eq(projects.authorId, users.id))
@@ -92,11 +127,15 @@ export async function listProjects(params: ListProjectsParams): Promise<ProjectL
     .offset((page - 1) * pageSize)
 
   const tagMap = await loadTagsForProjects(rows.map(row => row.id))
-  const items: ProjectListItem[] = rows.map(row => ({
-    ...row,
-    publishedAt: row.publishedAt ? row.publishedAt.toISOString() : null,
-    tags: tagMap.get(row.id) ?? [],
-  }))
+  const items: ProjectListItem[] = rows.map((row) => {
+    const { isAi, aiModels, aiHosting, monthlyCostCny, monthlyRevenueCny, revenueModel, costNote, revenueNote, ...rest } = row
+    return {
+      ...rest,
+      publishedAt: row.publishedAt ? row.publishedAt.toISOString() : null,
+      tags: tagMap.get(row.id) ?? [],
+      ai: toAiInfo({ isAi, aiModels, aiHosting, monthlyCostCny, monthlyRevenueCny, revenueModel, costNote, revenueNote }),
+    }
+  })
 
   const [countRow] = await db
     .select({ count: sql<number>`count(*)::int` })
@@ -158,6 +197,14 @@ export async function getProjectBySlug(slug: string): Promise<ProjectDetail | nu
       commentCount: projects.commentCount,
       publishedAt: projects.publishedAt,
       createdAt: projects.createdAt,
+      isAi: projects.isAi,
+      aiModels: projects.aiModels,
+      aiHosting: projects.aiHosting,
+      monthlyCostCny: projects.monthlyCostCny,
+      monthlyRevenueCny: projects.monthlyRevenueCny,
+      revenueModel: projects.revenueModel,
+      costNote: projects.costNote,
+      revenueNote: projects.revenueNote,
     })
     .from(projects)
     .innerJoin(users, eq(projects.authorId, users.id))
@@ -168,31 +215,28 @@ export async function getProjectBySlug(slug: string): Promise<ProjectDetail | nu
   if (!row) return null
 
   const tagMap = await loadTagsForProjects([row.id])
+  const {
+    body: _body,
+    isAi,
+    aiModels,
+    aiHosting,
+    monthlyCostCny,
+    monthlyRevenueCny,
+    revenueModel,
+    costNote,
+    revenueNote,
+    ...rest
+  } = row
 
   return {
-    id: row.id,
-    slug: row.slug,
-    title: row.title,
-    summary: row.summary,
-    coverUrl: row.coverUrl,
+    ...rest,
     screenshots: row.screenshots ?? [],
-    repoUrl: row.repoUrl,
-    demoUrl: row.demoUrl,
     extraLinks: row.extraLinks ?? [],
-    categoryName: row.categoryName,
-    categorySlug: row.categorySlug,
-    authorName: row.authorName,
-    authorUsername: row.authorUsername,
-    authorAvatarUrl: row.authorAvatarUrl,
-    authorBio: row.authorBio,
     tags: tagMap.get(row.id) ?? [],
-    likeCount: row.likeCount,
-    favoriteCount: row.favoriteCount,
-    viewCount: row.viewCount,
-    commentCount: row.commentCount,
     publishedAt: row.publishedAt ? row.publishedAt.toISOString() : null,
     createdAt: row.createdAt.toISOString(),
     bodyHtml: renderMarkdown(row.body),
+    ai: toAiInfo({ isAi, aiModels, aiHosting, monthlyCostCny, monthlyRevenueCny, revenueModel, costNote, revenueNote }),
   }
 }
 
@@ -223,16 +267,20 @@ export async function listCategories(): Promise<CategoryItem[]> {
   return rows
 }
 
-export async function listTags(limit = 30): Promise<TagItem[]> {
+export async function listTags(limit = 30, group?: TagItem['group']): Promise<TagItem[]> {
+  const conditions = [eq(tags.status, 'approved')]
+  if (group) conditions.push(eq(tags.tagGroup, group))
+
   return db
     .select({
       id: tags.id,
       name: tags.name,
       slug: tags.slug,
+      group: tags.tagGroup,
       usageCount: tags.usageCount,
     })
     .from(tags)
-    .where(eq(tags.status, 'approved'))
+    .where(and(...conditions))
     .orderBy(desc(tags.usageCount), asc(tags.name))
     .limit(limit)
 }

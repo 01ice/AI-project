@@ -4,6 +4,7 @@ const keyword = ref(typeof route.query.q === 'string' ? route.query.q : '')
 
 const navItems = [
   { label: '项目', to: '/projects' },
+  { label: 'AI 项目', to: '/projects?ai=1' },
   { label: '博客', to: '/blog' },
   { label: '关于', to: '/about' },
 ]

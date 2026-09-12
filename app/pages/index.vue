@@ -7,15 +7,18 @@ const { data: featured } = await useFetch<ProjectListResponse>('/api/projects', 
 const { data: latest } = await useFetch<ProjectListResponse>('/api/projects', {
   query: { sort: 'latest', pageSize: 6 },
 })
+const { data: aiProjects } = await useFetch<ProjectListResponse>('/api/projects', {
+  query: { ai: '1', sort: 'hot', pageSize: 6 },
+})
 const { data: categories } = await useFetch<CategoryItem[]>('/api/categories')
 const { data: tags } = await useFetch<TagItem[]>('/api/tags', { query: { limit: 18 } })
 
 useHead({
-  title: '栈桥 · 发现开发者的项目',
+  title: '栈桥 · 发现 AI 项目与开发者的作品',
   meta: [
     {
       name: 'description',
-      content: '栈桥是一个面向中文开发者的项目收录与分享社区，发现好项目，也分享你自己的作品。',
+      content: '栈桥以 AI 项目为主的开发者社区：每个项目公开用到的模型、每月成本与收益，发现好项目，也分享你自己的作品。',
     },
   ],
 })
@@ -25,18 +28,30 @@ useHead({
   <div>
     <section class="rounded-md border border-border-default bg-canvas-subtle px-6 py-8">
       <h1 class="text-2xl font-semibold text-fg-default">
-        发现值得一看的项目
+        发现值得一看的项目，看清它背后的成本
       </h1>
       <p class="mt-2 max-w-2xl text-sm leading-6 text-fg-muted">
-        栈桥收集开发者做出来的东西——工具、应用、开源库。每个项目都经过审核，
-        你也可以把作品放上来，让更多人看到。
+        栈桥收集开发者做出来的东西，以 AI 项目为主。每个 AI 项目都会公开用到的模型、
+        每月成本和每月收益，让你在动手之前先看清这笔账。
       </p>
+      <div class="mt-3 flex flex-wrap gap-2 text-xs text-fg-muted">
+        <span class="rounded-full border border-border-default bg-canvas px-2.5 py-1">模型</span>
+        <span class="rounded-full border border-border-default bg-canvas px-2.5 py-1">月成本</span>
+        <span class="rounded-full border border-border-default bg-canvas px-2.5 py-1">月收益</span>
+        <span class="rounded-full border border-border-default bg-canvas px-2.5 py-1">数据由作者提供</span>
+      </div>
       <div class="mt-4 flex flex-wrap items-center gap-2">
         <NuxtLink
           to="/projects"
           class="inline-flex h-8 items-center rounded-md border border-accent bg-accent px-4 text-sm font-medium text-white no-underline hover:bg-accent/90"
         >
           浏览全部项目
+        </NuxtLink>
+        <NuxtLink
+          to="/projects?ai=1"
+          class="inline-flex h-8 items-center rounded-md border border-border-default bg-canvas px-4 text-sm font-medium text-fg-default no-underline hover:border-accent hover:text-accent"
+        >
+          只看 AI 项目
         </NuxtLink>
         <button
           type="button"
@@ -47,6 +62,56 @@ useHead({
           发布我的项目
         </button>
       </div>
+    </section>
+
+    <section class="mt-6">
+      <div class="mb-3 flex items-center justify-between">
+        <h2 class="text-base font-semibold text-fg-default">AI 项目速览</h2>
+        <NuxtLink to="/projects?ai=1" class="text-xs no-underline hover:underline">查看全部 →</NuxtLink>
+      </div>
+
+      <div class="overflow-x-auto rounded-md border border-border-default">
+        <table class="w-full min-w-[660px] text-sm">
+          <thead class="bg-canvas-subtle text-xs text-fg-muted">
+            <tr>
+              <th class="px-3 py-2 text-left font-medium">项目</th>
+              <th class="px-3 py-2 text-left font-medium">模型</th>
+              <th class="px-3 py-2 text-right font-medium">月成本</th>
+              <th class="px-3 py-2 text-right font-medium">月收入</th>
+              <th class="px-3 py-2 text-right font-medium">状态</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border-muted">
+            <tr
+              v-for="project in aiProjects?.items ?? []"
+              :key="project.id"
+              class="hover:bg-canvas-subtle"
+            >
+              <td class="px-3 py-2">
+                <NuxtLink
+                  :to="`/projects/${project.slug}`"
+                  class="font-medium no-underline hover:underline"
+                >{{ project.title }}</NuxtLink>
+              </td>
+              <td class="px-3 py-2 text-xs text-fg-muted">
+                {{ project.ai.models.join(' · ') || '—' }}
+              </td>
+              <td class="px-3 py-2 text-right">
+                {{ formatCny(project.ai.monthlyCostCny) }}
+              </td>
+              <td class="px-3 py-2 text-right">
+                {{ formatCny(project.ai.monthlyRevenueCny) }}
+              </td>
+              <td class="px-3 py-2 text-right text-xs" :class="profitClass(profitState(project.ai))">
+                {{ profitLabel(profitState(project.ai)) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-2 text-xs text-fg-subtle">
+        成本与收益由项目作者自行填写，栈桥不做审计，仅供参照。
+      </p>
     </section>
 
     <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">

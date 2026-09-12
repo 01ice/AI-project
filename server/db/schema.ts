@@ -33,6 +33,17 @@ export const tagStatusEnum = pgEnum('tag_status', ['pending', 'approved', 'rejec
 export const commentStatusEnum = pgEnum('comment_status', ['visible', 'hidden', 'deleted'])
 export const reportStatusEnum = pgEnum('report_status', ['pending', 'resolved', 'dismissed'])
 export const targetTypeEnum = pgEnum('target_type', ['project', 'post'])
+export const tagGroupEnum = pgEnum('tag_group', ['stack', 'ai_model', 'ai_tech', 'ai_domain'])
+export const aiHostingEnum = pgEnum('ai_hosting', ['api', 'self_hosted', 'hybrid'])
+export const revenueModelEnum = pgEnum('revenue_model', [
+  'free',
+  'freemium',
+  'subscription',
+  'one_time',
+  'ads',
+  'service',
+  'not_yet',
+])
 
 // ===== 用户 =====
 export const users = pgTable('users', {
@@ -77,6 +88,7 @@ export const tags = pgTable('tags', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: varchar('name', { length: 32 }).notNull().unique(),
   slug: varchar('slug', { length: 32 }).notNull().unique(),
+  tagGroup: tagGroupEnum('tag_group').notNull().default('stack'),
   description: varchar('description', { length: 200 }),
   status: tagStatusEnum('status').notNull().default('pending'),
   usageCount: integer('usage_count').notNull().default(0),
@@ -104,6 +116,15 @@ export const projects = pgTable('projects', {
   status: projectStatusEnum('status').notNull().default('draft'),
   moderationSource: moderationSourceEnum('moderation_source'),
   moderationNote: varchar('moderation_note', { length: 500 }),
+  // ===== AI 项目信息（作者自行填写）=====
+  isAi: boolean('is_ai').notNull().default(false),
+  aiModels: jsonb('ai_models').$type<string[]>().notNull().default([]),
+  aiHosting: aiHostingEnum('ai_hosting'),
+  monthlyCostCny: integer('monthly_cost_cny'),
+  monthlyRevenueCny: integer('monthly_revenue_cny'),
+  revenueModel: revenueModelEnum('revenue_model'),
+  costNote: varchar('cost_note', { length: 200 }),
+  revenueNote: varchar('revenue_note', { length: 200 }),
   featured: boolean('featured').notNull().default(false),
   viewCount: integer('view_count').notNull().default(0),
   likeCount: integer('like_count').notNull().default(0),
@@ -114,6 +135,7 @@ export const projects = pgTable('projects', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, table => [
   index('projects_status_published_idx').on(table.status, table.publishedAt),
+  index('projects_ai_idx').on(table.isAi, table.status, table.publishedAt),
   index('projects_category_idx').on(table.categoryId),
   index('projects_author_idx').on(table.authorId),
 ])

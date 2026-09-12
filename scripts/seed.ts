@@ -32,6 +32,7 @@ console.log(`已写入 ${categoryRows.length} 个分类`)
 const tagRows = await db.insert(tags).values(seedTags.map(tag => ({
   name: tag.name,
   slug: tag.slug,
+  tagGroup: tag.group,
   status: 'approved' as const,
   usageCount: 0,
 }))).returning({ id: tags.id, name: tags.name })
@@ -68,6 +69,14 @@ for (const project of seedProjects) {
     authorId: userIdByUsername.get(project.authorUsername)!,
     status: 'published',
     moderationSource: 'llm',
+    isAi: Boolean(project.ai),
+    aiModels: project.ai?.models ?? [],
+    aiHosting: project.ai?.hosting ?? null,
+    monthlyCostCny: project.ai?.cost ?? null,
+    monthlyRevenueCny: project.ai?.revenue ?? null,
+    revenueModel: project.ai?.revenueModel ?? null,
+    costNote: project.ai?.costNote ?? null,
+    revenueNote: project.ai?.revenueNote ?? null,
     featured: project.featured ?? false,
     viewCount: project.viewCount,
     likeCount: project.likeCount,
