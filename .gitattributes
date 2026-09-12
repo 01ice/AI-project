@@ -1,0 +1,6 @@
+# 统一换行符：仓库内使用 LF，避免 Windows 开发与 Linux 服务器部署产生差异
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
