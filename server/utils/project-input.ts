@@ -17,7 +17,8 @@ const optionalMoney = z
 export const projectInputSchema = z.object({
   title: z.string().trim().min(2, '标题至少 2 个字').max(80, '标题最多 80 个字'),
   summary: z.string().trim().min(20, '一句话简介至少 20 个字').max(200, '简介最多 200 个字'),
-  body: z.string().trim().min(20, '正文至少 20 个字').max(30000, '正文太长了'),
+  // 长内容走文章（content/posts），项目条目只保留一段简短的补充说明
+  body: z.string().trim().max(300, '补充说明最多 300 字').default(''),
   coverUrl: z.string().trim().min(1, '请上传封面图').max(300),
   screenshots: z.array(z.string().max(300)).max(5, '截图最多 5 张').default([]),
   categoryId: z.string().uuid('请选择分类'),

@@ -20,6 +20,7 @@ console.log(`已写入 ${result.tags} 个标签`)
 console.log(`已写入 ${result.users} 个用户`)
 console.log(`已写入 ${result.projects} 个项目`)
 console.log(`已写入 ${result.comments} 条评论`)
+console.log(`已同步 ${result.posts} 篇文章`)
 console.log('种子数据写入完成')
 
 await handle.close()

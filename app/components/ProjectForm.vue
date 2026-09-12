@@ -64,9 +64,6 @@ const newTag = reactive({ name: '', group: 'ai_domain' as TagGroup })
 const newTags = ref<{ name: string, group: TagGroup }[]>([])
 
 const errors = ref<string[]>([])
-const previewHtml = ref('')
-const previewing = ref(false)
-const showPreview = ref(false)
 
 const revenueModelOptions: { value: RevenueModel, label: string }[] = [
   { value: 'free', label: '免费' },
@@ -145,7 +142,7 @@ function validate(payload: ProjectFormPayload): string[] {
   const list: string[] = []
   if (payload.title.length < 2) list.push('标题至少 2 个字')
   if (payload.summary.length < 20) list.push('一句话简介至少 20 个字，写清楚这个项目是做什么的')
-  if (payload.body.length < 20) list.push('正文至少 20 个字')
+  if (payload.body.length > 300) list.push('补充说明最多 300 字，更长的内容请写成文章')
   if (!payload.coverUrl) list.push('请上传封面图')
   if (!payload.categoryId) list.push('请选择分类')
   if (payload.isAi && !payload.aiModels.length) list.push('AI 项目请至少填写一个模型')
@@ -161,21 +158,6 @@ function submit(status: 'draft' | 'pending') {
   emit('submit', payload, status)
 }
 
-async function togglePreview() {
-  showPreview.value = !showPreview.value
-  if (!showPreview.value) return
-  previewing.value = true
-  try {
-    const res = await $fetch<{ html: string }>('/api/markdown/preview', {
-      method: 'POST',
-      body: { text: form.body },
-    })
-    previewHtml.value = res.html
-  }
-  finally {
-    previewing.value = false
-  }
-}
 </script>
 
 <template>
@@ -323,31 +305,23 @@ async function togglePreview() {
     </section>
 
     <section class="rounded-md border border-border-default bg-canvas p-5">
-      <div class="flex items-center justify-between">
-        <h2 class="text-sm font-semibold text-fg-default">项目正文</h2>
-        <button
-          type="button"
-          class="text-xs text-accent hover:underline"
-          @click="togglePreview"
-        >
-          {{ showPreview ? '继续编辑' : '预览' }}
-        </button>
-      </div>
-
-      <p v-if="showPreview" class="mt-3 rounded-md border border-border-default p-4">
-        <span v-if="previewing" class="text-xs text-fg-muted">正在渲染…</span>
-        <!-- 预览内容经过与服务端相同的白名单过滤 -->
-        <span v-else class="markdown-body" v-html="previewHtml" />
+      <h2 class="text-sm font-semibold text-fg-default">
+        补充说明
+        <span class="ml-1 text-xs font-normal text-fg-subtle">选填，300 字以内</span>
+      </h2>
+      <p class="mt-1 text-xs text-fg-subtle">
+        写清楚怎么用、有什么限制就够了。长篇的「怎么做出来的」「成本怎么算的」建议写成文章——
+        文章与项目是多对多关联，会同时出现在两边的页面上。
       </p>
 
       <textarea
-        v-else
         v-model="form.body"
-        rows="14"
-        required
-        placeholder="支持 Markdown：## 小标题、- 列表、**加粗**、`代码`、```代码块```"
-        class="mt-3 w-full rounded-md border border-border-default bg-canvas px-3 py-2 font-mono text-[13px] leading-6 focus:border-accent focus:outline-none"
+        rows="5"
+        maxlength="300"
+        placeholder="例如：支持 macOS 与 Windows，需要 Node 20 以上；本地优先，数据不上传。"
+        class="mt-3 w-full rounded-md border border-border-default bg-canvas px-3 py-2 text-sm leading-6 focus:border-accent focus:outline-none"
       />
+      <p class="mt-1 text-right text-xs text-fg-subtle">{{ form.body.length }} / 300</p>
     </section>
 
     <section class="rounded-md border border-border-default bg-canvas p-5">

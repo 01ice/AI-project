@@ -41,6 +41,7 @@ Windows 上如果 PowerShell 报「禁止运行脚本」，把 `npm` 换成 `npm
 | `npm run db:seed` | 清空业务数据并写入示例数据 |
 | `npm run db:setup` | 迁移 + 种子数据 |
 | `npm run user:create -- --email a@b.com --username name --nickname 昵称 --password 密码 [--admin]` | 创建账号（加 `--admin` 建管理员） |
+| `npm run content:sync` | 把 `content/posts/` 的 Markdown 文章同步进数据库 |
 
 改了数据库结构之后的标准流程：`npm run db:generate` → `npm run db:migrate`。
 
@@ -86,6 +87,22 @@ Windows 上如果 PowerShell 报「禁止运行脚本」，把 `npm` 换成 `npm
 - 首页提供「AI 项目速览」表格，可横向对比模型与收支
 - 详情页有独立的「AI 信息」区块，并标注「成本与收益由作者自行填写，栈桥不做审计」
 - **标签分四组**：技术栈 / 模型与供应商 / AI 技术 / 应用领域，列表页侧边栏按组展示
+- **正文与项目分离**：项目条目只保留一段 ≤300 字的「补充说明」，
+  长效内容写成文章（见下一节），两者是多对多关系
+
+## 文章与项目的关系（D4 已完成）
+
+长内容（怎么做出来的、成本怎么算的、踩了什么坑）走文章系统，项目条目只留结构化信息与简短说明。
+
+- 文章源码放在 `content/posts/*.md`，用 **Markdown + Git** 维护；社区成员通过 Pull Request 投稿
+- 开发服务器会监听该目录，**保存 Markdown 即自动同步进数据库**；也可以手动跑 `npm run content:sync`
+- 文章与项目是**多对多**关系：文章详情页显示「涉及的项目」，项目详情页显示「相关文章」
+- 文件名以 `_` 开头的（如 `_template.md`）不会被同步；frontmatter 里 `draft: true` 的文章入库但不公开
+- 同步只覆盖 `source = git` 的文章，将来网页编辑器写的文章（`source = editor`）不会被文件覆盖
+- 投稿规范见 [CONTRIBUTING.md](./CONTRIBUTING.md)
+
+为什么文章存文件、却要同步进数据库？因为这站的核心是「项目与文章互相关联 + 排行榜 + 分页筛选」，
+这些都要靠 SQL 关联查询；将来加网页编辑器时，写的也是同一张 `posts` 表。
 
 ## 发布项目（D3 已完成）
 

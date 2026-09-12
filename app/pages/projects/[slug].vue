@@ -81,8 +81,11 @@ useHead(() => ({
         >
 
         <div class="p-5">
-          <!-- 正文由服务端渲染并经过白名单过滤，见 server/utils/markdown.ts -->
-          <div class="markdown-body" v-html="project.bodyHtml" />
+          <div v-if="project.bodyHtml" class="rounded-md border border-border-default bg-canvas-subtle p-4">
+            <h2 class="text-xs font-semibold text-fg-muted">补充说明</h2>
+            <!-- 由服务端渲染并经过白名单过滤，见 server/utils/markdown.ts -->
+            <div class="markdown-body mt-2" v-html="project.bodyHtml" />
+          </div>
 
           <div v-if="project.screenshots.length" class="mt-6 grid grid-cols-2 gap-3">
             <img
@@ -96,6 +99,27 @@ useHead(() => ({
           </div>
         </div>
       </article>
+
+      <section v-if="project.relatedPosts.length" class="rounded-md border border-border-default bg-canvas">
+        <div class="flex items-center justify-between border-b border-border-default px-5 py-3">
+          <h2 class="text-sm font-semibold text-fg-default">相关文章 {{ project.relatedPosts.length }}</h2>
+          <NuxtLink to="/blog" class="text-xs no-underline hover:underline">全部文章 →</NuxtLink>
+        </div>
+        <ul class="divide-y divide-border-muted">
+          <li v-for="post in project.relatedPosts" :key="post.id" class="px-5 py-3">
+            <NuxtLink
+              :to="`/blog/${post.slug}`"
+              class="text-sm font-medium text-accent no-underline hover:underline"
+            >
+              {{ post.title }}
+            </NuxtLink>
+            <p class="mt-1 line-clamp-2 text-xs leading-5 text-fg-muted">{{ post.summary }}</p>
+            <p class="mt-1 text-xs text-fg-subtle">
+              {{ post.authorName }} · {{ relativeTime(post.publishedAt) }}
+            </p>
+          </li>
+        </ul>
+      </section>
 
       <section class="rounded-md border border-border-default bg-canvas">
         <h2 class="border-b border-border-default px-5 py-3 text-sm font-semibold text-fg-default">

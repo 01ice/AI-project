@@ -141,12 +141,49 @@ export interface ProjectListResponse {
 
 export interface ProjectDetail extends ProjectListItem {
   bodyHtml: string
+  relatedPosts: RelatedPostItem[]
   screenshots: string[]
   repoUrl: string | null
   demoUrl: string | null
   extraLinks: { label: string, url: string }[]
   authorBio: string | null
   createdAt: string
+}
+
+export interface PostListItem {
+  id: string
+  slug: string
+  title: string
+  summary: string
+  coverUrl: string | null
+  tags: string[]
+  authorName: string
+  authorUsername: string | null
+  publishedAt: string
+  viewCount: number
+  projects: { name: string, slug: string }[]
+}
+
+export interface PostListResponse {
+  items: PostListItem[]
+  total: number
+  page: number
+  pageSize: number
+  totalPages: number
+}
+
+export interface PostDetail extends PostListItem {
+  bodyHtml: string
+  updatedAt: string
+}
+
+export interface RelatedPostItem {
+  id: string
+  slug: string
+  title: string
+  summary: string
+  authorName: string
+  publishedAt: string
 }
 
 export interface CategoryItem {

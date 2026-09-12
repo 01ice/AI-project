@@ -11,6 +11,7 @@ import type {
 import { db } from '../db/client.ts'
 import { categories, comments, projectTags, projects, tags, users } from '../db/schema.ts'
 import { renderMarkdown } from './markdown.ts'
+import { relatedPostsForProject } from './posts.ts'
 
 export interface ListProjectsParams {
   category?: string
@@ -286,6 +287,7 @@ export async function getProjectBySlug(slug: string): Promise<ProjectDetail | nu
     publishedAt: row.publishedAt ? row.publishedAt.toISOString() : null,
     createdAt: row.createdAt.toISOString(),
     bodyHtml: renderMarkdown(row.body),
+    relatedPosts: await relatedPostsForProject(row.id),
     metrics: toMetrics({
       isAi,
       aiModels,

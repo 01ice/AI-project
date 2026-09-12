@@ -45,6 +45,8 @@ export const revenueModelEnum = pgEnum('revenue_model', [
   'not_yet',
 ])
 export const emailCodePurposeEnum = pgEnum('email_code_purpose', ['register', 'reset_password'])
+export const postSourceEnum = pgEnum('post_source', ['git', 'editor'])
+export const postStatusEnum = pgEnum('post_status', ['draft', 'published'])
 
 // ===== 用户 =====
 export const users = pgTable('users', {
@@ -166,6 +168,39 @@ export const projectTags = pgTable('project_tags', {
 }, table => [
   primaryKey({ columns: [table.projectId, table.tagId] }),
   index('project_tags_tag_idx').on(table.tagId),
+])
+
+// ===== 文章（Markdown + Git 投稿，后续网页编辑器写入同一张表）=====
+export const posts = pgTable('posts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  slug: varchar('slug', { length: 80 }).notNull().unique(),
+  title: varchar('title', { length: 120 }).notNull(),
+  summary: varchar('summary', { length: 300 }).notNull(),
+  body: text('body').notNull(),
+  coverUrl: text('cover_url'),
+  tags: jsonb('tags').$type<string[]>().notNull().default([]),
+  authorId: uuid('author_id').references(() => users.id, { onDelete: 'set null' }),
+  authorName: varchar('author_name', { length: 32 }).notNull(),
+  authorUsername: varchar('author_username', { length: 32 }),
+  source: postSourceEnum('source').notNull().default('git'),
+  sourcePath: text('source_path'),
+  contentHash: varchar('content_hash', { length: 64 }),
+  status: postStatusEnum('status').notNull().default('published'),
+  viewCount: integer('view_count').notNull().default(0),
+  publishedAt: timestamp('published_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, table => [
+  index('posts_status_published_idx').on(table.status, table.publishedAt),
+  index('posts_author_idx').on(table.authorId),
+])
+
+export const postProjects = pgTable('post_projects', {
+  postId: uuid('post_id').notNull().references(() => posts.id, { onDelete: 'cascade' }),
+  projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
+}, table => [
+  primaryKey({ columns: [table.postId, table.projectId] }),
+  index('post_projects_project_idx').on(table.projectId),
 ])
 
 // ===== 互动 =====

@@ -12,11 +12,13 @@
     "db:migrate": "node scripts/migrate.ts",
     "db:seed": "node scripts/seed.ts",
     "db:setup": "node scripts/migrate.ts && node scripts/seed.ts",
-    "user:create": "node scripts/create-user.ts"
+    "user:create": "node scripts/create-user.ts",
+    "content:sync": "node scripts/sync-posts.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",
     "drizzle-orm": "^0.45.2",
+    "gray-matter": "^4.0.3",
     "marked": "^18.0.12",
     "nodemailer": "^10.0.8",
     "nuxt": "^4.5.2",

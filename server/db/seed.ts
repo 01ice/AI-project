@@ -2,6 +2,7 @@ import type { DbHandle } from './client.ts'
 import { db } from './client.ts'
 import { categories, comments, projectTags, projects, tags, users } from './schema.ts'
 import { seedCategories, seedComments, seedProjects, seedTags, seedUsers } from './seed-data.ts'
+import { syncPostsFromDisk } from './posts-sync.ts'
 
 export interface SeedResult {
   categories: number
@@ -9,6 +10,23 @@ export interface SeedResult {
   users: number
   projects: number
   comments: number
+  posts: number
+}
+
+/**
+ * 旧结构里项目有一条很长的正文，现在长内容归文章，项目只保留一段简短的补充说明。
+ * 这里把种子数据里的长正文压成一段说明文字。
+ */
+function toNote(body: string, limit = 150): string {
+  const plain = body
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/^#{1,6}.*$/gm, ' ')
+    .replace(/^>.*$/gm, ' ')
+    .replace(/[*_`#>-]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  return plain.length > limit ? `${plain.slice(0, limit)}…` : plain
 }
 
 /**
@@ -18,6 +36,7 @@ export interface SeedResult {
 export async function seedDatabase(handle: DbHandle): Promise<SeedResult> {
   const TABLES = [
     'moderation_logs', 'reports', 'favorites', 'likes', 'comments', 'email_codes',
+    'post_projects', 'posts',
     'project_tags', 'projects', 'tags', 'categories', 'sessions', 'users',
   ]
 
@@ -57,7 +76,7 @@ export async function seedDatabase(handle: DbHandle): Promise<SeedResult> {
       slug: project.slug,
       title: project.title,
       summary: project.summary,
-      body: project.body,
+      body: toNote(project.body),
       coverUrl: `/api/cover/${project.slug}`,
       screenshots: [],
       repoUrl: project.repoUrl ?? null,
@@ -148,11 +167,15 @@ export async function seedDatabase(handle: DbHandle): Promise<SeedResult> {
     where projects.id = sub.target_id
   `)
 
+  // 文章来自 content/posts 下的 Markdown，灌完数据后同步一次
+  const postResult = await syncPostsFromDisk()
+
   return {
     categories: categoryRows.length,
     tags: tagRows.length,
     users: userRows.length,
     projects: seedProjects.length,
     comments: commentCount,
+    posts: postResult.upserted,
   }
 }
