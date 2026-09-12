@@ -44,10 +44,13 @@ defineProps<{ project: ProjectListItem }>()
       </div>
 
       <div class="mt-2 flex items-center gap-3 text-xs text-fg-muted">
-        <span class="inline-flex items-center gap-1">
+        <NuxtLink
+          :to="`/u/${project.authorUsername}`"
+          class="inline-flex items-center gap-1 text-fg-muted no-underline hover:text-accent hover:underline"
+        >
           <AppAvatar :name="project.authorName" :username="project.authorUsername" :size="16" :image-url="project.authorAvatarUrl" />
           {{ project.authorName }}
-        </span>
+        </NuxtLink>
         <AppStat icon="heart" :value="project.likeCount" label="点赞" />
         <AppStat icon="star" :value="project.favoriteCount" label="收藏" />
         <AppStat icon="comment" :value="project.commentCount" label="评论" />

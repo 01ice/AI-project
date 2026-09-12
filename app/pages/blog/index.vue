@@ -92,12 +92,20 @@ useHead({
             <p class="mt-1 line-clamp-2 text-[13px] leading-5 text-fg-muted">{{ post.summary }}</p>
 
             <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-fg-muted">
-              <span class="inline-flex items-center gap-1">
+              <NuxtLink
+                v-if="post.authorUsername"
+                :to="`/u/${post.authorUsername}`"
+                class="inline-flex items-center gap-1 no-underline hover:underline"
+              >
                 <AppAvatar
                   :name="post.authorName"
                   :username="post.authorUsername ?? post.authorName"
                   :size="16"
                 />
+                {{ post.authorName }}
+              </NuxtLink>
+              <span v-else class="inline-flex items-center gap-1">
+                <AppAvatar :name="post.authorName" :username="post.authorName" :size="16" />
                 {{ post.authorName }}
               </span>
               <span>{{ relativeTime(post.publishedAt) }}</span>

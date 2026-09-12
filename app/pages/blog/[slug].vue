@@ -44,6 +44,8 @@ async function toggleLike() {
   }
 }
 
+const siteUrl = String(useRuntimeConfig().public.siteUrl || '').replace(/\/$/, '')
+
 useHead(() => ({
   title: `${post.value.title} · 栈桥博客`,
   meta: [
@@ -51,6 +53,27 @@ useHead(() => ({
     { property: 'og:title', content: post.value.title },
     { property: 'og:description', content: post.value.summary },
     { property: 'og:type', content: 'article' },
+  ],
+  link: [
+    { rel: 'canonical', href: `${siteUrl}/blog/${post.value.slug}` },
+    { rel: 'alternate', type: 'application/rss+xml', title: '栈桥博客', href: `${siteUrl}/rss.xml` },
+  ],
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: post.value.title,
+        description: post.value.summary,
+        image: post.value.coverUrl,
+        url: `${siteUrl}/blog/${post.value.slug}`,
+        datePublished: post.value.publishedAt,
+        dateModified: post.value.updatedAt,
+        author: { '@type': 'Person', name: post.value.authorName },
+        keywords: post.value.tags.join(','),
+      }),
+    },
   ],
 }))
 </script>
@@ -63,8 +86,16 @@ useHead(() => ({
         <p class="mt-2 text-sm leading-6 text-fg-muted">{{ post.summary }}</p>
 
         <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-fg-muted">
-          <span class="inline-flex items-center gap-1">
+          <NuxtLink
+            v-if="post.authorUsername"
+            :to="`/u/${post.authorUsername}`"
+            class="inline-flex items-center gap-1 no-underline hover:underline"
+          >
             <AppAvatar :name="post.authorName" :username="post.authorUsername ?? post.authorName" :size="20" />
+            {{ post.authorName }}
+          </NuxtLink>
+          <span v-else class="inline-flex items-center gap-1">
+            <AppAvatar :name="post.authorName" :username="post.authorName" :size="20" />
             {{ post.authorName }}
           </span>
           <span>{{ formatDate(post.publishedAt) }}</span>

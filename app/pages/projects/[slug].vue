@@ -52,13 +52,39 @@ const likeCount = computed(() => interaction.value?.likeCount ?? project.value.l
 const favoriteCount = computed(() => interaction.value?.favoriteCount ?? project.value.favoriteCount)
 const commentCount = computed(() => interaction.value?.commentCount ?? project.value.commentCount)
 
+const siteUrl = String(useRuntimeConfig().public.siteUrl || '').replace(/\/$/, '')
+
 useHead(() => ({
   title: `${project.value.title} · 栈桥`,
   meta: [
     { name: 'description', content: project.value.summary },
     { property: 'og:title', content: project.value.title },
     { property: 'og:description', content: project.value.summary },
-    { property: 'og:image', content: project.value.coverUrl },
+    {
+      property: 'og:image',
+      content: project.value.coverUrl.startsWith('http')
+        ? project.value.coverUrl
+        : `${siteUrl}${project.value.coverUrl}`,
+    },
+    { property: 'og:type', content: 'article' },
+  ],
+  link: [{ rel: 'canonical', href: `${siteUrl}/projects/${project.value.slug}` }],
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: project.value.title,
+        description: project.value.summary,
+        image: project.value.coverUrl,
+        url: `${siteUrl}/projects/${project.value.slug}`,
+        author: { '@type': 'Person', name: project.value.authorName },
+        datePublished: project.value.publishedAt,
+        applicationCategory: project.value.categoryName ?? 'DeveloperApplication',
+        ...(project.value.repoUrl ? { codeRepository: project.value.repoUrl } : {}),
+      }),
+    },
   ],
 }))
 </script>
@@ -229,13 +255,16 @@ useHead(() => ({
 
       <section class="rounded-md border border-border-default bg-canvas p-4">
         <h2 class="text-sm font-semibold text-fg-default">作者</h2>
-        <div class="mt-3 flex items-center gap-3">
+        <NuxtLink
+          :to="`/u/${project.authorUsername}`"
+          class="mt-3 flex items-center gap-3 no-underline"
+        >
           <AppAvatar :name="project.authorName" :username="project.authorUsername" :size="36" :image-url="project.authorAvatarUrl" />
           <div class="min-w-0">
-            <p class="truncate text-sm font-medium text-fg-default">{{ project.authorName }}</p>
+            <p class="truncate text-sm font-medium text-fg-default hover:text-accent hover:underline">{{ project.authorName }}</p>
             <p class="truncate text-xs text-fg-muted">@{{ project.authorUsername }}</p>
           </div>
-        </div>
+        </NuxtLink>
         <p v-if="project.authorBio" class="mt-3 text-xs leading-5 text-fg-muted">
           {{ project.authorBio }}
         </p>

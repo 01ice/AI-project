@@ -308,6 +308,20 @@ export interface SearchResponse {
   posts: PostListItem[]
 }
 
+export interface PublicProfile {
+  username: string
+  nickname: string
+  avatarUrl: string | null
+  bio: string | null
+  role: 'user' | 'admin'
+  joinedAt: string
+  projectCount: number
+  postCount: number
+  totalViews: number
+  projects: ProjectListItem[]
+  posts: PostListItem[]
+}
+
 export interface InteractionState {
   liked: boolean
   favorited: boolean
