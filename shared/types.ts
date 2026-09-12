@@ -224,6 +224,59 @@ export interface AdminTagItem {
   createdAt: string
 }
 
+export interface AdminPostItem {
+  id: string
+  slug: string
+  title: string
+  summary: string
+  body: string
+  coverUrl: string | null
+  tags: string[]
+  status: string
+  moderationNote: string | null
+  source: string
+  authorName: string
+  authorUsername: string | null
+  authorEmailVerified: boolean
+  projects: { name: string, slug: string }[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ManagedPost {
+  id: string
+  slug: string
+  title: string
+  summary: string
+  body: string
+  coverUrl: string | null
+  tags: string[]
+  projectSlugs: string[]
+  status: PostStatus
+  moderationNote: string | null
+  authorName: string
+  authorUsername: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface MyPostItem {
+  id: string
+  slug: string
+  title: string
+  summary: string
+  coverUrl: string | null
+  status: PostStatus
+  moderationNote: string | null
+  tags: string[]
+  projects: { name: string, slug: string }[]
+  viewCount: number
+  publishedAt: string | null
+  updatedAt: string
+}
+
+export type PostStatus = 'draft' | 'pending' | 'published' | 'rejected' | 'offline'
+
 export interface CategoryItem {
   id: string
   name: string

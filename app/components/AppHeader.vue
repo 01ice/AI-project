@@ -70,6 +70,12 @@ async function logout() {
 
       <div v-else class="relative flex items-center gap-2">
         <NuxtLink
+          to="/blog/new"
+          class="mr-1 hidden h-8 items-center rounded-md border border-border-default px-3 text-sm font-medium text-fg-default no-underline hover:border-accent hover:text-accent sm:inline-flex"
+        >
+          写文章
+        </NuxtLink>
+        <NuxtLink
           to="/projects/new"
           class="mr-1 hidden h-8 items-center rounded-md border border-border-default px-3 text-sm font-medium text-fg-default no-underline hover:border-accent hover:text-accent sm:inline-flex"
         >

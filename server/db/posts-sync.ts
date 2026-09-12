@@ -144,7 +144,7 @@ export async function syncPostsFromDisk(options: { log?: boolean } = {}): Promis
         sourcePath,
         contentHash,
         status,
-        publishedAt: toDate(data.date) ?? new Date(),
+        publishedAt: status === 'draft' ? null : (toDate(data.date) ?? new Date()),
         updatedAt: new Date(),
       }
 

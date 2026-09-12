@@ -46,7 +46,7 @@ export const revenueModelEnum = pgEnum('revenue_model', [
 ])
 export const emailCodePurposeEnum = pgEnum('email_code_purpose', ['register', 'reset_password'])
 export const postSourceEnum = pgEnum('post_source', ['git', 'editor'])
-export const postStatusEnum = pgEnum('post_status', ['draft', 'published'])
+export const postStatusEnum = pgEnum('post_status', ['draft', 'pending', 'published', 'rejected', 'offline'])
 
 // ===== 用户 =====
 export const users = pgTable('users', {
@@ -186,8 +186,11 @@ export const posts = pgTable('posts', {
   sourcePath: text('source_path'),
   contentHash: varchar('content_hash', { length: 64 }),
   status: postStatusEnum('status').notNull().default('published'),
+  moderationSource: moderationSourceEnum('moderation_source'),
+  moderationNote: varchar('moderation_note', { length: 500 }),
   viewCount: integer('view_count').notNull().default(0),
-  publishedAt: timestamp('published_at', { withTimezone: true }).notNull().defaultNow(),
+  // 草稿还没有发布时间，因此允许为空
+  publishedAt: timestamp('published_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, table => [

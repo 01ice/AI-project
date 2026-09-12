@@ -40,13 +40,20 @@ useHead({
   <div class="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_260px]">
     <div>
       <header class="mb-4 border-b border-border-default pb-3">
-        <h1 class="text-lg font-semibold text-fg-default">
-          {{ query.q ? `搜索「${query.q}」` : '博客' }}
-          <span class="ml-1 text-sm font-normal text-fg-muted">{{ data?.total ?? 0 }} 篇</span>
-        </h1>
+        <div class="flex flex-wrap items-center gap-3">
+          <h1 class="text-lg font-semibold text-fg-default">
+            {{ query.q ? `搜索「${query.q}」` : '博客' }}
+            <span class="ml-1 text-sm font-normal text-fg-muted">{{ data?.total ?? 0 }} 篇</span>
+          </h1>
+          <NuxtLink
+            to="/blog/new"
+            class="ml-auto inline-flex h-8 items-center rounded-md border border-accent bg-accent px-3 text-sm font-medium text-white no-underline hover:bg-accent/90"
+          >
+            写文章
+          </NuxtLink>
+        </div>
         <p class="mt-1 text-xs text-fg-muted">
-          文章以 Markdown 文件提交到仓库，合并后同步到站点。
-          <NuxtLink to="/about" class="no-underline hover:underline">了解投稿方式</NuxtLink>
+          所有人登录后都可以写文章，发表后经审核上线；也可以用 Markdown 文件提交 Pull Request。
         </p>
       </header>
 

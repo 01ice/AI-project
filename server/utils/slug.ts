@@ -1,7 +1,7 @@
 import { randomBytes } from 'node:crypto'
 import { eq } from 'drizzle-orm'
 import { db } from '../db/client.ts'
-import { projects, tags } from '../db/schema.ts'
+import { posts, projects, tags } from '../db/schema.ts'
 
 /** 只保留 ASCII 字母数字，中文标题会退化为随机短标识 */
 export function slugify(input: string): string {
@@ -53,4 +53,22 @@ export async function uniqueTagSlug(name: string, fallbackPrefix = 'tag'): Promi
   }
 
   return randomSlug(fallbackPrefix)
+}
+
+export async function uniquePostSlug(input: string, excludeId?: string): Promise<string> {
+  const base = slugify(input)
+  let candidate = base.length >= 3 ? base.slice(0, 60) : `a-${randomBytes(4).toString('hex')}`
+
+  for (let i = 0; i < 20; i += 1) {
+    const [row] = await db
+      .select({ id: posts.id })
+      .from(posts)
+      .where(eq(posts.slug, candidate))
+      .limit(1)
+
+    if (!row || row.id === excludeId) return candidate
+    candidate = `${base.slice(0, 50) || 'a'}-${i + 2}`
+  }
+
+  return `a-${randomBytes(4).toString('hex')}`
 }

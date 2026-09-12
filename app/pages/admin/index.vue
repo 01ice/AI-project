@@ -1,16 +1,27 @@
 <script setup lang="ts">
-import type { AdminProjectItem, AdminTagItem } from '~~/shared/types'
+import type { AdminPostItem, AdminProjectItem, AdminTagItem } from '~~/shared/types'
 
 useHead({ title: '审核后台 · 栈桥' })
 
 const user = useAuthUser()
-const tab = ref<'projects' | 'tags'>('projects')
+const route = useRoute()
+const tab = ref<'projects' | 'posts' | 'tags'>(
+  route.query.tab === 'posts' || route.query.tab === 'tags' ? route.query.tab : 'projects',
+)
+
+watch(tab, (value) => {
+  // 让标签页可以直接分享链接，例如 /admin?tab=posts
+  navigateTo({ path: '/admin', query: value === 'projects' ? {} : { tab: value } }, { replace: true })
+})
 const projectStatus = ref<'pending' | 'published' | 'rejected' | 'offline'>('pending')
+const postStatus = ref<'pending' | 'published' | 'rejected' | 'offline'>('pending')
 const busySlug = ref('')
 const busyTag = ref('')
 const notes = reactive<Record<string, string>>({})
 const tagNotes = reactive<Record<string, string>>({})
 const message = ref('')
+const busyPost = ref('')
+const postNotes = reactive<Record<string, string>>({})
 
 const { data: projectData, refresh: refreshProjects } = await useFetch<{ items: AdminProjectItem[] }>(
   '/api/admin/projects',
@@ -24,7 +35,13 @@ const { data: summary, refresh: refreshSummary } = await useFetch<{
   pendingProjects: number
   publishedProjects: number
   pendingTags: number
+  pendingPosts: number
 }>('/api/admin/summary', { immediate: !!user.value })
+
+const { data: postData, refresh: refreshPosts } = await useFetch<{ items: AdminPostItem[] }>(
+  '/api/admin/posts',
+  { query: computed(() => ({ status: postStatus.value })), immediate: !!user.value },
+)
 
 const hostingLabels: Record<string, string> = {
   api: '调用 API',
@@ -46,8 +63,30 @@ const projectStatusOptions = [
   { value: 'offline' as const, label: '已下架' },
 ]
 
+const postStatusOptions = projectStatusOptions
+
 async function refreshAll() {
-  await Promise.all([refreshProjects(), refreshTags(), refreshSummary()])
+  await Promise.all([refreshProjects(), refreshTags(), refreshPosts(), refreshSummary()])
+}
+
+async function reviewPost(slug: string, action: 'approve' | 'reject' | 'offline') {
+  busyPost.value = slug
+  message.value = ''
+  try {
+    await $fetch(`/api/admin/posts/${slug}/review`, {
+      method: 'POST',
+      body: { action, note: postNotes[slug] ?? '' },
+    })
+    message.value = action === 'approve' ? '文章已通过并发布' : action === 'reject' ? '文章已驳回' : '文章已下架'
+    delete postNotes[slug]
+    await refreshAll()
+  }
+  catch (err) {
+    message.value = authErrorMessage(err)
+  }
+  finally {
+    busyPost.value = ''
+  }
 }
 
 async function reviewProject(slug: string, action: 'approve' | 'reject' | 'offline') {
@@ -107,6 +146,9 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
         <span class="rounded-md border border-attention/40 bg-attention/5 px-3 py-1.5 text-attention">
           待审标签 {{ summary?.pendingTags ?? 0 }}
         </span>
+        <span class="rounded-md border border-attention/40 bg-attention/5 px-3 py-1.5 text-attention">
+          待审文章 {{ summary?.pendingPosts ?? 0 }}
+        </span>
         <span class="rounded-md border border-border-default bg-canvas-subtle px-3 py-1.5 text-fg-muted">
           已发布项目 {{ summary?.publishedProjects ?? 0 }}
         </span>
@@ -131,16 +173,28 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
         标签审核
       </button>
 
-      <div v-if="tab === 'projects'" class="ml-auto flex items-center gap-1 pb-1">
+      <button
+        type="button"
+        class="-mb-px border-b-2 px-3 py-2 text-sm"
+        :class="tab === 'posts' ? 'border-accent font-medium text-fg-default' : 'border-transparent text-fg-muted hover:text-fg-default'"
+        @click="tab = 'posts'"
+      >
+        文章审核
+        <span v-if="summary?.pendingPosts" class="ml-1 rounded-full bg-attention/15 px-1.5 text-[11px] text-attention">
+          {{ summary.pendingPosts }}
+        </span>
+      </button>
+
+      <div v-if="tab !== 'tags'" class="ml-auto flex items-center gap-1 pb-1">
         <button
-          v-for="option in projectStatusOptions"
+          v-for="option in (tab === 'projects' ? projectStatusOptions : postStatusOptions)"
           :key="option.value"
           type="button"
           class="rounded px-2.5 py-1 text-xs"
-          :class="projectStatus === option.value
+          :class="(tab === 'projects' ? projectStatus : postStatus) === option.value
             ? 'bg-canvas-subtle font-medium text-fg-default'
             : 'text-fg-muted hover:text-fg-default'"
-          @click="projectStatus = option.value"
+          @click="tab === 'projects' ? (projectStatus = option.value) : (postStatus = option.value)"
         >
           {{ option.label }}
         </button>
@@ -294,6 +348,130 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
             :disabled="busySlug === item.slug"
             class="h-8 rounded-md border border-danger px-3 text-sm font-medium text-danger disabled:opacity-60"
             @click="reviewProject(item.slug, 'offline')"
+          >
+            下架
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <!-- 文章审核 -->
+    <div v-else-if="tab === 'posts'" class="mt-4 space-y-4">
+      <p v-if="!postData?.items.length" class="rounded-md border border-dashed border-border-default py-16 text-center text-sm text-fg-muted">
+        这里还没有文章。
+      </p>
+
+      <article
+        v-for="item in postData?.items ?? []"
+        :key="item.id"
+        class="rounded-md border border-border-default bg-canvas p-4"
+      >
+        <div class="flex gap-4">
+          <img
+            v-if="item.coverUrl"
+            :src="item.coverUrl"
+            :alt="item.title"
+            width="140"
+            height="84"
+            class="h-[84px] w-36 shrink-0 rounded-md border border-border-muted object-cover"
+          >
+
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <h2 class="text-base font-semibold text-fg-default">{{ item.title }}</h2>
+              <span
+                class="rounded-full border px-2 py-0.5 text-[11px]"
+                :class="item.source === 'git' ? 'border-border-muted text-fg-muted' : 'border-accent/40 text-accent'"
+              >
+                {{ item.source === 'git' ? 'Git 投稿' : '网页撰写' }}
+              </span>
+            </div>
+
+            <p class="mt-1 text-[13px] leading-5 text-fg-muted">{{ item.summary }}</p>
+
+            <dl class="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-fg-muted sm:grid-cols-4">
+              <div>
+                <dt class="text-fg-subtle">作者</dt>
+                <dd class="text-fg-default">
+                  {{ item.authorName }}
+                  <span v-if="!item.authorEmailVerified" class="text-attention">（邮箱未验证）</span>
+                </dd>
+              </div>
+              <div>
+                <dt class="text-fg-subtle">更新时间</dt>
+                <dd class="text-fg-default">{{ relativeTime(item.updatedAt) }}</dd>
+              </div>
+              <div v-if="item.tags.length" class="sm:col-span-2">
+                <dt class="text-fg-subtle">标签</dt>
+                <dd class="text-fg-default">{{ item.tags.join(' · ') }}</dd>
+              </div>
+            </dl>
+
+            <div v-if="item.projects.length" class="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
+              <span class="text-fg-subtle">关联项目</span>
+              <span
+                v-for="project in item.projects"
+                :key="project.slug"
+                class="rounded-full border border-border-muted px-2 py-0.5 text-fg-muted"
+              >
+                {{ project.name }}
+              </span>
+            </div>
+
+            <div class="mt-3 flex flex-wrap gap-2 text-xs">
+              <NuxtLink
+                v-if="item.status === 'published'"
+                :to="`/blog/${item.slug}`"
+                class="rounded-md border border-border-default px-2 py-1 no-underline hover:border-accent hover:text-accent"
+              >
+                查看文章
+              </NuxtLink>
+              <NuxtLink
+                v-else
+                :to="`/blog/edit/${item.slug}`"
+                class="rounded-md border border-border-default px-2 py-1 no-underline hover:border-accent hover:text-accent"
+              >
+                打开编辑器
+              </NuxtLink>
+            </div>
+          </div>
+        </div>
+
+        <details class="mt-3">
+          <summary class="cursor-pointer text-xs text-fg-muted hover:text-accent">展开正文全文</summary>
+          <pre class="mt-2 max-h-80 overflow-y-auto whitespace-pre-wrap rounded-md border border-border-muted bg-canvas-subtle p-3 text-[13px] leading-6 text-fg-default">{{ item.body }}</pre>
+        </details>
+
+        <div class="mt-3 flex flex-wrap items-center gap-2 border-t border-border-muted pt-3">
+          <input
+            v-model="postNotes[item.slug]"
+            placeholder="审核意见（驳回时建议写清楚原因）"
+            class="h-8 flex-1 rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+          >
+          <button
+            v-if="item.status !== 'published'"
+            type="button"
+            :disabled="busyPost === item.slug"
+            class="h-8 rounded-md border border-accent bg-accent px-3 text-sm font-medium text-white disabled:opacity-60"
+            @click="reviewPost(item.slug, 'approve')"
+          >
+            {{ item.status === 'pending' ? '通过并发布' : '恢复发布' }}
+          </button>
+          <button
+            v-if="item.status === 'pending'"
+            type="button"
+            :disabled="busyPost === item.slug"
+            class="h-8 rounded-md border border-danger px-3 text-sm font-medium text-danger disabled:opacity-60"
+            @click="reviewPost(item.slug, 'reject')"
+          >
+            驳回
+          </button>
+          <button
+            v-if="item.status === 'published'"
+            type="button"
+            :disabled="busyPost === item.slug"
+            class="h-8 rounded-md border border-danger px-3 text-sm font-medium text-danger disabled:opacity-60"
+            @click="reviewPost(item.slug, 'offline')"
           >
             下架
           </button>
