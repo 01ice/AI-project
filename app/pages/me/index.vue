@@ -6,31 +6,79 @@ useHead({ title: '个人中心 · 栈桥' })
 const route = useRoute()
 const user = useAuthUser()
 const notice = ref('')
-const mailSent = ref('')
+const message = ref('')
+const code = ref('')
+const sending = ref(false)
+const verifying = ref(false)
+const countdown = ref(0)
 
-// 直接访问 /me 时若尚未登录，交给服务端渲染后再跳转
+let timer: ReturnType<typeof setInterval> | null = null
+
+onUnmounted(() => {
+  if (timer) clearInterval(timer)
+})
+
+if (route.query.welcome === '1') {
+  notice.value = '注册成功，邮箱已完成验证，现在可以发布项目了。'
+}
+
 onMounted(async () => {
   if (!user.value) {
     await navigateTo({ path: '/login', query: { redirect: '/me' } })
   }
 })
 
-if (route.query.welcome === '1') {
-  notice.value = '注册成功。请先到邮箱完成验证，验证后即可发布项目。'
+function startCountdown() {
+  countdown.value = 60
+  timer = setInterval(() => {
+    countdown.value -= 1
+    if (countdown.value <= 0 && timer) {
+      clearInterval(timer)
+      timer = null
+    }
+  }, 1000)
 }
 
-async function resend() {
-  mailSent.value = ''
+async function sendCode() {
+  message.value = ''
+  sending.value = true
   try {
-    const res = await $fetch<{ mailSent: boolean, verifyUrl?: string }>('/api/auth/resend-verification', {
+    const res = await $fetch<{ delivered: boolean, devCode?: string }>('/api/auth/resend-verification', {
       method: 'POST',
     })
-    mailSent.value = res.verifyUrl
-      ? `开发模式未配置 SMTP，验证链接：${res.verifyUrl}`
-      : (res.mailSent ? '验证邮件已重新发送，请查收。' : '邮件发送失败，请稍后再试。')
+    startCountdown()
+    if (res.devCode) {
+      code.value = res.devCode
+      message.value = `开发模式未走邮件，验证码是 ${res.devCode}`
+    }
+    else {
+      message.value = res.delivered ? '验证码已发送，请查收邮件（10 分钟内有效）' : '发送失败，请稍后再试'
+    }
   }
   catch (err) {
-    mailSent.value = authErrorMessage(err)
+    message.value = authErrorMessage(err)
+  }
+  finally {
+    sending.value = false
+  }
+}
+
+async function verifyCode() {
+  message.value = ''
+  verifying.value = true
+  try {
+    const res = await $fetch<{ user: SessionUser }>('/api/auth/verify-email-code', {
+      method: 'POST',
+      body: { code: code.value },
+    })
+    user.value = res.user
+    message.value = '邮箱验证完成，现在可以发布项目了。'
+  }
+  catch (err) {
+    message.value = authErrorMessage(err)
+  }
+  finally {
+    verifying.value = false
   }
 }
 
@@ -73,12 +121,36 @@ async function logout() {
         </div>
       </dl>
 
-      <div v-if="!user.emailVerified" class="mt-4 rounded-md border border-border-default bg-canvas-subtle px-3 py-2">
+      <div v-if="!user.emailVerified" class="mt-4 rounded-md border border-border-default bg-canvas-subtle p-3">
         <p class="text-xs text-fg-muted">
-          邮箱验证后才能发布项目。
-          <button type="button" class="text-accent hover:underline" @click="resend">重新发送验证邮件</button>
+          邮箱验证后才能发布项目。点「获取验证码」，把邮件里的 6 位数字填进来即可。
         </p>
-        <p v-if="mailSent" class="mt-2 break-all text-xs text-fg-muted">{{ mailSent }}</p>
+        <div class="mt-2 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            :disabled="sending || countdown > 0"
+            class="h-8 whitespace-nowrap rounded-md border border-border-default px-3 text-sm hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+            @click="sendCode"
+          >
+            {{ countdown > 0 ? `${countdown} 秒后重发` : (sending ? '发送中…' : '获取验证码') }}
+          </button>
+          <input
+            v-model="code"
+            inputmode="numeric"
+            maxlength="6"
+            placeholder="6 位验证码"
+            class="h-8 w-32 rounded-md border border-border-default bg-canvas px-3 font-mono tracking-widest text-sm focus:border-accent focus:outline-none"
+          >
+          <button
+            type="button"
+            :disabled="verifying || code.length !== 6"
+            class="h-8 rounded-md border border-accent bg-accent px-3 text-sm font-medium text-white disabled:opacity-50"
+            @click="verifyCode"
+          >
+            {{ verifying ? '验证中…' : '完成验证' }}
+          </button>
+        </div>
+        <p v-if="message" class="mt-2 text-xs text-fg-muted">{{ message }}</p>
       </div>
     </section>
 

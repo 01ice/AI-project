@@ -44,6 +44,7 @@ export const revenueModelEnum = pgEnum('revenue_model', [
   'service',
   'not_yet',
 ])
+export const emailCodePurposeEnum = pgEnum('email_code_purpose', ['register', 'reset_password'])
 
 // ===== 用户 =====
 export const users = pgTable('users', {
@@ -76,6 +77,21 @@ export const sessions = pgTable('sessions', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 }, table => [
   index('sessions_user_idx').on(table.userId),
+])
+
+/** 邮箱验证码：注册与找回密码共用，存哈希不存明文 */
+export const emailCodes = pgTable('email_codes', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  email: varchar('email', { length: 254 }).notNull(),
+  codeHash: varchar('code_hash', { length: 64 }).notNull(),
+  purpose: emailCodePurposeEnum('purpose').notNull(),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  consumedAt: timestamp('consumed_at', { withTimezone: true }),
+  attempts: integer('attempts').notNull().default(0),
+  ip: varchar('ip', { length: 64 }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, table => [
+  index('email_codes_lookup_idx').on(table.email, table.purpose, table.createdAt),
 ])
 
 // ===== 分类与标签 =====

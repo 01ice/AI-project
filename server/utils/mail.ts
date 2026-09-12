@@ -55,7 +55,10 @@ export async function sendMail(message: MailMessage): Promise<MailResult> {
   }
   catch (error) {
     console.error('[mail] 发送失败：', error)
-    return { delivered: false, reason: 'send-failed' }
+    return {
+      delivered: false,
+      reason: error instanceof Error ? error.message : String(error),
+    }
   }
 }
 

@@ -17,7 +17,7 @@ export interface SeedResult {
  */
 export async function seedDatabase(handle: DbHandle): Promise<SeedResult> {
   const TABLES = [
-    'moderation_logs', 'reports', 'favorites', 'likes', 'comments',
+    'moderation_logs', 'reports', 'favorites', 'likes', 'comments', 'email_codes',
     'project_tags', 'projects', 'tags', 'categories', 'sessions', 'users',
   ]
 

@@ -1,6 +1,7 @@
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineNuxtConfig({
+  // 修改本文件会触发开发服务器整体重启（可用来重新加载 .env）
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
   css: ['~/assets/css/main.css'],
