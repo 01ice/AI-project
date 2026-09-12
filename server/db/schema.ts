@@ -122,6 +122,7 @@ export const projects = pgTable('projects', {
   aiHosting: aiHostingEnum('ai_hosting'),
   monthlyCostCny: integer('monthly_cost_cny'),
   monthlyRevenueCny: integer('monthly_revenue_cny'),
+  totalRevenueCny: integer('total_revenue_cny'),
   revenueModel: revenueModelEnum('revenue_model'),
   costNote: varchar('cost_note', { length: 200 }),
   revenueNote: varchar('revenue_note', { length: 200 }),

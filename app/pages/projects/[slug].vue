@@ -43,7 +43,7 @@ useHead(() => ({
           <h1 class="mt-2 text-2xl font-semibold text-fg-default">{{ project.title }}</h1>
           <p class="mt-2 text-sm leading-6 text-fg-muted">{{ project.summary }}</p>
 
-          <AiMeta v-if="project.ai.isAi" :ai="project.ai" :max-models="3" class="mt-3" />
+          <MetricsBar :metrics="project.metrics" :max-models="3" class="mt-3" />
 
           <div class="mt-3 flex flex-wrap items-center gap-2">
             <a
@@ -157,7 +157,7 @@ useHead(() => ({
     </div>
 
     <aside class="space-y-4">
-      <section v-if="project.ai.isAi" class="rounded-md border border-border-default bg-canvas p-4">
+      <section v-if="project.metrics.isAi" class="rounded-md border border-border-default bg-canvas p-4">
         <div class="flex items-center justify-between">
           <h2 class="text-sm font-semibold text-fg-default">AI 信息</h2>
           <span class="rounded-full bg-accent-subtle px-2 py-0.5 text-[11px] font-medium text-accent">AI 项目</span>
@@ -168,40 +168,57 @@ useHead(() => ({
             <dt class="text-fg-muted">使用模型</dt>
             <dd class="mt-1 flex flex-wrap gap-1">
               <span
-                v-for="model in project.ai.models"
+                v-for="model in project.metrics.models"
                 :key="model"
                 class="rounded-full border border-border-muted px-2 py-0.5 text-fg-default"
               >{{ model }}</span>
-              <span v-if="!project.ai.models.length" class="text-fg-subtle">未填写</span>
+              <span v-if="!project.metrics.models.length" class="text-fg-subtle">未填写</span>
             </dd>
           </div>
-          <div v-if="project.ai.hosting" class="flex items-center justify-between">
+          <div v-if="project.metrics.hosting" class="flex items-center justify-between">
             <dt class="text-fg-muted">使用方式</dt>
-            <dd class="text-fg-default">{{ aiHostingLabels[project.ai.hosting] }}</dd>
+            <dd class="text-fg-default">{{ aiHostingLabels[project.metrics.hosting] }}</dd>
           </div>
+        </dl>
+      </section>
+
+      <section v-if="hasMoneyData(project.metrics)" class="rounded-md border border-border-default bg-canvas p-4">
+        <h2 class="text-sm font-semibold text-fg-default">成本与收益</h2>
+
+        <dl class="mt-3 space-y-2 text-xs">
           <div class="flex items-center justify-between">
             <dt class="text-fg-muted">每月成本</dt>
-            <dd class="font-medium text-fg-default">{{ formatCny(project.ai.monthlyCostCny) }}</dd>
+            <dd class="font-medium text-fg-default">{{ formatCny(project.metrics.monthlyCostCny) }}</dd>
           </div>
           <div class="flex items-center justify-between">
-            <dt class="text-fg-muted">每月收益</dt>
-            <dd class="font-medium text-fg-default">{{ formatCny(project.ai.monthlyRevenueCny) }}</dd>
+            <dt class="text-fg-muted">每月收入</dt>
+            <dd class="font-medium text-fg-default">{{ formatCny(project.metrics.monthlyRevenueCny) }}</dd>
           </div>
-          <div v-if="project.ai.revenueModel" class="flex items-center justify-between">
+          <div class="flex items-center justify-between">
+            <dt class="text-fg-muted">总收入</dt>
+            <dd class="font-medium text-fg-default">{{ formatCny(project.metrics.totalRevenueCny) }}</dd>
+          </div>
+          <div v-if="monthlyProfit(project.metrics) !== null" class="flex items-center justify-between">
+            <dt class="text-fg-muted">每月净利</dt>
+            <dd class="font-medium" :class="profitClass(profitState(project.metrics))">
+              {{ formatCny(monthlyProfit(project.metrics)) }}
+            </dd>
+          </div>
+          <div v-if="project.metrics.revenueModel" class="flex items-center justify-between">
             <dt class="text-fg-muted">商业模式</dt>
-            <dd class="text-fg-default">{{ revenueModelLabels[project.ai.revenueModel] }}</dd>
+            <dd class="text-fg-default">{{ revenueModelLabels[project.metrics.revenueModel] }}</dd>
           </div>
           <div class="flex items-center justify-between">
             <dt class="text-fg-muted">当前状态</dt>
-            <dd :class="profitClass(profitState(project.ai))">{{ profitLabel(profitState(project.ai)) }}</dd>
+            <dd :class="profitClass(profitState(project.metrics))">{{ profitLabel(profitState(project.metrics)) }}</dd>
           </div>
         </dl>
 
-        <p v-if="project.ai.costNote" class="mt-3 text-xs leading-5 text-fg-muted">
-          <span class="text-fg-default">成本说明：</span>{{ project.ai.costNote }}
+        <p v-if="project.metrics.costNote" class="mt-3 text-xs leading-5 text-fg-muted">
+          <span class="text-fg-default">成本说明：</span>{{ project.metrics.costNote }}
         </p>
-        <p v-if="project.ai.revenueNote" class="mt-2 text-xs leading-5 text-fg-muted">
-          <span class="text-fg-default">收益说明：</span>{{ project.ai.revenueNote }}
+        <p v-if="project.metrics.revenueNote" class="mt-2 text-xs leading-5 text-fg-muted">
+          <span class="text-fg-default">收益说明：</span>{{ project.metrics.revenueNote }}
         </p>
 
         <p class="mt-3 border-t border-border-muted pt-2 text-[11px] text-fg-subtle">

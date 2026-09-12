@@ -9,12 +9,15 @@ export type RevenueModel =
   | 'service'
   | 'not_yet'
 
-export interface AiInfo {
+export interface ProjectMetrics {
   isAi: boolean
+  /** AI 项目专属 */
   models: string[]
   hosting: AiHosting | null
+  /** 成本与收益：所有项目均可选填 */
   monthlyCostCny: number | null
   monthlyRevenueCny: number | null
+  totalRevenueCny: number | null
   revenueModel: RevenueModel | null
   costNote: string | null
   revenueNote: string | null
@@ -37,7 +40,7 @@ export interface ProjectListItem {
   viewCount: number
   commentCount: number
   publishedAt: string | null
-  ai: AiInfo
+  metrics: ProjectMetrics
 }
 
 export interface ProjectListResponse {

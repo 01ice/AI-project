@@ -1,4 +1,4 @@
-import type { AiHosting, AiInfo, RevenueModel } from '~~/shared/types'
+import type { AiHosting, ProjectMetrics, RevenueModel } from '~~/shared/types'
 
 export const aiHostingLabels: Record<AiHosting, string> = {
   api: '调用 API',
@@ -21,12 +21,17 @@ export function formatCny(value: number | null | undefined): string {
   return `¥${value.toLocaleString('zh-CN')}`
 }
 
+/** 是否填写了成本或收益数据 */
+export function hasMoneyData(metrics: ProjectMetrics): boolean {
+  return metrics.monthlyCostCny !== null || metrics.monthlyRevenueCny !== null
+}
+
 export type ProfitState = 'profit' | 'breakeven' | 'loss' | 'free' | 'unknown'
 
 /** 根据每月成本与收益推导盈利状态 */
-export function profitState(ai: AiInfo): ProfitState {
-  const cost = ai.monthlyCostCny
-  const revenue = ai.monthlyRevenueCny
+export function profitState(metrics: ProjectMetrics): ProfitState {
+  const cost = metrics.monthlyCostCny
+  const revenue = metrics.monthlyRevenueCny
 
   if (revenue === null) return 'unknown'
   if (revenue === 0) return (cost ?? 0) > 0 ? 'loss' : 'free'
@@ -53,4 +58,10 @@ export function profitClass(state: ProfitState): string {
     case 'loss': return 'text-attention'
     default: return 'text-fg-subtle'
   }
+}
+
+/** 每月净利：收入减去成本 */
+export function monthlyProfit(metrics: ProjectMetrics): number | null {
+  if (metrics.monthlyRevenueCny === null) return null
+  return metrics.monthlyRevenueCny - (metrics.monthlyCostCny ?? 0)
 }

@@ -1,10 +1,11 @@
-import { and, asc, desc, eq, ilike, inArray, or, sql } from 'drizzle-orm'
+import { and, asc, desc, eq, ilike, inArray, isNotNull, or, sql } from 'drizzle-orm'
 import type {
   CategoryItem,
   CommentItem,
   ProjectDetail,
   ProjectListItem,
   ProjectListResponse,
+  ProjectMetrics,
   TagItem,
 } from '../../shared/types.ts'
 import { db } from '../db/client.ts'
@@ -16,7 +17,9 @@ export interface ListProjectsParams {
   tag?: string
   q?: string
   ai?: boolean
-  sort?: 'latest' | 'hot' | 'featured'
+  /** 只看填写了成本或收益的项目 */
+  withMetrics?: boolean
+  sort?: 'latest' | 'hot' | 'featured' | 'profit' | 'revenue' | 'cost'
   page?: number
   pageSize?: number
 }
@@ -51,25 +54,42 @@ function buildProjectConditions(params: ListProjectsParams) {
     conditions.push(eq(projects.isAi, true))
   }
 
+  if (params.withMetrics) {
+    conditions.push(or(
+      isNotNull(projects.monthlyCostCny),
+      isNotNull(projects.monthlyRevenueCny),
+    )!)
+  }
+
+  // 排行榜必须建立在真实填写过的数据之上，避免空值占位
+  if (params.sort === 'profit' || params.sort === 'revenue') {
+    conditions.push(isNotNull(projects.monthlyRevenueCny))
+  }
+  if (params.sort === 'cost') {
+    conditions.push(isNotNull(projects.monthlyCostCny))
+  }
+
   return and(...conditions)
 }
 
-function toAiInfo(row: {
+function toMetrics(row: {
   isAi: boolean
   aiModels: string[] | null
   aiHosting: 'api' | 'self_hosted' | 'hybrid' | null
   monthlyCostCny: number | null
   monthlyRevenueCny: number | null
+  totalRevenueCny: number | null
   revenueModel: 'free' | 'freemium' | 'subscription' | 'one_time' | 'ads' | 'service' | 'not_yet' | null
   costNote: string | null
   revenueNote: string | null
-}) {
+}): ProjectMetrics {
   return {
     isAi: row.isAi,
     models: row.aiModels ?? [],
     hosting: row.aiHosting,
     monthlyCostCny: row.monthlyCostCny,
     monthlyRevenueCny: row.monthlyRevenueCny,
+    totalRevenueCny: row.totalRevenueCny,
     revenueModel: row.revenueModel,
     costNote: row.costNote,
     revenueNote: row.revenueNote,
@@ -82,6 +102,12 @@ function projectOrder(sort: ListProjectsParams['sort']) {
       return [desc(projects.viewCount), desc(projects.likeCount)]
     case 'featured':
       return [desc(projects.featured), desc(projects.publishedAt)]
+    case 'profit':
+      return [desc(sql`coalesce(${projects.monthlyRevenueCny}, 0) - coalesce(${projects.monthlyCostCny}, 0)`)]
+    case 'revenue':
+      return [desc(projects.monthlyRevenueCny)]
+    case 'cost':
+      return [asc(projects.monthlyCostCny)]
     default:
       return [desc(projects.publishedAt)]
   }
@@ -114,6 +140,7 @@ export async function listProjects(params: ListProjectsParams): Promise<ProjectL
       aiHosting: projects.aiHosting,
       monthlyCostCny: projects.monthlyCostCny,
       monthlyRevenueCny: projects.monthlyRevenueCny,
+      totalRevenueCny: projects.totalRevenueCny,
       revenueModel: projects.revenueModel,
       costNote: projects.costNote,
       revenueNote: projects.revenueNote,
@@ -128,12 +155,33 @@ export async function listProjects(params: ListProjectsParams): Promise<ProjectL
 
   const tagMap = await loadTagsForProjects(rows.map(row => row.id))
   const items: ProjectListItem[] = rows.map((row) => {
-    const { isAi, aiModels, aiHosting, monthlyCostCny, monthlyRevenueCny, revenueModel, costNote, revenueNote, ...rest } = row
+    const {
+      isAi,
+      aiModels,
+      aiHosting,
+      monthlyCostCny,
+      monthlyRevenueCny,
+      totalRevenueCny,
+      revenueModel,
+      costNote,
+      revenueNote,
+      ...rest
+    } = row
     return {
       ...rest,
       publishedAt: row.publishedAt ? row.publishedAt.toISOString() : null,
       tags: tagMap.get(row.id) ?? [],
-      ai: toAiInfo({ isAi, aiModels, aiHosting, monthlyCostCny, monthlyRevenueCny, revenueModel, costNote, revenueNote }),
+      metrics: toMetrics({
+        isAi,
+        aiModels,
+        aiHosting,
+        monthlyCostCny,
+        monthlyRevenueCny,
+        totalRevenueCny,
+        revenueModel,
+        costNote,
+        revenueNote,
+      }),
     }
   })
 
@@ -202,6 +250,7 @@ export async function getProjectBySlug(slug: string): Promise<ProjectDetail | nu
       aiHosting: projects.aiHosting,
       monthlyCostCny: projects.monthlyCostCny,
       monthlyRevenueCny: projects.monthlyRevenueCny,
+      totalRevenueCny: projects.totalRevenueCny,
       revenueModel: projects.revenueModel,
       costNote: projects.costNote,
       revenueNote: projects.revenueNote,
@@ -222,6 +271,7 @@ export async function getProjectBySlug(slug: string): Promise<ProjectDetail | nu
     aiHosting,
     monthlyCostCny,
     monthlyRevenueCny,
+    totalRevenueCny,
     revenueModel,
     costNote,
     revenueNote,
@@ -236,7 +286,17 @@ export async function getProjectBySlug(slug: string): Promise<ProjectDetail | nu
     publishedAt: row.publishedAt ? row.publishedAt.toISOString() : null,
     createdAt: row.createdAt.toISOString(),
     bodyHtml: renderMarkdown(row.body),
-    ai: toAiInfo({ isAi, aiModels, aiHosting, monthlyCostCny, monthlyRevenueCny, revenueModel, costNote, revenueNote }),
+    metrics: toMetrics({
+      isAi,
+      aiModels,
+      aiHosting,
+      monthlyCostCny,
+      monthlyRevenueCny,
+      totalRevenueCny,
+      revenueModel,
+      costNote,
+      revenueNote,
+    }),
   }
 }
 

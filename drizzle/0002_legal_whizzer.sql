@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ADD COLUMN "total_revenue_cny" integer;

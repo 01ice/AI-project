@@ -1,4 +1,4 @@
-import type { RevenueModel } from '../shared/types.ts'
+import type { RevenueModel } from '../../shared/types.ts'
 
 export const seedCategories = [
   { name: 'AI 工具', slug: 'ai', description: '模型、Agent 与智能化产品', sortOrder: 1 },
@@ -91,12 +91,15 @@ export const seedUsers = [
   },
 ]
 
-export interface SeedAiInfo {
-  models: string[]
-  hosting: 'api' | 'self_hosted' | 'hybrid'
-  cost: number | null
-  revenue: number | null
-  revenueModel: RevenueModel
+export interface SeedMetrics {
+  /** 有 models 或 hosting 的项目会被标记为 AI 项目 */
+  models?: string[]
+  hosting?: 'api' | 'self_hosted' | 'hybrid'
+  /** 以下成本与收益字段所有项目均可选填 */
+  cost?: number | null
+  revenue?: number | null
+  total?: number | null
+  revenueModel?: RevenueModel
   costNote?: string
   revenueNote?: string
 }
@@ -116,7 +119,7 @@ export interface SeedProject {
   likeCount: number
   favoriteCount: number
   body: string
-  ai?: SeedAiInfo
+  metrics?: SeedMetrics
 }
 
 export const seedProjects: SeedProject[] = [
@@ -133,11 +136,12 @@ export const seedProjects: SeedProject[] = [
     viewCount: 3260,
     likeCount: 226,
     favoriteCount: 138,
-    ai: {
+    metrics: {
       models: ['deepseek-chat', 'bge-m3'],
       hosting: 'hybrid',
       cost: 260,
       revenue: 0,
+      total: 0,
       revenueModel: 'free',
       costNote: '向量库服务器 150 元 + 模型调用约 110 元，摘要只在首次抓取时生成',
       revenueNote: '目前完全免费，纯自用加开源',
@@ -182,11 +186,12 @@ const summary = await llm.chat({ model: 'deepseek-chat', prompt: buildPrompt(rep
     viewCount: 2840,
     likeCount: 198,
     favoriteCount: 121,
-    ai: {
+    metrics: {
       models: ['gpt-4o-mini', 'deepseek-chat'],
       hosting: 'api',
       cost: 420,
       revenue: 1680,
+      total: 6720,
       revenueModel: 'subscription',
       costNote: '按 token 计费，长文档翻译高峰集中在晚上，平均 420 元/月',
       revenueNote: '订阅制，目前 120 位付费用户，月收入约 1680 元',
@@ -225,11 +230,12 @@ const summary = await llm.chat({ model: 'deepseek-chat', prompt: buildPrompt(rep
     viewCount: 1980,
     likeCount: 152,
     favoriteCount: 97,
-    ai: {
+    metrics: {
       models: ['qwen-max', 'bge-large-zh'],
       hosting: 'hybrid',
       cost: 900,
       revenue: 3600,
+      total: 10800,
       revenueModel: 'service',
       costNote: '模型调用约 500 元，向量库服务器 400 元，合计 900 元/月',
       revenueNote: '按项目交付收费，近三个月平均 3600 元/月',
@@ -262,11 +268,12 @@ const summary = await llm.chat({ model: 'deepseek-chat', prompt: buildPrompt(rep
     viewCount: 2460,
     likeCount: 176,
     favoriteCount: 112,
-    ai: {
+    metrics: {
       models: ['SDXL 1.0', 'ControlNet'],
       hosting: 'self_hosted',
       cost: 1500,
       revenue: 2400,
+      total: 15600,
       revenueModel: 'one_time',
       costNote: 'GPU 租用是大头，A10 按小时计费，跑满约 1500 元/月',
       revenueNote: '卖工作流与配套教程，一次性买断，平均月收入 2400 元',
@@ -303,11 +310,12 @@ const summary = await llm.chat({ model: 'deepseek-chat', prompt: buildPrompt(rep
     viewCount: 1420,
     likeCount: 98,
     favoriteCount: 54,
-    ai: {
+    metrics: {
       models: ['whisper-large-v3', 'claude-sonnet'],
       hosting: 'api',
       cost: 310,
       revenue: 0,
+      total: 0,
       revenueModel: 'not_yet',
       costNote: '转写按音频时长计费，一小时节目约 3.5 元，平均每月 310 元',
       revenueNote: '还没想好怎么收费，先给自己用',
@@ -342,11 +350,12 @@ podcastcut ./episode-42.mp3 --summary --chapters
     viewCount: 3120,
     likeCount: 214,
     favoriteCount: 143,
-    ai: {
+    metrics: {
       models: ['deepseek-chat'],
       hosting: 'api',
       cost: 150,
       revenue: 780,
+      total: 2340,
       revenueModel: 'freemium',
       costNote: '单次优化约 0.02 元，每月 150 元左右',
       revenueNote: '免费 3 次后付费，9.9 元解锁，月收入约 780 元',
@@ -376,11 +385,12 @@ podcastcut ./episode-42.mp3 --summary --chapters
     viewCount: 1680,
     likeCount: 128,
     favoriteCount: 72,
-    ai: {
+    metrics: {
       models: ['MobileNetV3（量化）', 'MiniLM'],
       hosting: 'self_hosted',
       cost: 80,
       revenue: 0,
+      total: 0,
       revenueModel: 'free',
       costNote: '只有对象存储与域名开销，推理全在用户浏览器里，约 80 元/月',
       revenueNote: '开源免费',
@@ -412,6 +422,14 @@ const result = await model.predict(imageElement)
     authorUsername: 'linzhi',
     tags: ['Vue 3', 'TypeScript', 'Electron', '效率工具'],
     repoUrl: 'https://github.com/example/moji-note',
+    metrics: {
+      cost: 60,
+      revenue: 0,
+      total: 0,
+      revenueModel: 'free',
+      costNote: '只有域名与对象存储开销，几乎所有计算都在用户本机',
+      revenueNote: '开源免费，没有商业化计划',
+    },
     daysAgo: 38,
     viewCount: 2210,
     likeCount: 164,
@@ -443,6 +461,13 @@ cd moji-note && npm install && npm run dev
     tags: ['Go', 'Docker', 'PostgreSQL'],
     repoUrl: 'https://github.com/example/lighthouse-panel',
     demoUrl: 'https://lighthouse.example.com',
+    metrics: {
+      cost: 120,
+      revenue: 0,
+      total: 0,
+      revenueModel: 'free',
+      costNote: '一台 2 核 2G 服务器分摊下来约 120 元/月',
+    },
     daysAgo: 44,
     viewCount: 3420,
     likeCount: 254,
@@ -473,6 +498,14 @@ Prometheus + Grafana 很强，但对一台 2 核 2G 的小服务器来说太重�
     authorUsername: 'chenmo',
     tags: ['Go', 'Docker'],
     repoUrl: 'https://github.com/example/tunnel',
+    metrics: {
+      cost: 200,
+      revenue: 300,
+      total: 900,
+      revenueModel: 'service',
+      costNote: '中转服务器带宽是大头，约 200 元/月',
+      revenueNote: '给几家小团队做自建部署和维护，每月 300 元左右',
+    },
     daysAgo: 52,
     viewCount: 4120,
     likeCount: 312,

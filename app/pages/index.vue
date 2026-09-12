@@ -7,8 +7,8 @@ const { data: featured } = await useFetch<ProjectListResponse>('/api/projects', 
 const { data: latest } = await useFetch<ProjectListResponse>('/api/projects', {
   query: { sort: 'latest', pageSize: 6 },
 })
-const { data: aiProjects } = await useFetch<ProjectListResponse>('/api/projects', {
-  query: { ai: '1', sort: 'hot', pageSize: 6 },
+const { data: topProjects } = await useFetch<ProjectListResponse>('/api/projects', {
+  query: { withMetrics: '1', sort: 'profit', pageSize: 6 },
 })
 const { data: categories } = await useFetch<CategoryItem[]>('/api/categories')
 const { data: tags } = await useFetch<TagItem[]>('/api/tags', { query: { limit: 18 } })
@@ -66,24 +66,28 @@ useHead({
 
     <section class="mt-6">
       <div class="mb-3 flex items-center justify-between">
-        <h2 class="text-base font-semibold text-fg-default">AI 项目速览</h2>
-        <NuxtLink to="/projects?ai=1" class="text-xs no-underline hover:underline">查看全部 →</NuxtLink>
+        <h2 class="text-base font-semibold text-fg-default">项目收支速览</h2>
+        <div class="flex items-center gap-3 text-xs">
+          <NuxtLink to="/projects?ai=1" class="no-underline hover:underline">只看 AI 项目 →</NuxtLink>
+          <NuxtLink to="/ranking" class="no-underline hover:underline">完整排行榜 →</NuxtLink>
+        </div>
       </div>
 
       <div class="overflow-x-auto rounded-md border border-border-default">
-        <table class="w-full min-w-[660px] text-sm">
+        <table class="w-full min-w-[760px] text-sm">
           <thead class="bg-canvas-subtle text-xs text-fg-muted">
             <tr>
               <th class="px-3 py-2 text-left font-medium">项目</th>
-              <th class="px-3 py-2 text-left font-medium">模型</th>
-              <th class="px-3 py-2 text-right font-medium">月成本</th>
-              <th class="px-3 py-2 text-right font-medium">月收入</th>
-              <th class="px-3 py-2 text-right font-medium">状态</th>
+              <th class="px-3 py-2 text-left font-medium">模型 / 分类</th>
+              <th class="px-3 py-2 text-right font-medium">每月成本</th>
+              <th class="px-3 py-2 text-right font-medium">每月收入</th>
+              <th class="px-3 py-2 text-right font-medium">总收入</th>
+              <th class="px-3 py-2 text-right font-medium">月净利</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-border-muted">
             <tr
-              v-for="project in aiProjects?.items ?? []"
+              v-for="project in topProjects?.items ?? []"
               :key="project.id"
               class="hover:bg-canvas-subtle"
             >
@@ -92,18 +96,22 @@ useHead({
                   :to="`/projects/${project.slug}`"
                   class="font-medium no-underline hover:underline"
                 >{{ project.title }}</NuxtLink>
+                <span
+                  v-if="project.metrics.isAi"
+                  class="ml-2 rounded-full bg-accent-subtle px-1.5 py-0.5 text-[11px] text-accent"
+                >AI</span>
               </td>
               <td class="px-3 py-2 text-xs text-fg-muted">
-                {{ project.ai.models.join(' · ') || '—' }}
+                {{ project.metrics.models.length ? project.metrics.models.join(' · ') : (project.categoryName ?? '—') }}
               </td>
-              <td class="px-3 py-2 text-right">
-                {{ formatCny(project.ai.monthlyCostCny) }}
-              </td>
-              <td class="px-3 py-2 text-right">
-                {{ formatCny(project.ai.monthlyRevenueCny) }}
-              </td>
-              <td class="px-3 py-2 text-right text-xs" :class="profitClass(profitState(project.ai))">
-                {{ profitLabel(profitState(project.ai)) }}
+              <td class="px-3 py-2 text-right">{{ formatCny(project.metrics.monthlyCostCny) }}</td>
+              <td class="px-3 py-2 text-right">{{ formatCny(project.metrics.monthlyRevenueCny) }}</td>
+              <td class="px-3 py-2 text-right">{{ formatCny(project.metrics.totalRevenueCny) }}</td>
+              <td
+                class="px-3 py-2 text-right font-medium"
+                :class="(monthlyProfit(project.metrics) ?? 0) > 0 ? 'text-success' : 'text-fg-muted'"
+              >
+                {{ formatCny(monthlyProfit(project.metrics)) }}
               </td>
             </tr>
           </tbody>
