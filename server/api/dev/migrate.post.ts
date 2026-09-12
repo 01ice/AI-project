@@ -8,8 +8,8 @@ export default defineEventHandler(async () => {
   }
 
   const { getDbHandle } = await import('../../db/client.ts')
-  const { runMigrations } = await import('../../db/migrate.ts')
+  const { ensureMigrations } = await import('../../db/migrate.ts')
 
-  const applied = await runMigrations(getDbHandle())
+  const applied = await ensureMigrations(getDbHandle())
   return { ok: true, applied }
 })

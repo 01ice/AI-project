@@ -55,3 +55,25 @@ export async function runMigrations(handle: DbHandle, options: { log?: boolean }
 
   return executed
 }
+
+/**
+ * 进程内只执行一次迁移。
+ * 多个 Nitro 插件可能并发初始化，各跑各的会在 DDL 上撞车
+ * （典型报错：duplicate key ... pg_type_typname_nsp_index）。
+ */
+let pendingMigrations: Promise<string[]> | null = null
+
+export function ensureMigrations(
+  handle: DbHandle,
+  options: { log?: boolean } = {},
+): Promise<string[]> {
+  if (!pendingMigrations) {
+    pendingMigrations = runMigrations(handle, options).catch((error) => {
+      // 失败后清空，允许后续重试
+      pendingMigrations = null
+      throw error
+    })
+  }
+
+  return pendingMigrations
+}

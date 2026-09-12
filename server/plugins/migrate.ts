@@ -8,8 +8,8 @@ export default defineNitroPlugin(async () => {
 
   try {
     const { getDbHandle } = await import('../db/client.ts')
-    const { runMigrations } = await import('../db/migrate.ts')
-    const applied = await runMigrations(getDbHandle())
+    const { ensureMigrations } = await import('../db/migrate.ts')
+    const applied = await ensureMigrations(getDbHandle())
     if (applied.length) {
       console.log(`[db] 已自动应用 ${applied.length} 个迁移`)
     }

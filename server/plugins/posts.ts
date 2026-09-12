@@ -13,8 +13,8 @@ export default defineNitroPlugin(async () => {
     // 插件之间不保证先后顺序，这里先确保表结构存在，再做文章同步
     if (autoMigrate) {
       const { getDbHandle } = await import('../db/client.ts')
-      const { runMigrations } = await import('../db/migrate.ts')
-      await runMigrations(getDbHandle(), { log: false })
+      const { ensureMigrations } = await import('../db/migrate.ts')
+      await ensureMigrations(getDbHandle(), { log: false })
     }
 
     const result = await syncPostsFromDisk()
