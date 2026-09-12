@@ -7,7 +7,16 @@ import { contentDir, syncPostsFromDisk } from '../db/posts-sync.ts'
  * 它必须排在 migrate 插件之后执行（文件名排序天然满足）。
  */
 export default defineNitroPlugin(async () => {
+  const autoMigrate = import.meta.dev || process.env.NUXT_AUTO_MIGRATE === '1'
+
   try {
+    // 插件之间不保证先后顺序，这里先确保表结构存在，再做文章同步
+    if (autoMigrate) {
+      const { getDbHandle } = await import('../db/client.ts')
+      const { runMigrations } = await import('../db/migrate.ts')
+      await runMigrations(getDbHandle(), { log: false })
+    }
+
     const result = await syncPostsFromDisk()
     if (result.upserted || result.removed || result.errors.length) {
       console.log(`[posts] 同步完成：更新 ${result.upserted} 篇，关联 ${result.relations} 条，移除 ${result.removed} 篇`)
