@@ -43,7 +43,7 @@ defineProps<{ project: ProjectListItem }>()
         />
       </div>
 
-      <div class="mt-2 flex items-center gap-3 text-xs text-fg-muted">
+      <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-fg-muted">
         <NuxtLink
           :to="`/u/${project.authorUsername}`"
           class="inline-flex items-center gap-1 text-fg-muted no-underline hover:text-accent hover:underline"
@@ -54,7 +54,7 @@ defineProps<{ project: ProjectListItem }>()
         <AppStat icon="heart" :value="project.likeCount" label="点赞" />
         <AppStat icon="star" :value="project.favoriteCount" label="收藏" />
         <AppStat icon="comment" :value="project.commentCount" label="评论" />
-        <span class="ml-auto">{{ relativeTime(project.publishedAt) }}</span>
+        <span class="ml-auto whitespace-nowrap">{{ relativeTime(project.publishedAt) }}</span>
       </div>
     </div>
   </article>
