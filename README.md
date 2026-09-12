@@ -188,6 +188,10 @@ Windows 上如果 PowerShell 报「禁止运行脚本」，把 `npm` 换成 `npm
 **图片存储**：当前保存到 `public/uploads/年月/`（已加入 .gitignore）。服务器带宽只有 4Mbps，
 正式上线前会在 `server/utils/storage.ts` 里接入腾讯云 COS + CDN，函数返回的 url 契约不变。
 
+> COS 已经接入：在 `.env` 里填好 `NUXT_COS_SECRET_ID` / `NUXT_COS_SECRET_KEY` /
+> `NUXT_COS_BUCKET` / `NUXT_COS_REGION` 后，上传的图片会直接进对象存储，服务器不再承载图片流量。
+> 没配置、或对象存储上传失败时会自动退回本地磁盘并在日志里写明原因，站点不会因此不可用。
+
 ## 目录结构
 
 ```

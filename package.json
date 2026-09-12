@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",
+    "cos-nodejs-sdk-v5": "^3.0.0",
     "drizzle-orm": "^0.45.2",
     "gray-matter": "^4.0.3",
     "marked": "^18.0.12",

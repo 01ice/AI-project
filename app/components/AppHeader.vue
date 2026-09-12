@@ -4,6 +4,7 @@ const keyword = ref(typeof route.query.q === 'string' ? route.query.q : '')
 const user = useAuthUser()
 const unread = useUnreadNotifications()
 const menuOpen = ref(false)
+const menuRef = ref<HTMLElement | null>(null)
 
 const navItems = [
   { label: '项目', to: '/projects' },
@@ -15,7 +16,7 @@ const navItems = [
 
 function submitSearch() {
   const value = keyword.value.trim()
-  return navigateTo({ path: '/projects', query: value ? { q: value } : {} })
+  return navigateTo({ path: '/search', query: value ? { q: value } : {} })
 }
 
 async function logout() {
@@ -24,6 +25,32 @@ async function logout() {
   menuOpen.value = false
   await navigateTo('/')
 }
+
+// 点击菜单外部或按 Esc 关闭；路由变化也关闭
+function onDocumentClick(event: MouseEvent) {
+  if (!menuOpen.value) return
+  if (menuRef.value && !menuRef.value.contains(event.target as Node)) {
+    menuOpen.value = false
+  }
+}
+
+function onKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape') menuOpen.value = false
+}
+
+onMounted(() => {
+  document.addEventListener('click', onDocumentClick)
+  document.addEventListener('keydown', onKeydown)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', onDocumentClick)
+  document.removeEventListener('keydown', onKeydown)
+})
+
+watch(() => route.fullPath, () => {
+  menuOpen.value = false
+})
 </script>
 
 <template>
@@ -69,7 +96,7 @@ async function logout() {
         </NuxtLink>
       </div>
 
-      <div v-else class="relative flex items-center gap-2">
+      <div v-else class="flex items-center gap-2">
         <NuxtLink
           to="/me/notifications"
           class="relative inline-flex h-8 w-8 items-center justify-center rounded-md text-fg-muted no-underline hover:bg-border-muted/40 hover:text-fg-default"
@@ -96,37 +123,51 @@ async function logout() {
         >
           发布项目
         </NuxtLink>
-        <button
-          type="button"
-          class="flex h-8 items-center gap-2 rounded-md px-2 text-sm text-fg-default hover:bg-border-muted/40"
-          @click="menuOpen = !menuOpen"
-        >
-          <AppAvatar :name="user.nickname" :username="user.username" :size="20" :image-url="user.avatarUrl" />
-          <span class="hidden max-w-24 truncate sm:inline">{{ user.nickname }}</span>
-        </button>
-
-        <div
-          v-if="menuOpen"
-          class="absolute right-0 z-20 mt-1 w-44 rounded-md border border-border-default bg-canvas py-1 shadow-lg"
-          @click="menuOpen = false"
-        >
-          <NuxtLink to="/me" class="block px-3 py-1.5 text-sm text-fg-default no-underline hover:bg-canvas-subtle">
-            个人中心
-          </NuxtLink>
-          <NuxtLink
-            v-if="user.role === 'admin'"
-            to="/admin"
-            class="block px-3 py-1.5 text-sm text-fg-default no-underline hover:bg-canvas-subtle"
-          >
-            管理后台
-          </NuxtLink>
+        <div ref="menuRef" class="relative">
           <button
             type="button"
-            class="block w-full px-3 py-1.5 text-left text-sm text-fg-default hover:bg-canvas-subtle"
-            @click="logout"
+            class="flex h-8 items-center gap-2 rounded-md px-2 text-sm text-fg-default hover:bg-border-muted/40"
+            :class="menuOpen ? 'bg-border-muted/40' : ''"
+            @click="menuOpen = !menuOpen"
           >
-            退出登录
+            <AppAvatar :name="user.nickname" :username="user.username" :size="20" :image-url="user.avatarUrl" />
+            <span class="hidden max-w-24 truncate sm:inline">{{ user.nickname }}</span>
+            <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" class="text-fg-subtle" aria-hidden="true">
+              <path d="M4.427 6.427a.75.75 0 0 1 1.06 0L8 8.94l2.513-2.513a.75.75 0 1 1 1.06 1.06L8.53 10.53a.75.75 0 0 1-1.06 0L4.427 7.487a.75.75 0 0 1 0-1.06Z" />
+            </svg>
           </button>
+
+          <!-- 用 fixed 定位避开页头的层叠与裁切，右侧对齐头像按钮 -->
+          <div
+            v-if="menuOpen"
+            class="fixed right-4 top-[52px] z-50 w-48 overflow-hidden rounded-md border border-border-default bg-canvas py-1 shadow-lg"
+          >
+            <div class="border-b border-border-muted px-3 py-2">
+              <p class="truncate text-sm font-medium text-fg-default">{{ user.nickname }}</p>
+              <p class="truncate text-xs text-fg-subtle">{{ user.email }}</p>
+            </div>
+            <NuxtLink to="/me" class="block px-3 py-2 text-sm text-fg-default no-underline hover:bg-canvas-subtle">
+              个人中心
+            </NuxtLink>
+            <NuxtLink to="/me/notifications" class="block px-3 py-2 text-sm text-fg-default no-underline hover:bg-canvas-subtle">
+              我的通知
+              <span v-if="unread" class="ml-1 text-xs text-danger">{{ unread }}</span>
+            </NuxtLink>
+            <NuxtLink
+              v-if="user.role === 'admin'"
+              to="/admin"
+              class="block px-3 py-2 text-sm text-fg-default no-underline hover:bg-canvas-subtle"
+            >
+              管理后台
+            </NuxtLink>
+            <button
+              type="button"
+              class="mt-1 block w-full border-t border-border-muted px-3 py-2 text-left text-sm text-fg-default hover:bg-canvas-subtle"
+              @click="logout"
+            >
+              退出登录
+            </button>
+          </div>
         </div>
       </div>
     </div>

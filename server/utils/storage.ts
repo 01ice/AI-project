@@ -1,6 +1,7 @@
 import { randomBytes } from 'node:crypto'
 import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
+import COS from 'cos-nodejs-sdk-v5'
 
 const ALLOWED_TYPES = new Map<string, string>([
   ['image/jpeg', '.jpg'],
@@ -17,13 +18,48 @@ export interface SavedFile {
   type: string
 }
 
+interface CosConfig {
+  secretId: string
+  secretKey: string
+  bucket: string
+  region: string
+  publicBaseUrl: string
+}
+
+/** 读取 COS 配置；没有配置齐全就返回 null，退回本地磁盘存储 */
+export function cosConfig(): CosConfig | null {
+  const config = useRuntimeConfig()
+  const secretId = String(config.cosSecretId ?? '')
+  const secretKey = String(config.cosSecretKey ?? '')
+  const bucket = String(config.cosBucket ?? '')
+  const region = String(config.cosRegion ?? '')
+
+  if (!secretId || !secretKey || !bucket || !region) return null
+
+  const base = String(config.cosPublicBaseUrl ?? '').replace(/\/$/, '')
+    || `https://${bucket}.cos.${region}.myqcloud.com`
+
+  return { secretId, secretKey, bucket, region, publicBaseUrl: base }
+}
+
+let cosClient: COS | null = null
+let cosClientKey = ''
+
+function getCosClient(config: CosConfig): COS {
+  const key = `${config.secretId}:${config.bucket}:${config.region}`
+  if (!cosClient || cosClientKey !== key) {
+    cosClient = new COS({ SecretId: config.secretId, SecretKey: config.secretKey })
+    cosClientKey = key
+  }
+  return cosClient
+}
+
 /**
  * 保存上传的图片。
  *
- * 目前使用本地磁盘（public/uploads），开发与小流量够用。
- * 部署阶段会在这里接入腾讯云 COS：由于服务器带宽只有 4Mbps，
- * 正式上线前图片必须改由 COS + CDN 分发，届时只需替换本函数内部实现，
- * 返回的 url 契约保持不变。
+ * 配置了 COS 就上传到对象存储（服务器带宽只有 4Mbps，图片必须走对象存储）；
+ * 没配置时退回服务器本地磁盘，方便本地开发。
+ * 两种方式返回的 url 契约一致，页面上无需区分。
  */
 export async function saveUpload(data: Buffer, mimeType: string): Promise<SavedFile> {
   const ext = ALLOWED_TYPES.get(mimeType)
@@ -39,11 +75,41 @@ export async function saveUpload(data: Buffer, mimeType: string): Promise<SavedF
     throw createError({ statusCode: 413, statusMessage: '图片不能超过 5MB' })
   }
 
-  const config = useRuntimeConfig()
-  const baseDir = String(config.uploadDir || '') || path.join(process.cwd(), 'public', 'uploads')
   const now = new Date()
   const relativeDir = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}`
   const fileName = `${Date.now()}-${randomBytes(4).toString('hex')}${ext}`
+  const key = `uploads/${relativeDir}/${fileName}`
+
+  const cos = cosConfig()
+  if (cos) {
+    try {
+      await new Promise<void>((resolve, reject) => {
+        getCosClient(cos).putObject({
+          Bucket: cos.bucket,
+          Region: cos.region,
+          Key: key,
+          Body: data,
+          ContentType: mimeType,
+        }, (error) => {
+          if (error) reject(error)
+          else resolve()
+        })
+      })
+
+      return {
+        url: `${cos.publicBaseUrl}/${key}`,
+        size: data.length,
+        type: mimeType,
+      }
+    }
+    catch (error) {
+      // 对象存储不可用时退回本地磁盘，保证上传不中断；日志里会留下明确原因
+      console.error('[storage] COS 上传失败，已退回本地存储：', error)
+    }
+  }
+
+  const config = useRuntimeConfig()
+  const baseDir = String(config.uploadDir || '') || path.join(process.cwd(), 'public', 'uploads')
   const targetDir = path.join(baseDir, relativeDir)
 
   await mkdir(targetDir, { recursive: true })

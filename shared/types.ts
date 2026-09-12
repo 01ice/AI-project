@@ -302,6 +302,12 @@ export interface NotificationListResponse {
   unread: number
 }
 
+export interface SearchResponse {
+  q: string
+  projects: ProjectListItem[]
+  posts: PostListItem[]
+}
+
 export interface InteractionState {
   liked: boolean
   favorited: boolean

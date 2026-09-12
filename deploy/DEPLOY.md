@@ -109,14 +109,28 @@ docker compose exec -T db pg_dump -U zhanqiao zhanqiao | gzip > ~/backup-$(date 
 3. 备案通过后，把 `docker-compose.yml` 的端口改成 `80:3000`（或加一层 Nginx / Caddy 反代）
 4. `NUXT_PUBLIC_SITE_URL` 改成 `https://你的域名`，配置证书
 
-## 8. 后续：图片转到 COS
+## 8. 图片存储切到 COS
 
-服务器带宽只有 4Mbps，图片走服务器会很快吃满。当前图片存在数据卷里（`uploads`），
-正式对外前建议改成本地→COS：
+服务器带宽只有 4Mbps，图片继续走服务器会很快吃满，代码里已经接好了 COS：
 
-1. 在腾讯云创建 COS 存储桶，记下 `SecretId` / `SecretKey` / `Bucket` / `Region`
-2. 填进 `.env` 的 `NUXT_COS_*` 变量
-3. 在 `server/utils/storage.ts` 里接入 COS SDK（返回的 url 格式保持一致，页面无需改动）
+1. 腾讯云控制台 → 对象存储 → 创建存储桶：地域选**北京**（与服务器同地域），权限「公有读私有写」
+2. 访问管理 → API 密钥管理 → 新建**子账号**密钥，只授予这个桶的读写权限（不要用主账号密钥）
+3. 编辑 `/opt/zhanqiao/.env` 填入：
+
+```bash
+NUXT_COS_SECRET_ID=子账号 SecretId
+NUXT_COS_SECRET_KEY=子账号 SecretKey
+NUXT_COS_BUCKET=桶名-APPID        # 例如 zhanqiao-1250000000
+NUXT_COS_REGION=ap-beijing
+# NUXT_COS_PUBLIC_BASE_URL=      # 绑定 CDN 或自定义域名后再填
+```
+
+4. `sudo docker compose up -d app` 重启即生效，之后上传的图片 URL 会变成
+   `https://桶名.cos.ap-beijing.myqcloud.com/uploads/...`
+
+已经上传的历史图片仍在本机数据卷里（URL 形如 `/uploads/...`），可以正常显示；
+需要迁移时把数据卷里的文件手动传到 COS 的 `uploads/` 前缀下即可。
+如果 COS 配置有误，上传会自动退回本地磁盘并在日志里写明原因，站点不会不可用。
 
 ## 9. 常见问题
 
