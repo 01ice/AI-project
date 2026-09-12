@@ -51,8 +51,13 @@ scp @sshArgs -P $Port $archive "$User@$ServerHost`:$RemoteDir/"
 if ($LASTEXITCODE -ne 0) { throw 'scp 上传失败' }
 
 $remoteArchive = "$RemoteDir/zhanqiao-$stamp.tar.gz"
-Write-Host '解压…' -ForegroundColor Cyan
-ssh @sshArgs -p $Port "$User@$ServerHost" "cd $RemoteDir && tar -xzf '$remoteArchive' && rm -f '$remoteArchive' && ls -1"
+
+# 解压前先删掉由仓库管理的目录：tar 只会覆盖，不会删除本地已删掉的文件
+$managedDirs = 'app server shared content public drizzle deploy scripts'
+$pruneCmd = ($managedDirs.Split(' ') | ForEach-Object { "rm -rf '$RemoteDir/$_'" }) -join '; '
+
+Write-Host '清理旧文件并解压…' -ForegroundColor Cyan
+ssh @sshArgs -p $Port "$User@$ServerHost" "$pruneCmd; cd $RemoteDir && tar -xzf '$remoteArchive' && rm -f '$remoteArchive' && ls -1"
 
 Remove-Item $archive -ErrorAction SilentlyContinue
 

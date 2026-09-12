@@ -98,6 +98,10 @@ docker compose exec -T db pg_dump -U zhanqiao zhanqiao | gzip > ~/backup-$(date 
 
 更新代码的流程：本地改完提交 → 重新跑打包脚本 → 服务器上 `docker compose up -d --build`。
 
+打包脚本在解压前会先删除由仓库管理的目录（`app`、`server`、`shared`、`content`、`public`、
+`drizzle`、`deploy`、`scripts`），这样本地删掉的文件不会残留在服务器上。
+`.env` 与 Docker 数据卷（数据库、上传图片）不在这些目录里，不会被影响。
+
 ## 7. 后续：域名与 HTTPS
 
 1. 买域名（`.com` / `.cn` 等能备案的后缀），解析到服务器 IP
