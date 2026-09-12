@@ -40,12 +40,33 @@ Windows 上如果 PowerShell 报「禁止运行脚本」，把 `npm` 换成 `npm
 | `npm run db:migrate` | 应用未执行的迁移 |
 | `npm run db:seed` | 清空业务数据并写入示例数据 |
 | `npm run db:setup` | 迁移 + 种子数据 |
+| `npm run user:create -- --email a@b.com --username name --nickname 昵称 --password 密码 [--admin]` | 创建账号（加 `--admin` 建管理员） |
 
 改了数据库结构之后的标准流程：`npm run db:generate` → `npm run db:migrate`。
 
 > **本地数据库注意事项**：PGlite 是文件型数据库，同一时刻只允许一个进程访问。
 > 停止开发服务器请用 `Ctrl+C` 正常退出，**不要用 `taskkill` 强杀进程**，否则数据目录可能损坏。
 > 真损坏了也不用心疼——删掉 `.data/pglite` 重新执行 `npm run db:setup` 即可，里面只有示例数据。
+>
+> 开发服务器启动时会**自动应用迁移**；需要重灌示例数据时不用重启，直接 `POST /api/dev/seed` 即可
+> （PGlite 是单进程数据库，另开终端跑 `npm run db:seed` 会因为文件被占用而失败）。
+
+## 注册登录（D2 已完成）
+
+- 一期只做**邮箱 + 密码**：注册、登录、退出、邮箱验证、找回密码、会话管理
+- 密码使用 Node 内置 scrypt 哈希（N=32768, r=8, p=1），避免原生模块在服务器上的编译问题
+- 会话用 HttpOnly + SameSite=Lax 的 Cookie，服务端可失效；改密码会踢掉所有登录设备
+- 登录、注册、发信都有基于 IP / 用户的内存限流（单机够用，多实例部署时需换 Redis）
+- 邮箱验证后才能发布项目（`requireVerifiedUser`），浏览与互动不受限制
+
+**配置发信（QQ 邮箱）**：在 `.env` 里填 `NUXT_SMTP_USER` 与 `NUXT_SMTP_PASS`（授权码，不是登录密码）。
+未配置时邮件内容会打印到开发服务器控制台，接口还会在开发模式返回 `verifyUrl` / `resetUrl`，方便本地走通流程。
+
+**开发辅助接口**（仅开发环境，生产返回 404）：
+
+- `POST /api/dev/seed`：重灌示例数据
+- `GET /api/dev/outbox`：查看最近几个账号的邮箱验证与密码重置令牌
+- `POST /api/dev/grant-admin`：把某个邮箱提升为管理员（本地 PGlite 被开发服务器占用，不方便另开终端跑脚本时用）
 
 ## 项目模型要点
 

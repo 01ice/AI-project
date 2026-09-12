@@ -1,5 +1,15 @@
 export type AiHosting = 'api' | 'self_hosted' | 'hybrid'
 
+export interface SessionUser {
+  id: string
+  username: string
+  nickname: string
+  email: string
+  emailVerified: boolean
+  avatarUrl: string | null
+  role: 'user' | 'admin'
+}
+
 export type RevenueModel =
   | 'free'
   | 'freemium'

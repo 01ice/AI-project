@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const route = useRoute()
 const keyword = ref(typeof route.query.q === 'string' ? route.query.q : '')
+const user = useAuthUser()
+const menuOpen = ref(false)
 
 const navItems = [
   { label: '项目', to: '/projects' },
@@ -13,6 +15,13 @@ const navItems = [
 function submitSearch() {
   const value = keyword.value.trim()
   return navigateTo({ path: '/projects', query: value ? { q: value } : {} })
+}
+
+async function logout() {
+  await $fetch('/api/auth/logout', { method: 'POST' })
+  user.value = null
+  menuOpen.value = false
+  await navigateTo('/')
 }
 </script>
 
@@ -44,23 +53,54 @@ function submitSearch() {
         >
       </form>
 
-      <div class="flex items-center gap-2">
-        <button
-          type="button"
-          disabled
-          title="登录功能将在 D2 上线"
-          class="h-8 cursor-not-allowed rounded-md px-3 text-sm font-medium text-fg-default opacity-50"
+      <div v-if="!user" class="flex items-center gap-2">
+        <NuxtLink
+          to="/login"
+          class="inline-flex h-8 items-center rounded-md px-3 text-sm font-medium text-fg-default no-underline hover:bg-border-muted/40"
         >
           登录
-        </button>
-        <button
-          type="button"
-          disabled
-          title="注册功能将在 D2 上线"
-          class="h-8 cursor-not-allowed rounded-md border border-accent bg-accent px-3 text-sm font-medium text-white opacity-50"
+        </NuxtLink>
+        <NuxtLink
+          to="/register"
+          class="inline-flex h-8 items-center rounded-md border border-accent bg-accent px-3 text-sm font-medium text-white no-underline hover:bg-accent/90"
         >
           注册
+        </NuxtLink>
+      </div>
+
+      <div v-else class="relative">
+        <button
+          type="button"
+          class="flex h-8 items-center gap-2 rounded-md px-2 text-sm text-fg-default hover:bg-border-muted/40"
+          @click="menuOpen = !menuOpen"
+        >
+          <AppAvatar :name="user.nickname" :username="user.username" :size="20" :image-url="user.avatarUrl" />
+          <span class="hidden max-w-24 truncate sm:inline">{{ user.nickname }}</span>
         </button>
+
+        <div
+          v-if="menuOpen"
+          class="absolute right-0 z-20 mt-1 w-44 rounded-md border border-border-default bg-canvas py-1 shadow-lg"
+          @click="menuOpen = false"
+        >
+          <NuxtLink to="/me" class="block px-3 py-1.5 text-sm text-fg-default no-underline hover:bg-canvas-subtle">
+            个人中心
+          </NuxtLink>
+          <NuxtLink
+            v-if="user.role === 'admin'"
+            to="/admin"
+            class="block px-3 py-1.5 text-sm text-fg-default no-underline hover:bg-canvas-subtle"
+          >
+            管理后台
+          </NuxtLink>
+          <button
+            type="button"
+            class="block w-full px-3 py-1.5 text-left text-sm text-fg-default hover:bg-canvas-subtle"
+            @click="logout"
+          >
+            退出登录
+          </button>
+        </div>
       </div>
     </div>
   </header>
