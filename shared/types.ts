@@ -268,6 +268,7 @@ export interface MyPostItem {
   summary: string
   coverUrl: string | null
   status: PostStatus
+  source: 'git' | 'editor'
   moderationNote: string | null
   tags: string[]
   projects: { name: string, slug: string }[]

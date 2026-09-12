@@ -1,4 +1,4 @@
-import { and, desc, eq, isNull, sql } from 'drizzle-orm'
+import { and, desc, eq, isNull, ne, sql } from 'drizzle-orm'
 import type { NotificationType } from '../../shared/types.ts'
 import { db } from '../db/client.ts'
 import { notifications, users } from '../db/schema.ts'
@@ -46,8 +46,22 @@ export async function notifyUser(input: NotifyInput): Promise<void> {
     })
   }
   catch (error) {
-    console.error('[notify] 通知发送失败：', error)
+    // 通知失败不该影响主流程，但要留下足够线索，避免「举报人收不到结果」这类问题被静默吞掉
+    console.error(
+      `[notify] 通知失败 type=${input.type} userId=${input.userId ?? '(空)'}：`,
+      error,
+    )
   }
+}
+
+/** 给所有管理员发通知（例如有人举报了新内容） */
+export async function notifyAdmins(input: Omit<NotifyInput, 'userId'>): Promise<void> {
+  const admins = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(and(eq(users.role, 'admin'), ne(users.status, 'banned')))
+
+  await Promise.all(admins.map(admin => notifyUser({ ...input, userId: admin.id })))
 }
 
 export async function listNotifications(userId: string, limit = 50) {

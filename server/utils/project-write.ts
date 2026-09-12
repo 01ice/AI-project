@@ -1,9 +1,10 @@
 import { and, desc, eq, inArray, sql } from 'drizzle-orm'
 import type { ManagedProject, MyProjectItem, SessionUser } from '../../shared/types.ts'
 import { db } from '../db/client.ts'
-import { categories, projectTags, projects, tags } from '../db/schema.ts'
+import { categories, comments, favorites, likes, projectTags, projects, reports, tags } from '../db/schema.ts'
 import type { ProjectInput } from './project-input.ts'
 import { uniqueProjectSlug, uniqueTagSlug } from './slug.ts'
+import { notifyUser } from './notify.ts'
 
 function toColumns(input: ProjectInput) {
   return {
@@ -251,5 +252,56 @@ export async function getManagedProject(user: SessionUser, slug: string): Promis
     tags: tagMap.get(row.id) ?? [],
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
+  }
+}
+
+/**
+ * 删除项目（作者本人或管理员）。
+ * 评论、点赞、收藏、举报与标签关联一并清理，避免留下孤立数据；
+ * 管理员删除他人项目时通知作者。
+ */
+export async function deleteProject(user: SessionUser, slug: string): Promise<void> {
+  const [existing] = await db
+    .select({ id: projects.id, authorId: projects.authorId, title: projects.title })
+    .from(projects)
+    .where(eq(projects.slug, slug))
+    .limit(1)
+
+  if (!existing) {
+    throw createError({ statusCode: 404, statusMessage: '项目不存在' })
+  }
+
+  const isAdmin = user.role === 'admin'
+  if (existing.authorId !== user.id && !isAdmin) {
+    throw createError({ statusCode: 403, statusMessage: '只能删除自己发布的项目' })
+  }
+
+  await db.delete(comments).where(and(
+    eq(comments.targetType, 'project'),
+    eq(comments.targetId, existing.id),
+  ))
+  await db.delete(likes).where(and(
+    eq(likes.targetType, 'project'),
+    eq(likes.targetId, existing.id),
+  ))
+  await db.delete(favorites).where(eq(favorites.projectId, existing.id))
+  await db.delete(reports).where(and(
+    eq(reports.targetType, 'project'),
+    eq(reports.targetId, existing.id),
+  ))
+  await db.delete(projects).where(eq(projects.id, existing.id))
+
+  if (isAdmin && existing.authorId !== user.id) {
+    await notifyUser({
+      userId: existing.authorId,
+      type: 'project_rejected',
+      title: `你的项目《${existing.title}》已被删除`,
+      body: '管理员删除了该项目，如有疑问可以通过反馈渠道联系。',
+      link: '/me/projects',
+      email: {
+        subject: `你的项目《${existing.title}》已被删除`,
+        text: `管理员删除了你的项目《${existing.title}》。`,
+      },
+    })
   }
 }

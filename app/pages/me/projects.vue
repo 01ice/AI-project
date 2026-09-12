@@ -18,6 +18,27 @@ const notice = computed(() => {
   return ''
 })
 
+const pendingDelete = ref('')
+const deleting = ref('')
+const deleteMessage = ref('')
+
+async function remove(slug: string) {
+  deleting.value = slug
+  deleteMessage.value = ''
+  try {
+    await $fetch(`/api/me/projects/${slug}`, { method: 'DELETE' })
+    deleteMessage.value = '项目已删除'
+    pendingDelete.value = ''
+    await refresh()
+  }
+  catch (err) {
+    deleteMessage.value = authErrorMessage(err)
+  }
+  finally {
+    deleting.value = ''
+  }
+}
+
 const statusLabels: Record<ProjectStatus, { text: string, class: string }> = {
   draft: { text: '草稿', class: 'border-border-default text-fg-muted' },
   pending: { text: '待审核', class: 'border-attention/40 text-attention' },
@@ -53,6 +74,12 @@ onMounted(async () => {
       class="mb-4 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-xs text-success"
     >
       {{ notice }}
+    </p>
+    <p
+      v-if="deleteMessage"
+      class="mb-4 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-xs text-success"
+    >
+      {{ deleteMessage }}
     </p>
 
     <p v-if="!data?.items.length" class="rounded-md border border-dashed border-border-default py-16 text-center text-sm text-fg-muted">
@@ -113,6 +140,27 @@ onMounted(async () => {
           >
             查看
           </NuxtLink>
+          <button
+            v-if="pendingDelete !== project.slug"
+            type="button"
+            class="text-fg-muted hover:text-danger"
+            @click="pendingDelete = project.slug"
+          >
+            删除
+          </button>
+          <template v-else>
+            <button
+              type="button"
+              :disabled="deleting === project.slug"
+              class="font-medium text-danger disabled:opacity-60"
+              @click="remove(project.slug)"
+            >
+              {{ deleting === project.slug ? '删除中…' : '确认删除' }}
+            </button>
+            <button type="button" class="text-fg-muted hover:text-fg-default" @click="pendingDelete = ''">
+              取消
+            </button>
+          </template>
         </div>
       </li>
     </ul>

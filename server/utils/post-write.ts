@@ -1,7 +1,7 @@
 import { and, desc, eq, inArray } from 'drizzle-orm'
 import type { ManagedPost, MyPostItem, PostStatus, SessionUser } from '../../shared/types.ts'
 import { db } from '../db/client.ts'
-import { postProjects, posts, projects } from '../db/schema.ts'
+import { comments, likes, postProjects, posts, projects } from '../db/schema.ts'
 import type { PostInput } from './post-input.ts'
 import { uniquePostSlug } from './slug.ts'
 
@@ -132,6 +132,7 @@ export async function listMyPosts(userId: string): Promise<MyPostItem[]> {
       summary: posts.summary,
       coverUrl: posts.coverUrl,
       status: posts.status,
+      source: posts.source,
       moderationNote: posts.moderationNote,
       tags: posts.tags,
       viewCount: posts.viewCount,
@@ -165,6 +166,7 @@ export async function listMyPosts(userId: string): Promise<MyPostItem[]> {
     summary: row.summary,
     coverUrl: row.coverUrl,
     status: row.status,
+    source: row.source,
     moderationNote: row.moderationNote,
     tags: row.tags ?? [],
     viewCount: row.viewCount,
@@ -217,4 +219,42 @@ export async function isPostSlugTaken(slug: string, excludeId?: string): Promise
     .limit(1)
 
   return Boolean(row && row.id !== excludeId)
+}
+
+/**
+ * 删除文章（作者本人或管理员）。
+ * 评论、点赞一并清理，避免留下孤立数据。
+ */
+export async function deletePost(user: SessionUser, slug: string): Promise<void> {
+  const [existing] = await db
+    .select({ id: posts.id, authorId: posts.authorId, source: posts.source })
+    .from(posts)
+    .where(eq(posts.slug, slug))
+    .limit(1)
+
+  if (!existing) {
+    throw createError({ statusCode: 404, statusMessage: '文章不存在' })
+  }
+
+  const isAdmin = user.role === 'admin'
+  if (existing.authorId !== user.id && !isAdmin) {
+    throw createError({ statusCode: 403, statusMessage: '只能删除自己写的文章' })
+  }
+
+  if (existing.source === 'git' && !isAdmin) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: '这篇文章来自仓库里的 Markdown 文件，请在仓库中删除',
+    })
+  }
+
+  await db.delete(comments).where(and(
+    eq(comments.targetType, 'post'),
+    eq(comments.targetId, existing.id),
+  ))
+  await db.delete(likes).where(and(
+    eq(likes.targetType, 'post'),
+    eq(likes.targetId, existing.id),
+  ))
+  await db.delete(posts).where(eq(posts.id, existing.id))
 }
