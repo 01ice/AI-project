@@ -186,6 +186,44 @@ export interface RelatedPostItem {
   publishedAt: string
 }
 
+export interface AdminProjectItem {
+  id: string
+  slug: string
+  title: string
+  summary: string
+  note: string
+  coverUrl: string
+  screenshots: string[]
+  repoUrl: string | null
+  demoUrl: string | null
+  status: ProjectStatus
+  moderationNote: string | null
+  categoryName: string | null
+  authorName: string
+  authorUsername: string
+  authorEmailVerified: boolean
+  isAi: boolean
+  aiModels: string[]
+  aiHosting: string | null
+  monthlyCostCny: number | null
+  monthlyRevenueCny: number | null
+  tags: { name: string, slug: string, status: string }[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AdminTagItem {
+  id: string
+  name: string
+  slug: string
+  group: TagGroup
+  status: string
+  usageCount: number
+  description: string | null
+  creatorName: string | null
+  createdAt: string
+}
+
 export interface CategoryItem {
   id: string
   name: string

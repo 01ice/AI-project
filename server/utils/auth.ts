@@ -95,6 +95,14 @@ export async function requireVerifiedUser(event: H3Event): Promise<SessionUser> 
   return user
 }
 
+export async function requireAdmin(event: H3Event): Promise<SessionUser> {
+  const user = await requireUser(event)
+  if (user.role !== 'admin') {
+    throw createError({ statusCode: 403, statusMessage: '需要管理员权限' })
+  }
+  return user
+}
+
 export async function destroyCurrentSession(event: H3Event): Promise<void> {
   const token = getCookie(event, SESSION_COOKIE)
   if (token) {
