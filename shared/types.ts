@@ -277,6 +277,49 @@ export interface MyPostItem {
 
 export type PostStatus = 'draft' | 'pending' | 'published' | 'rejected' | 'offline'
 
+export type TargetType = 'project' | 'post'
+
+export interface InteractionState {
+  liked: boolean
+  favorited: boolean
+  likeCount: number
+  favoriteCount: number
+  commentCount: number
+}
+
+export interface FavoriteItem {
+  projectId: string
+  slug: string
+  title: string
+  summary: string
+  coverUrl: string
+  categoryName: string | null
+  authorName: string
+  createdAt: string
+}
+
+export interface MyCommentItem {
+  id: string
+  content: string
+  createdAt: string
+  status: string
+  targetType: TargetType
+  targetSlug: string | null
+  targetTitle: string | null
+}
+
+export interface AdminReportItem {
+  id: string
+  reason: string
+  detail: string | null
+  status: string
+  createdAt: string
+  targetType: TargetType
+  targetSlug: string | null
+  targetTitle: string | null
+  reporterName: string
+}
+
 export interface CategoryItem {
   id: string
   name: string

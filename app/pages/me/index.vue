@@ -169,14 +169,20 @@ async function logout() {
         <h2 class="text-sm font-semibold text-fg-default">我的文章 →</h2>
         <p class="mt-1 text-xs text-fg-muted">写文章、看审核状态</p>
       </NuxtLink>
-      <div class="rounded-md border border-border-default bg-canvas p-4">
-        <h2 class="text-sm font-semibold text-fg-default">我的收藏</h2>
-        <p class="mt-1 text-xs text-fg-muted">收藏功能将在 D6 上线</p>
-      </div>
-      <div class="rounded-md border border-border-default bg-canvas p-4">
-        <h2 class="text-sm font-semibold text-fg-default">我的评论</h2>
-        <p class="mt-1 text-xs text-fg-muted">评论功能将在 D6 上线</p>
-      </div>
+      <NuxtLink
+        to="/me/favorites"
+        class="rounded-md border border-border-default bg-canvas p-4 no-underline hover:border-accent"
+      >
+        <h2 class="text-sm font-semibold text-fg-default">我的收藏 →</h2>
+        <p class="mt-1 text-xs text-fg-muted">收藏过的项目</p>
+      </NuxtLink>
+      <NuxtLink
+        to="/me/comments"
+        class="rounded-md border border-border-default bg-canvas p-4 no-underline hover:border-accent"
+      >
+        <h2 class="text-sm font-semibold text-fg-default">我的评论 →</h2>
+        <p class="mt-1 text-xs text-fg-muted">发表过的评论</p>
+      </NuxtLink>
     </section>
 
     <div class="mt-5">

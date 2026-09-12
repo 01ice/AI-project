@@ -2,6 +2,7 @@ import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm'
 import type { ProjectStatus, TagGroup } from '../../shared/types.ts'
 import { db } from '../db/client.ts'
 import { categories, postProjects, posts, projectTags, projects, tags, users } from '../db/schema.ts'
+import { countPendingReports } from './reports.ts'
 
 export interface AdminProjectItem {
   id: string
@@ -258,10 +259,13 @@ export async function adminSummary() {
     .from(posts)
     .where(eq(posts.status, 'pending'))
 
+  const pendingReports = await countPendingReports()
+
   return {
     pendingProjects: pendingProjects?.count ?? 0,
     publishedProjects: publishedProjects?.count ?? 0,
     pendingTags: pendingTags?.count ?? 0,
     pendingPosts: pendingPosts?.count ?? 0,
+    pendingReports,
   }
 }

@@ -1,4 +1,4 @@
-import { getProjectBySlug, incrementProjectViews, listComments } from '../../utils/projects.ts'
+import { getProjectBySlug, incrementProjectViews } from '../../utils/projects.ts'
 
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')
@@ -11,10 +11,9 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: '项目不存在或尚未公开' })
   }
 
-  const comments = await listComments(project.id)
-
   // 浏览量统计失败不应影响页面渲染
   incrementProjectViews(project.id).catch(() => {})
 
-  return { project, comments }
+  // 评论改由 /api/comments 提供，便于项目与文章共用同一套评论逻辑
+  return { project }
 })

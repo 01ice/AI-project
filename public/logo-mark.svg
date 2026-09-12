@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="栈桥 H 形标志">
+  <title>栈桥 Zhanqiao — 徽章极小版（16–32px 图标）</title>
+  <rect x="0" y="0" width="240" height="240" rx="52" fill="#111111"/>
+  <g transform="translate(21.6 21.6) scale(0.82)">
+    <rect x="22" y="32" width="62" height="182" rx="3" fill="#FFFFFF"/>
+    <rect x="156" y="32" width="62" height="182" rx="3" fill="#FFFFFF"/>
+    <rect x="84" y="105" width="72" height="16" fill="#FFFFFF"/>
+    <path d="M84 150 C92.43 111.33 147.57 111.33 156 150" fill="none" stroke="#FFFFFF" stroke-width="13"/>
+  </g>
+</svg>

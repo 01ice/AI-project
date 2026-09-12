@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import type { CommentItem, ProjectDetail } from '~~/shared/types'
+import type { InteractionState, ProjectDetail } from '~~/shared/types'
 
 const route = useRoute()
 const slug = route.params.slug as string
+const user = useAuthUser()
 
-const { data, error } = await useFetch<{ project: ProjectDetail, comments: CommentItem[] }>(
-  () => `/api/projects/${slug}`,
-)
+const { data, error } = await useFetch<{ project: ProjectDetail }>(() => `/api/projects/${slug}`)
 
 if (error.value || !data.value) {
   throw createError({
@@ -17,7 +16,41 @@ if (error.value || !data.value) {
 }
 
 const project = computed(() => data.value!.project)
-const comments = computed(() => data.value!.comments)
+
+const { data: interaction, refresh: refreshInteraction } = await useFetch<InteractionState>(
+  '/api/interactions',
+  { query: computed(() => ({ targetType: 'project', targetId: project.value.id })) },
+)
+
+const busyAction = ref<'like' | 'favorite' | ''>('')
+const actionError = ref('')
+
+async function toggleAction(action: 'like' | 'favorite') {
+  if (!user.value) {
+    await navigateTo({ path: '/login', query: { redirect: route.fullPath } })
+    return
+  }
+
+  busyAction.value = action
+  actionError.value = ''
+  try {
+    await $fetch(`/api/interactions?targetType=project`, {
+      method: 'POST',
+      body: { action, targetId: project.value.id },
+    })
+    await refreshInteraction()
+  }
+  catch (err) {
+    actionError.value = authErrorMessage(err)
+  }
+  finally {
+    busyAction.value = ''
+  }
+}
+
+const likeCount = computed(() => interaction.value?.likeCount ?? project.value.likeCount)
+const favoriteCount = computed(() => interaction.value?.favoriteCount ?? project.value.favoriteCount)
+const commentCount = computed(() => interaction.value?.commentCount ?? project.value.commentCount)
 
 useHead(() => ({
   title: `${project.value.title} · 栈桥`,
@@ -121,63 +154,7 @@ useHead(() => ({
         </ul>
       </section>
 
-      <section class="rounded-md border border-border-default bg-canvas">
-        <h2 class="border-b border-border-default px-5 py-3 text-sm font-semibold text-fg-default">
-          评论 {{ project.commentCount }}
-        </h2>
-
-        <div class="border-b border-border-default bg-canvas-subtle px-5 py-3">
-          <textarea
-            rows="3"
-            disabled
-            placeholder="登录后可以参与讨论（D2 上线）"
-            class="w-full cursor-not-allowed rounded-md border border-border-default bg-canvas px-3 py-2 text-sm placeholder:text-fg-subtle"
-          />
-          <div class="mt-2 flex items-center gap-2">
-            <button
-              type="button"
-              disabled
-              class="h-8 cursor-not-allowed rounded-md border border-accent bg-accent px-3 text-sm font-medium text-white opacity-50"
-            >
-              发表评论
-            </button>
-            <span class="text-xs text-fg-muted">评论功能将在 D6 上线</span>
-          </div>
-        </div>
-
-        <ul v-if="comments.length" class="divide-y divide-border-muted">
-          <li v-for="comment in comments" :key="comment.id" class="px-5 py-4">
-            <div class="flex gap-3">
-              <AppAvatar :name="comment.authorName" :username="comment.authorUsername" :size="28" />
-              <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-2 text-xs">
-                  <span class="font-medium text-fg-default">{{ comment.authorName }}</span>
-                  <span class="text-fg-subtle">{{ relativeTime(comment.createdAt) }}</span>
-                </div>
-                <p class="mt-1 text-sm leading-6 text-fg-default">{{ comment.content }}</p>
-
-                <ul v-if="comment.replies.length" class="mt-3 space-y-3 border-l-2 border-border-muted pl-4">
-                  <li v-for="reply in comment.replies" :key="reply.id" class="flex gap-3">
-                    <AppAvatar :name="reply.authorName" :username="reply.authorUsername" :size="24" />
-                    <div class="min-w-0 flex-1">
-                      <div class="flex flex-wrap items-center gap-2 text-xs">
-                        <span class="font-medium text-fg-default">{{ reply.authorName }}</span>
-                        <span v-if="reply.replyToName" class="text-fg-subtle">回复 {{ reply.replyToName }}</span>
-                        <span class="text-fg-subtle">{{ relativeTime(reply.createdAt) }}</span>
-                      </div>
-                      <p class="mt-1 text-sm leading-6 text-fg-default">{{ reply.content }}</p>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </li>
-        </ul>
-
-        <p v-else class="px-5 py-10 text-center text-sm text-fg-muted">
-          还没有评论，来做第一个。
-        </p>
-      </section>
+      <CommentSection target-type="project" :target-id="project.id" />
     </div>
 
     <aside class="space-y-4">
@@ -279,35 +256,38 @@ useHead(() => ({
       <section class="rounded-md border border-border-default bg-canvas p-4">
         <div class="flex items-center justify-between text-sm">
           <AppStat icon="eye" :value="project.viewCount" label="浏览" />
-          <AppStat icon="heart" :value="project.likeCount" label="点赞" />
-          <AppStat icon="star" :value="project.favoriteCount" label="收藏" />
+          <AppStat icon="heart" :value="likeCount" label="点赞" />
+          <AppStat icon="star" :value="favoriteCount" label="收藏" />
         </div>
         <div class="mt-3 flex gap-2">
           <button
             type="button"
-            disabled
-            title="点赞功能将在 D6 上线"
-            class="h-8 flex-1 cursor-not-allowed rounded-md border border-border-default text-sm opacity-50"
+            :disabled="busyAction === 'like'"
+            class="h-8 flex-1 rounded-md border text-sm disabled:opacity-60"
+            :class="interaction?.liked
+              ? 'border-accent bg-accent-subtle font-medium text-accent'
+              : 'border-border-default hover:border-accent hover:text-accent'"
+            @click="toggleAction('like')"
           >
-            点赞
+            {{ interaction?.liked ? '已点赞' : '点赞' }}
           </button>
           <button
             type="button"
-            disabled
-            title="收藏功能将在 D6 上线"
-            class="h-8 flex-1 cursor-not-allowed rounded-md border border-border-default text-sm opacity-50"
+            :disabled="busyAction === 'favorite'"
+            class="h-8 flex-1 rounded-md border text-sm disabled:opacity-60"
+            :class="interaction?.favorited
+              ? 'border-accent bg-accent-subtle font-medium text-accent'
+              : 'border-border-default hover:border-accent hover:text-accent'"
+            @click="toggleAction('favorite')"
           >
-            收藏
+            {{ interaction?.favorited ? '已收藏' : '收藏' }}
           </button>
         </div>
-        <button
-          type="button"
-          disabled
-          title="举报功能将在 D6 上线"
-          class="mt-2 h-8 w-full cursor-not-allowed rounded-md text-xs text-fg-muted opacity-60"
-        >
-          举报该项目
-        </button>
+        <p v-if="actionError" class="mt-2 text-xs text-danger">{{ actionError }}</p>
+        <p v-if="!user" class="mt-2 text-xs text-fg-subtle">登录后可以点赞和收藏</p>
+        <div class="mt-1">
+          <ReportButton target-type="project" :target-id="project.id" />
+        </div>
       </section>
     </aside>
   </div>

@@ -9,7 +9,7 @@ import type {
   TagItem,
 } from '../../shared/types.ts'
 import { db } from '../db/client.ts'
-import { categories, comments, projectTags, projects, tags, users } from '../db/schema.ts'
+import { categories, projectTags, projects, tags, users } from '../db/schema.ts'
 import { renderMarkdown } from './markdown.ts'
 import { relatedPostsForProject } from './posts.ts'
 
@@ -345,53 +345,4 @@ export async function listTags(limit = 30, group?: TagItem['group']): Promise<Ta
     .where(and(...conditions))
     .orderBy(desc(tags.usageCount), asc(tags.name))
     .limit(limit)
-}
-
-export async function listComments(targetId: string): Promise<CommentItem[]> {
-  const rows = await db
-    .select({
-      id: comments.id,
-      content: comments.content,
-      createdAt: comments.createdAt,
-      parentId: comments.parentId,
-      rootId: comments.rootId,
-      authorName: users.nickname,
-      authorUsername: users.username,
-      authorAvatarUrl: users.avatarUrl,
-    })
-    .from(comments)
-    .innerJoin(users, eq(comments.userId, users.id))
-    .where(and(
-      eq(comments.targetType, 'project'),
-      eq(comments.targetId, targetId),
-      eq(comments.status, 'visible'),
-    ))
-    .orderBy(asc(comments.createdAt))
-
-  const nameById = new Map(rows.map(row => [row.id, row.authorName]))
-  const rootMap = new Map<string, CommentItem>()
-  const items: CommentItem[] = []
-
-  for (const row of rows) {
-    const item: CommentItem = {
-      id: row.id,
-      content: row.content,
-      createdAt: row.createdAt.toISOString(),
-      authorName: row.authorName,
-      authorUsername: row.authorUsername,
-      authorAvatarUrl: row.authorAvatarUrl,
-      replyToName: row.parentId ? nameById.get(row.parentId) ?? null : null,
-      replies: [],
-    }
-
-    if (row.rootId && rootMap.has(row.rootId)) {
-      rootMap.get(row.rootId)!.replies.push(item)
-    }
-    else {
-      rootMap.set(item.id, item)
-      items.push(item)
-    }
-  }
-
-  return items
 }

@@ -29,7 +29,7 @@ async function logout() {
   <header class="border-b border-border-default bg-canvas-subtle">
     <div class="mx-auto flex h-14 max-w-[1280px] items-center gap-4 px-4">
       <NuxtLink to="/" class="flex items-center gap-2 no-underline">
-        <span class="flex h-7 w-7 items-center justify-center rounded-md bg-accent text-sm font-bold text-white">栈</span>
+        <img src="/logo-mark.svg" alt="栈桥" width="28" height="28" class="h-7 w-7 rounded-md">
         <span class="text-base font-semibold text-fg-default">栈桥</span>
       </NuxtLink>
 

@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import type { AdminPostItem, AdminProjectItem, AdminTagItem } from '~~/shared/types'
+import type { AdminPostItem, AdminProjectItem, AdminReportItem, AdminTagItem } from '~~/shared/types'
 
 useHead({ title: '审核后台 · 栈桥' })
 
 const user = useAuthUser()
 const route = useRoute()
-const tab = ref<'projects' | 'posts' | 'tags'>(
-  route.query.tab === 'posts' || route.query.tab === 'tags' ? route.query.tab : 'projects',
+const tab = ref<'projects' | 'posts' | 'tags' | 'reports'>(
+  ['posts', 'tags', 'reports'].includes(String(route.query.tab))
+    ? route.query.tab as 'posts' | 'tags' | 'reports'
+    : 'projects',
 )
 
 watch(tab, (value) => {
@@ -36,7 +38,13 @@ const { data: summary, refresh: refreshSummary } = await useFetch<{
   publishedProjects: number
   pendingTags: number
   pendingPosts: number
+  pendingReports: number
 }>('/api/admin/summary', { immediate: !!user.value })
+
+const { data: reportData, refresh: refreshReports } = await useFetch<{ items: AdminReportItem[] }>(
+  '/api/admin/reports',
+  { query: { status: 'pending' }, immediate: !!user.value },
+)
 
 const { data: postData, refresh: refreshPosts } = await useFetch<{ items: AdminPostItem[] }>(
   '/api/admin/posts',
@@ -66,7 +74,33 @@ const projectStatusOptions = [
 const postStatusOptions = projectStatusOptions
 
 async function refreshAll() {
-  await Promise.all([refreshProjects(), refreshTags(), refreshPosts(), refreshSummary()])
+  await Promise.all([refreshProjects(), refreshTags(), refreshPosts(), refreshReports(), refreshSummary()])
+}
+
+const busyReport = ref('')
+
+async function reviewReport(id: string, action: 'resolve' | 'dismiss') {
+  busyReport.value = id
+  message.value = ''
+  try {
+    await $fetch(`/api/admin/reports/${id}/review`, { method: 'POST', body: { action } })
+    message.value = action === 'resolve' ? '举报已处理' : '举报已驳回'
+    await refreshAll()
+  }
+  catch (err) {
+    message.value = authErrorMessage(err)
+  }
+  finally {
+    busyReport.value = ''
+  }
+}
+
+const reportReasonLabels: Record<string, string> = {
+  spam: '垃圾信息 / 刷屏',
+  ad: '广告推广',
+  abuse: '辱骂或不当内容',
+  wrong: '信息错误 / 误导',
+  other: '其他',
 }
 
 async function reviewPost(slug: string, action: 'approve' | 'reject' | 'offline') {
@@ -182,6 +216,18 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
         文章审核
         <span v-if="summary?.pendingPosts" class="ml-1 rounded-full bg-attention/15 px-1.5 text-[11px] text-attention">
           {{ summary.pendingPosts }}
+        </span>
+      </button>
+
+      <button
+        type="button"
+        class="-mb-px border-b-2 px-3 py-2 text-sm"
+        :class="tab === 'reports' ? 'border-accent font-medium text-fg-default' : 'border-transparent text-fg-muted hover:text-fg-default'"
+        @click="tab = 'reports'"
+      >
+        举报处理
+        <span v-if="summary?.pendingReports" class="ml-1 rounded-full bg-attention/15 px-1.5 text-[11px] text-attention">
+          {{ summary.pendingReports }}
         </span>
       </button>
 
@@ -477,6 +523,77 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
           </button>
         </div>
       </article>
+    </div>
+
+    <!-- 举报处理 -->
+    <div v-else-if="tab === 'reports'" class="mt-4 space-y-3">
+      <p v-if="!reportData?.items.length" class="rounded-md border border-dashed border-border-default py-16 text-center text-sm text-fg-muted">
+        没有待处理的举报。
+      </p>
+
+      <div
+        v-for="item in reportData?.items ?? []"
+        :key="item.id"
+        class="rounded-md border border-border-default bg-canvas p-4"
+      >
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <span class="rounded-full border border-attention/40 bg-attention/5 px-2 py-0.5 text-attention">
+            {{ reportReasonLabels[item.reason] ?? item.reason }}
+          </span>
+          <span class="text-fg-muted">
+            {{ item.reporterName }} 举报于 {{ relativeTime(item.createdAt) }}
+          </span>
+        </div>
+
+        <div class="mt-2 flex flex-wrap items-center gap-2 text-sm">
+          <span class="text-fg-subtle">{{ item.targetType === 'project' ? '项目' : '文章' }}</span>
+          <NuxtLink
+            v-if="item.targetSlug"
+            :to="item.targetType === 'project' ? `/projects/${item.targetSlug}` : `/blog/${item.targetSlug}`"
+            class="font-medium no-underline hover:underline"
+          >
+            {{ item.targetTitle ?? '（内容已删除）' }}
+          </NuxtLink>
+          <span v-else class="text-fg-subtle">（内容已删除）</span>
+        </div>
+
+        <p v-if="item.detail" class="mt-2 rounded-md border border-border-muted bg-canvas-subtle px-3 py-2 text-xs leading-5 text-fg-default">
+          {{ item.detail }}
+        </p>
+
+        <div class="mt-3 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            :disabled="busyReport === item.id"
+            class="h-8 rounded-md border border-accent bg-accent px-3 text-sm font-medium text-white disabled:opacity-60"
+            @click="reviewReport(item.id, 'resolve')"
+          >
+            已处理
+          </button>
+          <button
+            type="button"
+            :disabled="busyReport === item.id"
+            class="h-8 rounded-md border border-border-default px-3 text-sm disabled:opacity-60"
+            @click="reviewReport(item.id, 'dismiss')"
+          >
+            驳回举报
+          </button>
+          <NuxtLink
+            v-if="item.targetType === 'project'"
+            to="/admin?tab=projects"
+            class="text-xs text-fg-muted no-underline hover:text-accent hover:underline"
+          >
+            去项目审核里下架 →
+          </NuxtLink>
+          <NuxtLink
+            v-else
+            to="/admin?tab=posts"
+            class="text-xs text-fg-muted no-underline hover:text-accent hover:underline"
+          >
+            去文章审核里下架 →
+          </NuxtLink>
+        </div>
+      </div>
     </div>
 
     <!-- 标签审核 -->
