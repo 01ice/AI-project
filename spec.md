@@ -439,7 +439,7 @@ posts            (博客来自 Git；frontmatter: 标题, slug, 摘要, 分类, 
 - 项目与文章**多对多**：`post_projects` 关联表；项目页显示「相关文章」，文章页显示「涉及的项目」
 - 页面：`/blog` 文章列表（分页、标签筛选）、`/blog/[slug]` 文章详情（Markdown 渲染、关联项目、阅读量）
 - 投稿流程：`CONTRIBUTING.md` 说明如何在 Pull Request 里提交文章；作者用栈桥用户名的 frontmatter 自动关联账号
-- 示例文章 3 篇，其中一篇同时关联两个项目，用于验证多对多
+- 验证用的示例文章已从 `content/posts/` 移除（内容保留在 Git 历史里），线上只保留真实内容
 
 **D5 已完成（手动审核后台）**
 
