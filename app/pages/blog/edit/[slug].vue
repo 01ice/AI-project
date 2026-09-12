@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { ManagedPost, PostStatus } from '~~/shared/types'
 
+definePageMeta({ layout: 'editor' })
+
 useHead({ title: '编辑文章 · 栈桥' })
 
 const route = useRoute()
@@ -25,25 +27,25 @@ const statusLabels: Record<PostStatus, string> = {
 </script>
 
 <template>
-  <div class="mx-auto max-w-[900px]">
-    <header class="mb-5">
-      <h1 class="text-xl font-semibold text-fg-default">编辑文章</h1>
-      <p class="mt-2 text-sm text-fg-muted">
-        当前状态：<span class="text-fg-default">{{ statusLabels[post.status] }}</span>
-        <span v-if="post.status === 'published'" class="ml-1">· 保存后需要重新审核</span>
-      </p>
-      <p
-        v-if="post.moderationNote"
-        class="mt-2 rounded-md border border-danger/40 bg-danger/5 px-3 py-2 text-xs text-danger"
-      >
-        审核意见：{{ post.moderationNote }}
-      </p>
-    </header>
-
-    <p v-if="!user" class="rounded-md border border-border-default bg-canvas p-6 text-center text-sm text-fg-muted">
-      请先登录。
+  <div v-if="user" class="flex flex-1 flex-col">
+    <p
+      v-if="post.status !== 'draft'"
+      class="border-b border-border-default bg-canvas-subtle px-4 py-2 text-xs text-fg-muted"
+    >
+      当前状态：<span class="text-fg-default">{{ statusLabels[post.status] }}</span>
+      <span v-if="post.status === 'published'" class="ml-1">· 保存后需要重新审核</span>
+      <span v-if="post.moderationNote" class="ml-2 text-danger">审核意见：{{ post.moderationNote }}</span>
     </p>
 
-    <PostEditor v-else :initial="post" />
+    <PostEditor :initial="post" />
+  </div>
+
+  <div v-else class="flex flex-1 items-center justify-center px-4 py-20">
+    <div class="rounded-md border border-border-default bg-canvas p-6 text-center">
+      <p class="text-sm text-fg-muted">请先登录。</p>
+      <NuxtLink to="/login" class="mt-3 inline-block text-sm text-accent no-underline hover:underline">
+        去登录
+      </NuxtLink>
+    </div>
   </div>
 </template>

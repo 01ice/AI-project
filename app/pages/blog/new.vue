@@ -1,22 +1,18 @@
 <script setup lang="ts">
+definePageMeta({ layout: 'editor' })
+
 useHead({ title: '写文章 · 栈桥' })
 
 const user = useAuthUser()
 </script>
 
 <template>
-  <div class="mx-auto max-w-[900px]">
-    <header class="mb-5">
-      <h1 class="text-xl font-semibold text-fg-default">写文章</h1>
-      <p class="mt-2 text-sm text-fg-muted">
-        内容会自动保存为草稿。写下你的做法、成本账或者踩过的坑——
-        关联到项目之后，文章会出现在项目详情页的「相关文章」里。
-      </p>
-    </header>
+  <PostEditor v-if="user" />
 
-    <div v-if="!user" class="rounded-md border border-border-default bg-canvas p-6 text-center">
+  <div v-else class="flex flex-1 items-center justify-center px-4 py-20">
+    <div class="w-full max-w-[420px] rounded-md border border-border-default bg-canvas p-6 text-center">
       <p class="text-sm text-fg-muted">写文章需要先登录。</p>
-      <div class="mt-3 flex justify-center gap-2">
+      <div class="mt-4 flex justify-center gap-2">
         <NuxtLink
           to="/login?redirect=/blog/new"
           class="inline-flex h-8 items-center rounded-md border border-accent bg-accent px-4 text-sm font-medium text-white no-underline"
@@ -30,8 +26,9 @@ const user = useAuthUser()
           注册账号
         </NuxtLink>
       </div>
+      <NuxtLink to="/blog" class="mt-4 inline-block text-xs text-fg-subtle no-underline hover:underline">
+        先去读几篇文章 →
+      </NuxtLink>
     </div>
-
-    <PostEditor v-else />
   </div>
 </template>
