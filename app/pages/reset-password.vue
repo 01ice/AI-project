@@ -61,7 +61,7 @@ async function submit() {
           type="password"
           required
           autocomplete="new-password"
-          class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+          class="h-8 w-full card px-3 text-sm focus:border-accent focus:outline-none"
         >
       </FormField>
 
@@ -71,7 +71,7 @@ async function submit() {
           type="password"
           required
           autocomplete="new-password"
-          class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+          class="h-8 w-full card px-3 text-sm focus:border-accent focus:outline-none"
         >
       </FormField>
 

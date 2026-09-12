@@ -19,7 +19,7 @@ function submit() {
 </script>
 
 <template>
-  <div class="mx-auto max-w-[900px]">
+  <div class="w-full">
     <header class="mb-5">
       <h1 class="text-xl font-semibold text-fg-default">搜索</h1>
       <form class="mt-3 flex gap-2" @submit.prevent="submit">
@@ -27,7 +27,7 @@ function submit() {
           v-model="keyword"
           type="search"
           placeholder="搜索项目、文章、标签…"
-          class="h-9 flex-1 rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+          class="h-9 flex-1 card px-3 text-sm focus:border-accent focus:outline-none"
         >
         <button
           type="submit"
@@ -71,7 +71,7 @@ function submit() {
           <li
             v-for="post in data.posts"
             :key="post.id"
-            class="flex gap-3 rounded-md border border-border-default bg-canvas p-3"
+            class="flex gap-3 card p-3"
           >
             <img
               v-if="post.coverUrl"

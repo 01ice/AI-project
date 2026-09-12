@@ -57,7 +57,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="mx-auto max-w-[900px]">
+  <div class="w-full">
     <header class="mb-4 flex flex-wrap items-center gap-3">
       <h1 class="text-xl font-semibold text-fg-default">我的文章</h1>
       <NuxtLink
@@ -83,7 +83,7 @@ onMounted(async () => {
       <li
         v-for="post in data.items"
         :key="post.id"
-        class="flex gap-3 rounded-md border border-border-default bg-canvas p-3"
+        class="flex gap-3 card p-3"
       >
         <img
           v-if="post.coverUrl"

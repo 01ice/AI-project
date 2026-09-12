@@ -170,7 +170,7 @@ function submit(status: 'draft' | 'pending') {
       <span v-for="item in errors" :key="item" class="block">{{ item }}</span>
     </p>
 
-    <section class="rounded-md border border-border-default bg-canvas p-5">
+    <section class="card p-5">
       <h2 class="text-sm font-semibold text-fg-default">基本信息</h2>
 
       <div class="mt-4 space-y-4">
@@ -180,7 +180,7 @@ function submit(status: 'draft' | 'pending') {
             required
             maxlength="80"
             placeholder="例如：星图"
-            class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+            class="h-8 w-full card px-3 text-sm focus:border-accent focus:outline-none"
           >
         </FormField>
 
@@ -191,7 +191,7 @@ function submit(status: 'draft' | 'pending') {
             rows="2"
             maxlength="200"
             placeholder="用一句话说清楚这个项目做什么、给谁用"
-            class="w-full rounded-md border border-border-default bg-canvas px-3 py-2 text-sm focus:border-accent focus:outline-none"
+            class="w-full card px-3 py-2 text-sm focus:border-accent focus:outline-none"
           />
         </FormField>
 
@@ -199,7 +199,7 @@ function submit(status: 'draft' | 'pending') {
           <select
             v-model="form.categoryId"
             required
-            class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+            class="h-8 w-full card px-3 text-sm focus:border-accent focus:outline-none"
           >
             <option value="">请选择分类</option>
             <option v-for="category in categories ?? []" :key="category.id" :value="category.id">
@@ -231,7 +231,7 @@ function submit(status: 'draft' | 'pending') {
             </div>
           </div>
 
-          <div class="mt-3 rounded-md border border-border-default bg-canvas-subtle p-3">
+          <div class="mt-3 card bg-canvas-subtle p-3">
             <p class="text-xs text-fg-muted">
               没找到合适的标签？可以申请新标签，管理员审核通过后会出现在公共标签里（最多 3 个）。
             </p>
@@ -240,11 +240,11 @@ function submit(status: 'draft' | 'pending') {
                 v-model="newTag.name"
                 placeholder="标签名"
                 maxlength="16"
-                class="h-8 w-40 rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+                class="h-8 w-40 card px-3 text-sm focus:border-accent focus:outline-none"
               >
               <select
                 v-model="newTag.group"
-                class="h-8 rounded-md border border-border-default bg-canvas px-2 text-sm focus:border-accent focus:outline-none"
+                class="h-8 card px-2 text-sm focus:border-accent focus:outline-none"
               >
                 <option value="ai_model">模型与供应商</option>
                 <option value="ai_tech">AI 技术</option>
@@ -253,7 +253,7 @@ function submit(status: 'draft' | 'pending') {
               </select>
               <button
                 type="button"
-                class="h-8 rounded-md border border-border-default px-3 text-sm hover:border-accent hover:text-accent"
+                class="h-8 card px-3 text-sm hover:border-accent hover:text-accent"
                 @click="addNewTag"
               >
                 添加
@@ -274,7 +274,7 @@ function submit(status: 'draft' | 'pending') {
       </div>
     </section>
 
-    <section class="rounded-md border border-border-default bg-canvas p-5">
+    <section class="card p-5">
       <h2 class="text-sm font-semibold text-fg-default">封面与截图</h2>
       <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-[220px_minmax(0,1fr)]">
         <div>
@@ -304,7 +304,7 @@ function submit(status: 'draft' | 'pending') {
       </div>
     </section>
 
-    <section class="rounded-md border border-border-default bg-canvas p-5">
+    <section class="card p-5">
       <h2 class="text-sm font-semibold text-fg-default">
         补充说明
         <span class="ml-1 text-xs font-normal text-fg-subtle">选填，300 字以内</span>
@@ -319,26 +319,26 @@ function submit(status: 'draft' | 'pending') {
         rows="5"
         maxlength="300"
         placeholder="例如：支持 macOS 与 Windows，需要 Node 20 以上；本地优先，数据不上传。"
-        class="mt-3 w-full rounded-md border border-border-default bg-canvas px-3 py-2 text-sm leading-6 focus:border-accent focus:outline-none"
+        class="mt-3 w-full card px-3 py-2 text-sm leading-6 focus:border-accent focus:outline-none"
       />
       <p class="mt-1 text-right text-xs text-fg-subtle">{{ form.body.length }} / 300</p>
     </section>
 
-    <section class="rounded-md border border-border-default bg-canvas p-5">
+    <section class="card p-5">
       <h2 class="text-sm font-semibold text-fg-default">相关链接</h2>
       <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <FormField label="仓库地址" hint="选填，GitHub / Gitee 等">
           <input
             v-model="form.repoUrl"
             placeholder="https://github.com/..."
-            class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+            class="h-8 w-full card px-3 text-sm focus:border-accent focus:outline-none"
           >
         </FormField>
         <FormField label="演示链接" hint="选填，线上可访问的地址">
           <input
             v-model="form.demoUrl"
             placeholder="https://..."
-            class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+            class="h-8 w-full card px-3 text-sm focus:border-accent focus:outline-none"
           >
         </FormField>
       </div>
@@ -353,12 +353,12 @@ function submit(status: 'draft' | 'pending') {
             v-model="link.label"
             placeholder="名称"
             maxlength="20"
-            class="h-8 w-28 rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+            class="h-8 w-28 card px-3 text-sm focus:border-accent focus:outline-none"
           >
           <input
             v-model="link.url"
             placeholder="https://..."
-            class="h-8 flex-1 rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+            class="h-8 flex-1 card px-3 text-sm focus:border-accent focus:outline-none"
           >
           <button
             type="button"
@@ -379,7 +379,7 @@ function submit(status: 'draft' | 'pending') {
       </div>
     </section>
 
-    <section class="rounded-md border border-border-default bg-canvas p-5">
+    <section class="card p-5">
       <label class="flex items-center gap-2">
         <input v-model="form.isAi" type="checkbox" class="h-4 w-4">
         <span class="text-sm font-semibold text-fg-default">这是 AI 项目</span>
@@ -393,13 +393,13 @@ function submit(status: 'draft' | 'pending') {
           <input
             v-model="form.aiModels"
             placeholder="deepseek-chat"
-            class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+            class="h-8 w-full card px-3 text-sm focus:border-accent focus:outline-none"
           >
         </FormField>
         <FormField label="模型使用方式">
           <select
             v-model="form.aiHosting"
-            class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+            class="h-8 w-full card px-3 text-sm focus:border-accent focus:outline-none"
           >
             <option value="">请选择</option>
             <option v-for="option in hostingOptions" :key="option.value" :value="option.value">
@@ -410,7 +410,7 @@ function submit(status: 'draft' | 'pending') {
       </div>
     </section>
 
-    <section class="rounded-md border border-border-default bg-canvas p-5">
+    <section class="card p-5">
       <h2 class="text-sm font-semibold text-fg-default">
         成本与收益
         <span class="ml-1 text-xs font-normal text-fg-subtle">全部选填，所有项目都可以填</span>
@@ -426,7 +426,7 @@ function submit(status: 'draft' | 'pending') {
             type="number"
             min="0"
             placeholder="例如 260"
-            class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+            class="h-8 w-full card px-3 text-sm focus:border-accent focus:outline-none"
           >
         </FormField>
         <FormField label="每月收入（元）">
@@ -435,7 +435,7 @@ function submit(status: 'draft' | 'pending') {
             type="number"
             min="0"
             placeholder="未盈利填 0"
-            class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+            class="h-8 w-full card px-3 text-sm focus:border-accent focus:outline-none"
           >
         </FormField>
         <FormField label="总收入（元）">
@@ -444,7 +444,7 @@ function submit(status: 'draft' | 'pending') {
             type="number"
             min="0"
             placeholder="累计收入"
-            class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+            class="h-8 w-full card px-3 text-sm focus:border-accent focus:outline-none"
           >
         </FormField>
       </div>
@@ -453,7 +453,7 @@ function submit(status: 'draft' | 'pending') {
         <FormField label="商业模式">
           <select
             v-model="form.revenueModel"
-            class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none sm:w-64"
+            class="h-8 w-full card px-3 text-sm focus:border-accent focus:outline-none sm:w-64"
           >
             <option value="">不填</option>
             <option v-for="option in revenueModelOptions" :key="option.value" :value="option.value">
@@ -466,7 +466,7 @@ function submit(status: 'draft' | 'pending') {
           <input
             v-model="form.costNote"
             maxlength="200"
-            class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+            class="h-8 w-full card px-3 text-sm focus:border-accent focus:outline-none"
           >
         </FormField>
 
@@ -474,7 +474,7 @@ function submit(status: 'draft' | 'pending') {
           <input
             v-model="form.revenueNote"
             maxlength="200"
-            class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+            class="h-8 w-full card px-3 text-sm focus:border-accent focus:outline-none"
           >
         </FormField>
       </div>
@@ -491,7 +491,7 @@ function submit(status: 'draft' | 'pending') {
       <button
         type="button"
         :disabled="busy"
-        class="h-9 rounded-md border border-border-default px-4 text-sm hover:border-accent hover:text-accent disabled:opacity-60"
+        class="h-9 card px-4 text-sm hover:border-accent hover:text-accent disabled:opacity-60"
         @click="submit('draft')"
       >
         存为草稿

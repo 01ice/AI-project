@@ -38,7 +38,7 @@ async function submit(payload: ProjectFormPayload, status: 'draft' | 'pending') 
 
     <div
       v-if="!user"
-      class="rounded-md border border-border-default bg-canvas p-6 text-center"
+      class="card p-6 text-center"
     >
       <p class="text-sm text-fg-muted">发布项目需要先登录。</p>
       <div class="mt-3 flex justify-center gap-2">
@@ -50,7 +50,7 @@ async function submit(payload: ProjectFormPayload, status: 'draft' | 'pending') 
         </NuxtLink>
         <NuxtLink
           to="/register"
-          class="inline-flex h-8 items-center rounded-md border border-border-default px-4 text-sm no-underline hover:border-accent hover:text-accent"
+          class="inline-flex h-8 items-center card px-4 text-sm no-underline hover:border-accent hover:text-accent"
         >
           注册账号
         </NuxtLink>

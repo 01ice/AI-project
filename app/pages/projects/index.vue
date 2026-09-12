@@ -104,7 +104,7 @@ useHead({ title: '项目 · 栈桥' })
         </h1>
 
         <div class="ml-auto flex items-center gap-2">
-          <div class="flex items-center gap-1 rounded-md border border-border-default p-0.5">
+          <div class="flex items-center gap-1 card p-0.5">
             <NuxtLink
               :to="withQuery({ ai: undefined })"
               class="rounded px-2.5 py-1 text-xs no-underline"
@@ -125,7 +125,7 @@ useHead({ title: '项目 · 栈桥' })
             </NuxtLink>
           </div>
 
-          <div class="flex items-center gap-1 rounded-md border border-border-default p-0.5">
+          <div class="flex items-center gap-1 card p-0.5">
             <NuxtLink
               v-for="option in sortOptions"
               :key="option.value"
@@ -160,7 +160,7 @@ useHead({ title: '项目 · 栈桥' })
         <NuxtLink
           v-if="query.page > 1"
           :to="withQuery({ page: String(query.page - 1) })"
-          class="rounded-md border border-border-default px-3 py-1.5 text-sm no-underline hover:border-accent hover:text-accent"
+          class="btn btn-secondary btn-sm no-underline"
         >
           上一页
         </NuxtLink>
@@ -170,7 +170,7 @@ useHead({ title: '项目 · 栈桥' })
         <NuxtLink
           v-if="query.page < (data?.totalPages ?? 1)"
           :to="withQuery({ page: String(query.page + 1) })"
-          class="rounded-md border border-border-default px-3 py-1.5 text-sm no-underline hover:border-accent hover:text-accent"
+          class="btn btn-secondary btn-sm no-underline"
         >
           下一页
         </NuxtLink>

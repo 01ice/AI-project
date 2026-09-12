@@ -79,7 +79,7 @@ async function submit(payload: ProjectFormPayload, status: 'draft' | 'pending') 
       </p>
     </header>
 
-    <p v-if="!user" class="rounded-md border border-border-default bg-canvas p-6 text-center text-sm text-fg-muted">
+    <p v-if="!user" class="card p-6 text-center text-sm text-fg-muted">
       请先登录。
     </p>
 

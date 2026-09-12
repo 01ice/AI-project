@@ -60,12 +60,12 @@ async function submit() {
       举报{{ targetType === 'project' ? '该项目' : '该文章' }}
     </button>
 
-    <div v-else class="rounded-md border border-border-default bg-canvas-subtle p-3">
+    <div v-else class="card bg-canvas-subtle p-3">
       <template v-if="user">
         <p class="text-xs font-medium text-fg-default">举报原因</p>
         <select
           v-model="reason"
-          class="mt-2 h-8 w-full rounded-md border border-border-default bg-canvas px-2 text-sm focus:border-accent focus:outline-none"
+          class="mt-2 h-8 w-full card px-2 text-sm focus:border-accent focus:outline-none"
         >
           <option v-for="item in reasons" :key="item.value" :value="item.value">{{ item.label }}</option>
         </select>
@@ -74,7 +74,7 @@ async function submit() {
           rows="2"
           maxlength="500"
           placeholder="补充说明（选填）"
-          class="mt-2 w-full rounded-md border border-border-default bg-canvas px-3 py-2 text-sm focus:border-accent focus:outline-none"
+          class="mt-2 w-full card px-3 py-2 text-sm focus:border-accent focus:outline-none"
         />
         <div class="mt-2 flex items-center gap-2">
           <button

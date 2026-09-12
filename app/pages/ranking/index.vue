@@ -27,7 +27,7 @@ useHead({
 </script>
 
 <template>
-  <div class="mx-auto max-w-[900px]">
+  <div class="w-full">
     <header>
       <h1 class="text-xl font-semibold text-fg-default">排行榜</h1>
       <p class="mt-2 text-sm text-fg-muted">{{ activeTab.desc }}</p>
@@ -53,7 +53,7 @@ useHead({
       还没有项目填写这项数据。
     </p>
 
-    <div v-else class="mt-4 overflow-x-auto rounded-md border border-border-default">
+    <div v-else class="mt-4 overflow-x-auto card">
       <table class="w-full min-w-[720px] text-sm">
         <thead class="bg-canvas-subtle text-xs text-fg-muted">
           <tr>

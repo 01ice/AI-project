@@ -43,7 +43,7 @@ function targetLink(item: MyCommentItem) {
 </script>
 
 <template>
-  <div class="mx-auto max-w-[900px]">
+  <div class="w-full">
     <header class="mb-4 flex flex-wrap items-center gap-3">
       <h1 class="text-xl font-semibold text-fg-default">我的评论</h1>
       <NuxtLink to="/me" class="ml-auto text-sm text-fg-muted no-underline hover:text-accent hover:underline">
@@ -63,7 +63,7 @@ function targetLink(item: MyCommentItem) {
       <li
         v-for="item in data.items"
         :key="item.id"
-        class="rounded-md border border-border-default bg-canvas p-4"
+        class="card p-4"
       >
         <div class="flex flex-wrap items-center gap-2 text-xs text-fg-muted">
           <span

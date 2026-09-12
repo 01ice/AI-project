@@ -67,7 +67,7 @@ useHead({
         <li
           v-for="post in data.items"
           :key="post.id"
-          class="flex gap-4 rounded-md border border-border-default bg-canvas p-4 transition-colors hover:border-fg-subtle"
+          class="flex gap-4 card p-4 transition-colors hover:border-fg-subtle"
         >
           <NuxtLink :to="`/blog/${post.slug}`" class="shrink-0">
             <img
@@ -136,7 +136,7 @@ useHead({
         <NuxtLink
           v-if="query.page > 1"
           :to="withQuery({ page: String(query.page - 1) })"
-          class="rounded-md border border-border-default px-3 py-1.5 text-sm no-underline hover:border-accent hover:text-accent"
+          class="btn btn-secondary btn-sm no-underline"
         >
           上一页
         </NuxtLink>
@@ -144,7 +144,7 @@ useHead({
         <NuxtLink
           v-if="query.page < (data?.totalPages ?? 1)"
           :to="withQuery({ page: String(query.page + 1) })"
-          class="rounded-md border border-border-default px-3 py-1.5 text-sm no-underline hover:border-accent hover:text-accent"
+          class="btn btn-secondary btn-sm no-underline"
         >
           下一页
         </NuxtLink>
@@ -152,7 +152,7 @@ useHead({
     </div>
 
     <aside class="space-y-4">
-      <section class="rounded-md border border-border-default bg-canvas p-4">
+      <section class="card p-4">
         <h2 class="text-sm font-semibold text-fg-default">标签</h2>
         <div v-if="tagCloud.length" class="mt-3 flex flex-wrap gap-1.5">
           <TagChip
@@ -166,7 +166,7 @@ useHead({
         <p v-else class="mt-2 text-xs text-fg-muted">本页还没有标签</p>
       </section>
 
-      <section class="rounded-md border border-border-default bg-canvas-subtle p-4">
+      <section class="card bg-canvas-subtle p-4">
         <p class="text-sm font-semibold text-fg-default">有想分享的？</p>
         <p class="mt-1 text-xs leading-5 text-fg-muted">
           写下你的做法、成本账或者踩过的坑，关联到项目之后两边会互相导流。

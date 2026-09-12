@@ -24,8 +24,8 @@ useHead(() => ({
 </script>
 
 <template>
-  <div class="mx-auto max-w-[900px]">
-    <section class="rounded-md border border-border-default bg-canvas p-5">
+  <div class="w-full">
+    <section class="card p-5">
       <div class="flex flex-wrap items-center gap-4">
         <AppAvatar
           :name="profile.nickname"
@@ -83,7 +83,7 @@ useHead(() => ({
         <li
           v-for="post in profile.posts"
           :key="post.id"
-          class="flex gap-3 rounded-md border border-border-default bg-canvas p-3"
+          class="flex gap-3 card p-3"
         >
           <img
             v-if="post.coverUrl"

@@ -48,7 +48,7 @@ onMounted(async () => {
           </NuxtLink>
           <NuxtLink
             to="/projects"
-            class="inline-flex h-8 items-center rounded-md border border-border-default px-3 text-sm no-underline hover:border-accent hover:text-accent"
+            class="inline-flex h-8 items-center card px-3 text-sm no-underline hover:border-accent hover:text-accent"
           >
             逛逛项目
           </NuxtLink>

@@ -26,7 +26,7 @@ useHead({
 
 <template>
   <div>
-    <section class="rounded-md border border-border-default bg-canvas-subtle px-6 py-8">
+    <section class="card bg-canvas-subtle px-6 py-8">
       <h1 class="text-2xl font-semibold text-fg-default">
         发现值得一看的项目，看清它背后的成本
       </h1>
@@ -49,13 +49,13 @@ useHead({
         </NuxtLink>
         <NuxtLink
           to="/projects?ai=1"
-          class="inline-flex h-8 items-center rounded-md border border-border-default bg-canvas px-4 text-sm font-medium text-fg-default no-underline hover:border-accent hover:text-accent"
+          class="inline-flex h-8 items-center card px-4 text-sm font-medium text-fg-default no-underline hover:border-accent hover:text-accent"
         >
           只看 AI 项目
         </NuxtLink>
         <NuxtLink
           to="/projects/new"
-          class="inline-flex h-8 items-center rounded-md border border-border-default bg-canvas px-4 text-sm font-medium text-fg-default no-underline hover:border-accent hover:text-accent"
+          class="inline-flex h-8 items-center card px-4 text-sm font-medium text-fg-default no-underline hover:border-accent hover:text-accent"
         >
           发布我的项目
         </NuxtLink>
@@ -71,7 +71,7 @@ useHead({
         </div>
       </div>
 
-      <div class="overflow-x-auto rounded-md border border-border-default">
+      <div class="overflow-x-auto card">
         <table class="w-full min-w-[760px] text-sm">
           <thead class="bg-canvas-subtle text-xs text-fg-muted">
             <tr>
@@ -144,8 +144,8 @@ useHead({
       </div>
 
       <aside class="space-y-6">
-        <section class="rounded-md border border-border-default bg-canvas">
-          <h2 class="border-b border-border-default px-4 py-2.5 text-sm font-semibold text-fg-default">
+        <section class="card">
+          <h2 class="border-b border-border-muted px-4 py-3 text-sm font-semibold text-fg-default">
             分类
           </h2>
           <ul class="p-2">
@@ -161,8 +161,8 @@ useHead({
           </ul>
         </section>
 
-        <section class="rounded-md border border-border-default bg-canvas">
-          <h2 class="border-b border-border-default px-4 py-2.5 text-sm font-semibold text-fg-default">
+        <section class="card">
+          <h2 class="border-b border-border-muted px-4 py-3 text-sm font-semibold text-fg-default">
             热门标签
           </h2>
           <div class="flex flex-wrap gap-1.5 p-3">
@@ -175,11 +175,17 @@ useHead({
           </div>
         </section>
 
-        <section class="rounded-md border border-border-default bg-canvas-subtle px-4 py-3 text-xs leading-5 text-fg-muted">
-          <p class="font-semibold text-fg-default">这个站还在建设</p>
-          <p class="mt-1">
-            注册登录、发布项目、评论互动正在开发中，当前展示的是示例数据。
-          </p>
+        <section class="card bg-canvas-subtle p-4">
+          <p class="text-sm font-semibold text-fg-default">怎么用栈桥</p>
+          <ul class="mt-2 space-y-1.5 text-xs leading-5 text-fg-muted">
+            <li>· 浏览项目，按分类、技术栈或关键词筛选</li>
+            <li>· 注册后发布自己的项目，或写下做法与成本账</li>
+            <li>· 在排行榜里横向对比模型、成本与收益</li>
+          </ul>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <NuxtLink to="/projects/new" class="btn btn-primary btn-sm no-underline">发布项目</NuxtLink>
+            <NuxtLink to="/blog/new" class="btn btn-secondary btn-sm no-underline">写文章</NuxtLink>
+          </div>
         </section>
       </aside>
     </div>

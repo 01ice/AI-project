@@ -10,7 +10,7 @@ const user = useAuthUser()
   <PostEditor v-if="user" />
 
   <div v-else class="flex flex-1 items-center justify-center px-4 py-20">
-    <div class="w-full max-w-[420px] rounded-md border border-border-default bg-canvas p-6 text-center">
+    <div class="w-full max-w-[420px] card p-6 text-center">
       <p class="text-sm text-fg-muted">写文章需要先登录。</p>
       <div class="mt-4 flex justify-center gap-2">
         <NuxtLink
@@ -21,7 +21,7 @@ const user = useAuthUser()
         </NuxtLink>
         <NuxtLink
           to="/register"
-          class="inline-flex h-8 items-center rounded-md border border-border-default px-4 text-sm no-underline hover:border-accent hover:text-accent"
+          class="inline-flex h-8 items-center card px-4 text-sm no-underline hover:border-accent hover:text-accent"
         >
           注册账号
         </NuxtLink>

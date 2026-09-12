@@ -81,8 +81,8 @@ function canDelete(comment: CommentItem) {
 </script>
 
 <template>
-  <section class="rounded-md border border-border-default bg-canvas">
-    <h2 class="border-b border-border-default px-5 py-3 text-sm font-semibold text-fg-default">
+  <section class="card">
+    <h2 class="border-b border-border-muted px-5 py-3.5 text-sm font-semibold text-fg-default">
       评论 {{ total }}
     </h2>
 
@@ -97,7 +97,7 @@ function canDelete(comment: CommentItem) {
             rows="3"
             maxlength="1000"
             placeholder="说点什么…"
-            class="w-full rounded-md border border-border-default bg-canvas px-3 py-2 text-sm focus:border-accent focus:outline-none"
+            class="w-full card px-3 py-2 text-sm focus:border-accent focus:outline-none"
           />
           <div class="mt-2 flex flex-wrap items-center gap-2">
             <button
@@ -156,7 +156,7 @@ function canDelete(comment: CommentItem) {
                 rows="2"
                 maxlength="1000"
                 :placeholder="`回复 ${comment.authorName}`"
-                class="w-full rounded-md border border-border-default bg-canvas px-3 py-2 text-sm focus:border-accent focus:outline-none"
+                class="w-full card px-3 py-2 text-sm focus:border-accent focus:outline-none"
               />
               <div class="mt-1 flex items-center gap-2">
                 <button

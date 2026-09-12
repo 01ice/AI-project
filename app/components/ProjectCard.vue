@@ -5,7 +5,7 @@ defineProps<{ project: ProjectListItem }>()
 </script>
 
 <template>
-  <article class="flex gap-3 rounded-md border border-border-default bg-canvas p-3 transition-colors hover:border-fg-subtle">
+  <article class="flex gap-3 card p-3 transition-colors hover:border-fg-subtle">
     <NuxtLink :to="`/projects/${project.slug}`" class="shrink-0">
       <img
         :src="project.coverUrl"

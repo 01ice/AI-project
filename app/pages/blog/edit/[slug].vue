@@ -41,7 +41,7 @@ const statusLabels: Record<PostStatus, string> = {
   </div>
 
   <div v-else class="flex flex-1 items-center justify-center px-4 py-20">
-    <div class="rounded-md border border-border-default bg-canvas p-6 text-center">
+    <div class="card p-6 text-center">
       <p class="text-sm text-fg-muted">请先登录。</p>
       <NuxtLink to="/login" class="mt-3 inline-block text-sm text-accent no-underline hover:underline">
         去登录

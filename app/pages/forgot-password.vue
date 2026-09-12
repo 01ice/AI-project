@@ -31,7 +31,7 @@ async function submit() {
   <AuthCard title="找回密码" description="输入注册时使用的邮箱，我们会发送一封重置邮件。">
     <div v-if="sent" class="space-y-3 text-sm text-fg-muted">
       <p>如果该邮箱已经注册，重置链接已经发送，请查收邮件（30 分钟内有效）。</p>
-      <p v-if="devUrl" class="break-all rounded-md border border-border-default bg-canvas-subtle px-3 py-2 text-xs">
+      <p v-if="devUrl" class="break-all card bg-canvas-subtle px-3 py-2 text-xs">
         开发模式：<NuxtLink :to="devUrl.replace(/^https?:\/\/[^/]+/, '')" class="no-underline hover:underline">{{ devUrl }}</NuxtLink>
       </p>
     </div>
@@ -46,7 +46,7 @@ async function submit() {
           v-model="email"
           type="email"
           required
-          class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+          class="h-8 w-full card px-3 text-sm focus:border-accent focus:outline-none"
         >
       </FormField>
 

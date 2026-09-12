@@ -170,7 +170,7 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
     <NuxtLink to="/" class="mt-3 inline-block text-sm no-underline hover:underline">回到首页</NuxtLink>
   </div>
 
-  <div v-else class="mx-auto max-w-[900px]">
+  <div v-else class="w-full">
     <header class="mb-4">
       <h1 class="text-xl font-semibold text-fg-default">审核后台</h1>
       <div class="mt-3 flex flex-wrap gap-3 text-xs">
@@ -183,7 +183,7 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
         <span class="rounded-md border border-attention/40 bg-attention/5 px-3 py-1.5 text-attention">
           待审文章 {{ summary?.pendingPosts ?? 0 }}
         </span>
-        <span class="rounded-md border border-border-default bg-canvas-subtle px-3 py-1.5 text-fg-muted">
+        <span class="card bg-canvas-subtle px-3 py-1.5 text-fg-muted">
           已发布项目 {{ summary?.publishedProjects ?? 0 }}
         </span>
       </div>
@@ -260,7 +260,7 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
       <article
         v-for="item in projectData?.items ?? []"
         :key="item.id"
-        class="rounded-md border border-border-default bg-canvas p-4"
+        class="card p-4"
       >
         <div class="flex gap-4">
           <img
@@ -330,18 +330,18 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
                 :href="item.repoUrl"
                 target="_blank"
                 rel="noopener noreferrer nofollow"
-                class="rounded-md border border-border-default px-2 py-1 no-underline hover:border-accent hover:text-accent"
+                class="card px-2 py-1 no-underline hover:border-accent hover:text-accent"
               >仓库</a>
               <a
                 v-if="item.demoUrl"
                 :href="item.demoUrl"
                 target="_blank"
                 rel="noopener noreferrer nofollow"
-                class="rounded-md border border-border-default px-2 py-1 no-underline hover:border-accent hover:text-accent"
+                class="card px-2 py-1 no-underline hover:border-accent hover:text-accent"
               >演示</a>
               <NuxtLink
                 :to="`/projects/${item.slug}`"
-                class="rounded-md border border-border-default px-2 py-1 no-underline hover:border-accent hover:text-accent"
+                class="card px-2 py-1 no-underline hover:border-accent hover:text-accent"
               >查看详情页</NuxtLink>
             </div>
           </div>
@@ -358,7 +358,7 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
                 :key="shot"
                 :src="shot"
                 alt="截图"
-                class="h-20 rounded-md border border-border-default object-cover"
+                class="h-20 card object-cover"
               >
             </div>
           </div>
@@ -368,7 +368,7 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
           <input
             v-model="notes[item.slug]"
             placeholder="审核意见（驳回时建议写清楚原因）"
-            class="h-8 flex-1 rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+            class="h-8 flex-1 card px-3 text-sm focus:border-accent focus:outline-none"
           >
           <button
             v-if="item.status !== 'published'"
@@ -410,7 +410,7 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
       <article
         v-for="item in postData?.items ?? []"
         :key="item.id"
-        class="rounded-md border border-border-default bg-canvas p-4"
+        class="card p-4"
       >
         <div class="flex gap-4">
           <img
@@ -468,14 +468,14 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
               <NuxtLink
                 v-if="item.status === 'published'"
                 :to="`/blog/${item.slug}`"
-                class="rounded-md border border-border-default px-2 py-1 no-underline hover:border-accent hover:text-accent"
+                class="card px-2 py-1 no-underline hover:border-accent hover:text-accent"
               >
                 查看文章
               </NuxtLink>
               <NuxtLink
                 v-else
                 :to="`/blog/edit/${item.slug}`"
-                class="rounded-md border border-border-default px-2 py-1 no-underline hover:border-accent hover:text-accent"
+                class="card px-2 py-1 no-underline hover:border-accent hover:text-accent"
               >
                 打开编辑器
               </NuxtLink>
@@ -492,7 +492,7 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
           <input
             v-model="postNotes[item.slug]"
             placeholder="审核意见（驳回时建议写清楚原因）"
-            class="h-8 flex-1 rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+            class="h-8 flex-1 card px-3 text-sm focus:border-accent focus:outline-none"
           >
           <button
             v-if="item.status !== 'published'"
@@ -534,7 +534,7 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
       <div
         v-for="item in reportData?.items ?? []"
         :key="item.id"
-        class="rounded-md border border-border-default bg-canvas p-4"
+        class="card p-4"
       >
         <div class="flex flex-wrap items-center gap-2 text-xs">
           <span class="rounded-full border border-attention/40 bg-attention/5 px-2 py-0.5 text-attention">
@@ -573,7 +573,7 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
           <button
             type="button"
             :disabled="busyReport === item.id"
-            class="h-8 rounded-md border border-border-default px-3 text-sm disabled:opacity-60"
+            class="h-8 card px-3 text-sm disabled:opacity-60"
             @click="reviewReport(item.id, 'dismiss')"
           >
             驳回举报
@@ -605,7 +605,7 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
       <div
         v-for="tag in pendingTags?.items ?? []"
         :key="tag.id"
-        class="rounded-md border border-border-default bg-canvas p-4"
+        class="card p-4"
       >
         <div class="flex flex-wrap items-center gap-2">
           <span class="text-sm font-medium text-fg-default">{{ tag.name }}</span>
@@ -621,7 +621,7 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
           <input
             v-model="tagNotes[tag.id]"
             placeholder="审核意见（选填）"
-            class="h-8 flex-1 rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+            class="h-8 flex-1 card px-3 text-sm focus:border-accent focus:outline-none"
           >
           <button
             type="button"
@@ -643,7 +643,7 @@ async function reviewTag(id: string, action: 'approve' | 'reject') {
       </div>
     </div>
 
-    <p class="mt-6 rounded-md border border-border-default bg-canvas-subtle px-3 py-2 text-xs leading-5 text-fg-muted">
+    <p class="mt-6 card bg-canvas-subtle px-3 py-2 text-xs leading-5 text-fg-muted">
       通过后项目立即公开，驳回意见会显示在作者的「我的项目」里。AI 自动审核（DeepSeek + 腾讯云内容安全）
       会在填入 API Key 后接入，届时这里只处理机器拿不准的内容。
     </p>

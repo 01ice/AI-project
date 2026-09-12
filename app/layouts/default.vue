@@ -1,7 +1,7 @@
 <template>
   <div class="flex min-h-screen flex-col">
     <AppHeader />
-    <main class="mx-auto w-full max-w-[1280px] flex-1 px-4 py-6">
+    <main class="container-page flex-1 py-6 sm:py-8">
       <slot />
     </main>
     <AppFooter />

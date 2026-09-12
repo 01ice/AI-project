@@ -67,7 +67,7 @@ async function toggleEmail() {
 </script>
 
 <template>
-  <div class="mx-auto max-w-[800px]">
+  <div class="w-full">
     <header class="mb-4 flex flex-wrap items-center gap-3">
       <h1 class="text-xl font-semibold text-fg-default">我的通知</h1>
       <span v-if="unread" class="rounded-full bg-danger/10 px-2 py-0.5 text-xs text-danger">
@@ -92,7 +92,7 @@ async function toggleEmail() {
       {{ message }}
     </p>
 
-    <div class="mb-4 flex items-center gap-3 rounded-md border border-border-default bg-canvas px-4 py-3">
+    <div class="mb-4 flex items-center gap-3 card px-4 py-3">
       <div>
         <p class="text-sm text-fg-default">邮件提醒</p>
         <p class="mt-0.5 text-xs text-fg-subtle">

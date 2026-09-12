@@ -92,7 +92,7 @@ useHead(() => ({
 <template>
   <div class="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_260px]">
     <div class="space-y-6">
-      <article class="rounded-md border border-border-default bg-canvas">
+      <article class="card">
         <div class="border-b border-border-default p-5">
           <div class="flex flex-wrap items-center gap-2 text-xs text-fg-muted">
             <TagChip v-if="project.categoryName" :label="project.categoryName" :to="`/projects?category=${project.categorySlug}`" />
@@ -110,7 +110,7 @@ useHead(() => ({
               :href="project.repoUrl"
               target="_blank"
               rel="noopener noreferrer nofollow"
-              class="inline-flex h-8 items-center rounded-md border border-border-default px-3 text-sm no-underline hover:border-accent hover:text-accent"
+              class="inline-flex h-8 items-center card px-3 text-sm no-underline hover:border-accent hover:text-accent"
             >
               源代码
             </a>
@@ -119,14 +119,14 @@ useHead(() => ({
               :href="project.demoUrl"
               target="_blank"
               rel="noopener noreferrer nofollow"
-              class="inline-flex h-8 items-center rounded-md border border-border-default px-3 text-sm no-underline hover:border-accent hover:text-accent"
+              class="inline-flex h-8 items-center card px-3 text-sm no-underline hover:border-accent hover:text-accent"
             >
               在线体验
             </a>
             <span
               v-for="link in project.extraLinks"
               :key="link.url"
-              class="inline-flex h-8 items-center rounded-md border border-border-default px-3 text-sm text-fg-muted"
+              class="inline-flex h-8 items-center card px-3 text-sm text-fg-muted"
             >
               {{ link.label }}
             </span>
@@ -140,7 +140,7 @@ useHead(() => ({
         >
 
         <div class="p-5">
-          <div v-if="project.bodyHtml" class="rounded-md border border-border-default bg-canvas-subtle p-4">
+          <div v-if="project.bodyHtml" class="card bg-canvas-subtle p-4">
             <h2 class="text-xs font-semibold text-fg-muted">补充说明</h2>
             <!-- 由服务端渲染并经过白名单过滤，见 server/utils/markdown.ts -->
             <div class="markdown-body mt-2" v-html="project.bodyHtml" />
@@ -153,14 +153,14 @@ useHead(() => ({
               :src="shot"
               alt="项目截图"
               loading="lazy"
-              class="rounded-md border border-border-default"
+              class="card"
             >
           </div>
         </div>
       </article>
 
-      <section v-if="project.relatedPosts.length" class="rounded-md border border-border-default bg-canvas">
-        <div class="flex items-center justify-between border-b border-border-default px-5 py-3">
+      <section v-if="project.relatedPosts.length" class="card">
+        <div class="flex items-center justify-between border-b border-border-muted px-5 py-3.5">
           <h2 class="text-sm font-semibold text-fg-default">相关文章 {{ project.relatedPosts.length }}</h2>
           <NuxtLink to="/blog" class="text-xs no-underline hover:underline">全部文章 →</NuxtLink>
         </div>
@@ -184,7 +184,7 @@ useHead(() => ({
     </div>
 
     <aside class="space-y-4">
-      <section v-if="project.metrics.isAi" class="rounded-md border border-border-default bg-canvas p-4">
+      <section v-if="project.metrics.isAi" class="card p-4">
         <div class="flex items-center justify-between">
           <h2 class="text-sm font-semibold text-fg-default">AI 信息</h2>
           <span class="rounded-full bg-accent-subtle px-2 py-0.5 text-[11px] font-medium text-accent">AI 项目</span>
@@ -209,7 +209,7 @@ useHead(() => ({
         </dl>
       </section>
 
-      <section v-if="hasMoneyData(project.metrics)" class="rounded-md border border-border-default bg-canvas p-4">
+      <section v-if="hasMoneyData(project.metrics)" class="card p-4">
         <h2 class="text-sm font-semibold text-fg-default">成本与收益</h2>
 
         <dl class="mt-3 space-y-2 text-xs">
@@ -253,7 +253,7 @@ useHead(() => ({
         </p>
       </section>
 
-      <section class="rounded-md border border-border-default bg-canvas p-4">
+      <section class="card p-4">
         <h2 class="text-sm font-semibold text-fg-default">作者</h2>
         <NuxtLink
           :to="`/u/${project.authorUsername}`"
@@ -270,7 +270,7 @@ useHead(() => ({
         </p>
       </section>
 
-      <section class="rounded-md border border-border-default bg-canvas p-4">
+      <section class="card p-4">
         <h2 class="text-sm font-semibold text-fg-default">技术栈</h2>
         <div class="mt-3 flex flex-wrap gap-1.5">
           <TagChip
@@ -282,7 +282,7 @@ useHead(() => ({
         </div>
       </section>
 
-      <section class="rounded-md border border-border-default bg-canvas p-4">
+      <section class="card p-4">
         <div class="flex items-center justify-between text-sm">
           <AppStat icon="eye" :value="project.viewCount" label="浏览" />
           <AppStat icon="heart" :value="likeCount" label="点赞" />

@@ -105,12 +105,12 @@ async function submit() {
             required
             autocomplete="email"
             placeholder="you@example.com"
-            class="h-8 flex-1 rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+            class="h-8 flex-1 card px-3 text-sm focus:border-accent focus:outline-none"
           >
           <button
             type="button"
             :disabled="sending || countdown > 0"
-            class="h-8 whitespace-nowrap rounded-md border border-border-default px-3 text-sm hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+            class="h-8 whitespace-nowrap card px-3 text-sm hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
             @click="sendCode"
           >
             {{ countdown > 0 ? `${countdown} 秒后重发` : (sending ? '发送中…' : '获取验证码') }}
@@ -125,7 +125,7 @@ async function submit() {
           inputmode="numeric"
           maxlength="6"
           placeholder="6 位数字"
-          class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 font-mono tracking-widest focus:border-accent focus:outline-none"
+          class="h-8 w-full card px-3 font-mono tracking-widest focus:border-accent focus:outline-none"
         >
       </FormField>
 
@@ -134,7 +134,7 @@ async function submit() {
           v-model="form.username"
           required
           autocomplete="username"
-          class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+          class="h-8 w-full card px-3 text-sm focus:border-accent focus:outline-none"
         >
       </FormField>
 
@@ -142,7 +142,7 @@ async function submit() {
         <input
           v-model="form.nickname"
           required
-          class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+          class="h-8 w-full card px-3 text-sm focus:border-accent focus:outline-none"
         >
       </FormField>
 
@@ -152,7 +152,7 @@ async function submit() {
           type="password"
           required
           autocomplete="new-password"
-          class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+          class="h-8 w-full card px-3 text-sm focus:border-accent focus:outline-none"
         >
       </FormField>
 

@@ -80,7 +80,7 @@ useHead(() => ({
 
 <template>
   <div class="mx-auto max-w-[760px]">
-    <article class="rounded-md border border-border-default bg-canvas">
+    <article class="card">
       <header class="border-b border-border-default p-6">
         <h1 class="text-2xl font-semibold text-fg-default">{{ post.title }}</h1>
         <p class="mt-2 text-sm leading-6 text-fg-muted">{{ post.summary }}</p>
@@ -123,7 +123,7 @@ useHead(() => ({
       <div class="markdown-body p-6" v-html="post.bodyHtml" />
     </article>
 
-    <section class="mt-4 flex flex-wrap items-center gap-3 rounded-md border border-border-default bg-canvas px-5 py-3">
+    <section class="mt-4 flex flex-wrap items-center gap-3 card px-5 py-3">
       <button
         type="button"
         :disabled="liking"
@@ -152,7 +152,7 @@ useHead(() => ({
       <CommentSection target-type="post" :target-id="post.id" />
     </div>
 
-    <section v-if="post.projects.length" class="mt-4 rounded-md border border-border-default bg-canvas p-5">
+    <section v-if="post.projects.length" class="mt-4 card p-5">
       <h2 class="text-sm font-semibold text-fg-default">涉及的项目</h2>
       <ul class="mt-3 space-y-2">
         <li v-for="project in post.projects" :key="project.slug">

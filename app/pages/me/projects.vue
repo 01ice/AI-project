@@ -58,7 +58,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="mx-auto max-w-[900px]">
+  <div class="w-full">
     <header class="mb-4 flex flex-wrap items-center gap-3">
       <h1 class="text-xl font-semibold text-fg-default">我的项目</h1>
       <NuxtLink
@@ -90,7 +90,7 @@ onMounted(async () => {
       <li
         v-for="project in data.items"
         :key="project.id"
-        class="flex gap-3 rounded-md border border-border-default bg-canvas p-3"
+        class="flex gap-3 card p-3"
       >
         <img
           :src="project.coverUrl"

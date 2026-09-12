@@ -79,8 +79,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <header class="border-b border-border-default bg-canvas-subtle">
-    <div class="mx-auto flex h-14 max-w-[1280px] items-center gap-4 px-4">
+  <header class="border-b border-border-default bg-canvas">
+    <div class="container-page flex h-14 items-center gap-4">
       <NuxtLink to="/" class="flex items-center gap-2 no-underline">
         <img src="/logo-mark.svg" alt="栈桥" width="28" height="28" class="h-7 w-7 rounded-md">
         <span class="text-base font-semibold text-fg-default">栈桥</span>
@@ -113,7 +113,7 @@ onMounted(() => {
           v-model="keyword"
           type="search"
           placeholder="搜索项目…"
-          class="h-8 w-full rounded-md border border-border-default bg-canvas px-3 text-sm text-fg-default placeholder:text-fg-subtle focus:border-accent focus:outline-none"
+          class="h-8 w-full card px-3 text-sm text-fg-default placeholder:text-fg-subtle focus:border-accent focus:outline-none"
         >
       </form>
 
@@ -149,13 +149,13 @@ onMounted(() => {
 
         <NuxtLink
           to="/blog/new"
-          class="mr-1 hidden h-8 items-center rounded-md border border-border-default px-3 text-sm font-medium text-fg-default no-underline hover:border-accent hover:text-accent sm:inline-flex"
+          class="mr-1 hidden h-8 items-center card px-3 text-sm font-medium text-fg-default no-underline hover:border-accent hover:text-accent sm:inline-flex"
         >
           写文章
         </NuxtLink>
         <NuxtLink
           to="/projects/new"
-          class="mr-1 hidden h-8 items-center rounded-md border border-border-default px-3 text-sm font-medium text-fg-default no-underline hover:border-accent hover:text-accent sm:inline-flex"
+          class="mr-1 hidden h-8 items-center card px-3 text-sm font-medium text-fg-default no-underline hover:border-accent hover:text-accent sm:inline-flex"
         >
           发布项目
         </NuxtLink>
@@ -177,7 +177,7 @@ onMounted(() => {
           <!-- 用 fixed 定位避开页头的层叠与裁切，右侧对齐头像按钮 -->
           <div
             v-if="menuOpen"
-            class="fixed z-50 w-48 overflow-hidden rounded-md border border-border-default bg-canvas py-1 shadow-lg"
+            class="fixed z-50 w-48 overflow-hidden card py-1 shadow-lg"
             :style="{ top: menuStyle.top, right: menuStyle.right }"
           >
             <div class="border-b border-border-muted px-3 py-2">
@@ -217,7 +217,7 @@ onMounted(() => {
           v-model="keyword"
           type="search"
           placeholder="搜索项目、文章…"
-          class="h-9 w-full rounded-md border border-border-default bg-canvas px-3 text-sm focus:border-accent focus:outline-none"
+          class="h-9 w-full card px-3 text-sm focus:border-accent focus:outline-none"
         >
       </form>
       <nav class="grid grid-cols-2 gap-1">
@@ -233,13 +233,13 @@ onMounted(() => {
       <div v-if="user" class="mt-3 flex flex-wrap gap-2 border-t border-border-muted pt-3">
         <NuxtLink
           to="/projects/new"
-          class="inline-flex h-8 items-center rounded-md border border-border-default px-3 text-sm no-underline"
+          class="inline-flex h-8 items-center card px-3 text-sm no-underline"
         >
           发布项目
         </NuxtLink>
         <NuxtLink
           to="/blog/new"
-          class="inline-flex h-8 items-center rounded-md border border-border-default px-3 text-sm no-underline"
+          class="inline-flex h-8 items-center card px-3 text-sm no-underline"
         >
           写文章
         </NuxtLink>

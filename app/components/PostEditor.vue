@@ -435,7 +435,7 @@ function openPublish() {
       <div class="ml-auto flex items-center gap-2">
         <button
           type="button"
-          class="h-8 rounded-md border border-border-default px-3 text-xs hover:border-accent hover:text-accent"
+          class="h-8 card px-3 text-xs hover:border-accent hover:text-accent"
           @click="save('draft')"
         >
           保存草稿
@@ -452,7 +452,7 @@ function openPublish() {
 
     <div v-if="publishOpen" class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4 sm:p-8">
       <div class="w-full max-w-[720px] rounded-lg border border-border-default bg-canvas">
-        <header class="flex items-center justify-between border-b border-border-default px-5 py-3">
+        <header class="flex items-center justify-between border-b border-border-muted px-5 py-3.5">
           <h2 class="text-base font-semibold text-fg-default">发布文章</h2>
           <button type="button" class="text-lg text-fg-muted hover:text-fg-default" @click="publishOpen = false">×</button>
         </header>
@@ -483,14 +483,14 @@ function openPublish() {
                 v-model="newTag"
                 placeholder="+ 添加文章标签"
                 maxlength="16"
-                class="h-8 w-40 rounded border border-border-default px-2 text-sm focus:border-accent focus:outline-none"
+                class="h-8 w-40 rounded-control border border-border-default px-2 text-sm focus:border-accent focus:outline-none"
                 @keydown.enter.prevent="addCustomTag"
               >
               <button
                 v-for="tag in tagSuggestions.slice(0, 8)"
                 :key="tag.id"
                 type="button"
-                class="rounded border border-border-default bg-canvas-subtle px-2 py-0.5 text-xs text-fg-muted hover:border-accent hover:text-accent"
+                class="rounded-control border border-border-default bg-canvas-subtle px-2 py-0.5 text-xs text-fg-muted hover:border-accent hover:text-accent"
                 @click="toggleTag(tag.name)"
               >
                 {{ tag.name }}
@@ -515,12 +515,12 @@ function openPublish() {
               rows="3"
               maxlength="300"
               placeholder="会显示在博客列表与搜索结果里"
-              class="w-full rounded border border-border-default px-3 py-2 text-sm focus:border-accent focus:outline-none"
+              class="w-full rounded-control border border-border-default px-3 py-2 text-sm focus:border-accent focus:outline-none"
             />
             <div class="mt-1 flex items-center gap-3">
               <button
                 type="button"
-                class="rounded border border-border-default px-2 py-1 text-xs hover:border-accent hover:text-accent"
+                class="rounded-control border border-border-default px-2 py-1 text-xs hover:border-accent hover:text-accent"
                 @click="generateSummary"
               >
                 从正文提取摘要
@@ -537,7 +537,7 @@ function openPublish() {
             <input
               v-model="projectKeyword"
               placeholder="搜索项目名"
-              class="h-8 w-full rounded border border-border-default px-2 text-sm focus:border-accent focus:outline-none"
+              class="h-8 w-full rounded-control border border-border-default px-2 text-sm focus:border-accent focus:outline-none"
             >
             <div class="mt-2 max-h-44 overflow-y-auto rounded border border-border-muted p-2">
               <label
@@ -566,13 +566,13 @@ function openPublish() {
               <input
                 v-model="form.slug"
                 placeholder="留空自动生成，例如 my-article"
-                class="h-8 w-full rounded border border-border-default px-2 font-mono text-sm focus:border-accent focus:outline-none"
+                class="h-8 w-full rounded-control border border-border-default px-2 font-mono text-sm focus:border-accent focus:outline-none"
               >
               <p class="mt-1 text-xs text-fg-subtle">文章地址：/blog/{{ form.slug || '（自动生成）' }}</p>
             </div>
           </div>
 
-          <p class="rounded-md border border-border-default bg-canvas-subtle px-3 py-2 text-xs text-fg-muted">
+          <p class="card bg-canvas-subtle px-3 py-2 text-xs text-fg-muted">
             {{ user?.role === 'admin' ? '管理员发布后立即上线。' : '发布后进入审核队列，通过后出现在博客里。' }}
             也可以先「保存草稿」继续写。
           </p>
@@ -581,7 +581,7 @@ function openPublish() {
         <footer class="flex items-center justify-end gap-2 border-t border-border-default px-5 py-3">
           <button
             type="button"
-            class="h-8 rounded-md border border-border-default px-4 text-sm hover:border-accent hover:text-accent"
+            class="h-8 card px-4 text-sm hover:border-accent hover:text-accent"
             @click="publishOpen = false"
           >
             取消

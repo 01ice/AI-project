@@ -4,6 +4,18 @@
 
 需求与规划见 [spec.md](./spec.md)。
 
+## 界面设计规范（SaaS 后台风格）
+
+设计令牌集中在 `app/assets/css/main.css`，改一处全站生效：
+
+- 颜色：浅灰页面底 `#f4f5f7`、白色卡片、蓝色主题 `#2563eb`、统一边框 `#e4e7ec`
+- 圆角：统一 12px（通过覆盖 `--radius-md` / `--radius-lg`，历史代码里的 `rounded-md` 自动统一）
+- 阴影：`shadow-card`（轻微）/ `shadow-card-hover`（悬停）/ `shadow-pop`（弹层）
+- 布局：`.container-page` 主内容区固定 max-width 1120px
+- 组件类：`.card` `.card-header` `.card-body` `.btn` `.btn-primary` `.btn-secondary` `.btn-ghost`
+  `.input` `.textarea` `.chip` `.badge` `.stat-card` `.section-title`
+- 响应式：功能卡片网格为「桌面三列 / 平板两列 / 手机单列」（`grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`）
+
 ## 技术栈
 
 | 层次 | 选型 |

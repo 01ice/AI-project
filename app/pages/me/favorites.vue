@@ -41,7 +41,7 @@ async function remove(projectId: string) {
 </script>
 
 <template>
-  <div class="mx-auto max-w-[900px]">
+  <div class="w-full">
     <header class="mb-4 flex flex-wrap items-center gap-3">
       <h1 class="text-xl font-semibold text-fg-default">我的收藏</h1>
       <NuxtLink to="/me" class="ml-auto text-sm text-fg-muted no-underline hover:text-accent hover:underline">
@@ -61,7 +61,7 @@ async function remove(projectId: string) {
       <li
         v-for="item in data.items"
         :key="item.projectId"
-        class="flex gap-3 rounded-md border border-border-default bg-canvas p-3"
+        class="flex gap-3 card p-3"
       >
         <NuxtLink :to="`/projects/${item.slug}`" class="shrink-0">
           <img
