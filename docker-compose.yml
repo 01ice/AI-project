@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-zhanqiao}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?请在 .env 里设置 POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-zhanqiao}
+    # 2 核 2G 的小机器，限制 PostgreSQL 的内存占用
+    command: >
+      postgres
+      -c shared_buffers=256MB
+      -c max_connections=50
+      -c work_mem=8MB
+      -c effective_cache_size=768MB
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-zhanqiao} -d ${POSTGRES_DB:-zhanqiao}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      NUXT_DATABASE_URL: postgres://${POSTGRES_USER:-zhanqiao}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-zhanqiao}
+      # 启动时自动应用数据库迁移
+      NUXT_AUTO_MIGRATE: "1"
+    ports:
+      # 备案前用 http://服务器IP:8080 访问；有域名并备案后可改成 80/443
+      - "8080:3000"
+    volumes:
+      # 上传的图片放在数据卷里，重新构建镜像不会丢
+      - uploads:/app/public/uploads
+
+volumes:
+  pgdata:
+  uploads:

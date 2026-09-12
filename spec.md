@@ -490,6 +490,16 @@ posts            (博客来自 Git；frontmatter: 标题, slug, 摘要, 分类, 
 - 页面：项目详情与文章详情接入评论组件与点赞按钮，管理端统计增加待处理举报数
 - 已实测 16 项接口检查 + 页面渲染检查通过
 
+**D8 准备完成（部署方案）**
+
+- 服务器系统选定：Ubuntu 24.04 LTS + Docker 29（控制台容器镜像重装，容器配置留空）
+- `Dockerfile`：Node 22 Alpine 两阶段构建，运行阶段只保留 `.output` + `drizzle` + `content`，非 root 用户运行
+- `docker-compose.yml`：app + PostgreSQL 16，含健康检查、`pgdata` 与 `uploads` 数据卷，
+  针对 2 核 2G 调低了 PostgreSQL 内存参数；`NUXT_AUTO_MIGRATE=1` 让首次启动自动迁移
+- `.env.production.example` 与 `scripts/package-for-server.ps1`（本地打包上传）
+- `deploy/DEPLOY.md`：从重装系统、加 swap、放行安全组、上传代码、配置环境变量、启动验证，
+  到日常运维命令、数据库备份、域名备案与图片转 COS 的完整手册
+
 ## 11. 待确认问题清单
 
 ### Round 1 —— 已完成

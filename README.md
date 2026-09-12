@@ -225,10 +225,17 @@ npm run db:seed -- --force
 
 ## 部署计划（本地确认后执行）
 
-1. 准备 CVM：2 核 2G / 4Mbps，建议重装 Ubuntu 22.04（CentOS 7.6 已 EOL，且 glibc 2.17 跑不了 Node 20+ 的官方二进制）
-2. Docker Compose 运行应用与 PostgreSQL，加 2GB swap；图片走 COS，避免占用 4Mbps 带宽
-3. 宿主机 Nginx 反代 `127.0.0.1:3000`，备案前先用高位端口对外访问
-4. 后续买域名 → ICP 备案 → 配置 HTTPS 正式上线
+部署已经准备好一套 Docker 化方案，完整步骤见 [deploy/DEPLOY.md](./deploy/DEPLOY.md)。
+
+核心文件：
+
+- `Dockerfile`：两阶段构建（Node 22 Alpine），运行时只带 `.output`、`drizzle` 迁移与 `content` 文章
+- `docker-compose.yml`：app + PostgreSQL 16，带健康检查、数据卷与内存参数（针对 2G 内存调过）
+- `.env.production.example`：服务器环境变量模板
+- `scripts/package-for-server.ps1`：本地一键打包上传到服务器（排除依赖、本地数据与 `.env`）
+
+要点：备案前用 `http://服务器IP:8080` 访问；首次启动自动跑迁移；图片暂存数据卷，
+正式对外前按 `deploy/DEPLOY.md` 第 8 节改到 COS。
 
 ## 注意事项
 

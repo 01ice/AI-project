@@ -1,0 +1,16 @@
+node_modules
+.nuxt
+.output
+.data
+.git
+.github
+.env
+.env.*
+!.env.example
+public/uploads
+*.log
+README.md
+CONTRIBUTING.md
+spec.md
+.vscode
+.idea
