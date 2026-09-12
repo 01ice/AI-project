@@ -6,7 +6,7 @@ const props = withDefaults(defineProps<{
   aspect?: string
 }>(), {
   label: '上传图片',
-  hint: '支持 JPG / PNG / WebP / GIF，单张不超过 5MB',
+  hint: '支持 JPG / PNG / WebP / GIF，单张不超过 5MB；也可以把图片拖进来',
   aspect: 'aspect-video',
 })
 
@@ -20,6 +20,11 @@ async function onFile(event: Event) {
   const file = input.files?.[0]
   if (!file) return
 
+  await upload(file)
+  input.value = ''
+}
+
+async function upload(file: File) {
   uploading.value = true
   error.value = ''
 
@@ -34,8 +39,19 @@ async function onFile(event: Event) {
   }
   finally {
     uploading.value = false
-    input.value = ''
   }
+}
+
+/** 支持把图片直接拖进上传区域 */
+async function onDrop(event: DragEvent) {
+  const file = event.dataTransfer?.files?.[0]
+  if (!file || !file.type.startsWith('image/')) return
+  event.preventDefault()
+  await upload(file)
+}
+
+function onDragOver(event: DragEvent) {
+  event.preventDefault()
 }
 
 function clear() {
@@ -48,6 +64,8 @@ function clear() {
     <div
       class="relative flex items-center justify-center overflow-hidden rounded-md border border-dashed border-border-default bg-canvas-subtle"
       :class="aspect"
+      @drop="onDrop"
+      @dragover="onDragOver"
     >
       <img v-if="modelValue" :src="modelValue" alt="" class="h-full w-full object-cover">
       <div v-else class="px-4 py-6 text-center text-xs text-fg-muted">

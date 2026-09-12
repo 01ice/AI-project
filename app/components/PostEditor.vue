@@ -132,25 +132,67 @@ function updateCursor() {
   cursor.column = (lines[lines.length - 1] ?? '').length + 1
 }
 
-async function onPickImage(event: Event) {
-  const input = event.target as HTMLInputElement
-  const file = input.files?.[0]
-  if (!file) return
-
+/** 上传单张图片并插入 Markdown，供文件选择、粘贴、拖拽三种入口共用 */
+async function uploadImageFile(file: File): Promise<void> {
   uploading.value = true
   error.value = ''
   try {
     const data = new FormData()
     data.append('file', file)
     const res = await $fetch<{ url: string }>('/api/upload', { method: 'POST', body: data })
-    insertBlock(`![${file.name.replace(/\.[^.]+$/, '')}](${res.url})`)
+    const alt = file.name.replace(/\.[^.]+$/, '') || '图片'
+    insertBlock(`![${alt}](${res.url})`)
   }
   catch (err) {
     error.value = authErrorMessage(err)
   }
   finally {
     uploading.value = false
-    input.value = ''
+  }
+}
+
+async function onPickImage(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+
+  await uploadImageFile(file)
+  input.value = ''
+}
+
+/** 支持 Ctrl/⌘+V 直接粘贴截图 */
+async function onPaste(event: ClipboardEvent) {
+  const items = event.clipboardData?.items
+  if (!items?.length) return
+
+  const files: File[] = []
+  for (const item of items) {
+    if (item.kind === 'file' && item.type.startsWith('image/')) {
+      const file = item.getAsFile()
+      if (file) files.push(file)
+    }
+  }
+
+  // 没有图片就放行，正常粘贴文字
+  if (!files.length) return
+
+  event.preventDefault()
+  for (const file of files) {
+    await uploadImageFile(file)
+  }
+}
+
+/** 也支持把图片文件直接拖进编辑器 */
+async function onDrop(event: DragEvent) {
+  const list = event.dataTransfer?.files
+  if (!list?.length) return
+
+  const images = [...list].filter(file => file.type.startsWith('image/'))
+  if (!images.length) return
+
+  event.preventDefault()
+  for (const file of images) {
+    await uploadImageFile(file)
   }
 }
 
@@ -398,7 +440,9 @@ function openPublish() {
         <button type="button" title="分割线" class="editor-tool" @click="insertBlock('---')">分割线</button>
       </div>
 
-      <span class="ml-auto hidden text-xs text-fg-subtle sm:inline">Ctrl/⌘ + S 存草稿</span>
+      <span class="ml-auto hidden text-xs text-fg-subtle sm:inline">
+        支持 Ctrl/⌘+V 粘贴图片 · Ctrl/⌘+S 存草稿
+      </span>
 
       <input ref="imageInputRef" type="file" accept="image/*" class="hidden" @change="onPickImage">
     </div>
@@ -413,6 +457,9 @@ function openPublish() {
         @click="updateCursor"
         @keyup="updateCursor"
         @keydown="onKeydown"
+        @paste="onPaste"
+        @drop="onDrop"
+        @dragover.prevent
       />
 
       <div
