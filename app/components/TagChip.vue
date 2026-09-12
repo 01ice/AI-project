@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { RouteLocationRaw } from 'vue-router'
+
 withDefaults(defineProps<{
   label: string
-  to?: string
+  to?: RouteLocationRaw | string
   active?: boolean
 }>(), {
   to: '',

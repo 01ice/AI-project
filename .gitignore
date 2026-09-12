@@ -9,6 +9,9 @@ dist/
 # 本地数据库（PGlite 数据目录）
 .data/
 
+# 本地上传的图片（部署时会改由 COS 托管）
+public/uploads/
+
 # 环境变量（含密钥，禁止提交）
 .env
 .env.*

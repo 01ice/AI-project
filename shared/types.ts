@@ -10,6 +10,84 @@ export interface SessionUser {
   role: 'user' | 'admin'
 }
 
+export type ProjectStatus = 'draft' | 'pending' | 'published' | 'rejected' | 'offline'
+
+export type TagGroup = 'stack' | 'ai_model' | 'ai_tech' | 'ai_domain'
+
+export interface ProjectFormPayload {
+  title: string
+  summary: string
+  body: string
+  coverUrl: string
+  screenshots: string[]
+  categoryId: string
+  repoUrl: string
+  demoUrl: string
+  extraLinks: { label: string, url: string }[]
+  tagIds: string[]
+  newTags: { name: string, group: TagGroup }[]
+  isAi: boolean
+  aiModels: string[]
+  aiHosting: AiHosting | null
+  monthlyCostCny: number | null
+  monthlyRevenueCny: number | null
+  totalRevenueCny: number | null
+  revenueModel: RevenueModel | null
+  costNote: string
+  revenueNote: string
+}
+
+export interface ProjectTagRef {
+  name: string
+  slug: string
+}
+
+export interface ManagedProject {
+  id: string
+  slug: string
+  status: ProjectStatus
+  moderationNote: string | null
+  title: string
+  summary: string
+  body: string
+  coverUrl: string
+  screenshots: string[]
+  categoryId: string | null
+  repoUrl: string | null
+  demoUrl: string | null
+  extraLinks: { label: string, url: string }[]
+  isAi: boolean
+  aiModels: string[]
+  aiHosting: AiHosting | null
+  monthlyCostCny: number | null
+  monthlyRevenueCny: number | null
+  totalRevenueCny: number | null
+  revenueModel: RevenueModel | null
+  costNote: string | null
+  revenueNote: string | null
+  tags: ProjectTagRef[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface MyProjectItem {
+  id: string
+  slug: string
+  title: string
+  summary: string
+  coverUrl: string
+  status: ProjectStatus
+  categoryName: string | null
+  moderationNote: string | null
+  tags: ProjectTagRef[]
+  viewCount: number
+  likeCount: number
+  favoriteCount: number
+  commentCount: number
+  publishedAt: string | null
+  updatedAt: string
+}
+
 export type RevenueModel =
   | 'free'
   | 'freemium'

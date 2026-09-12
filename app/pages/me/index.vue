@@ -83,10 +83,13 @@ async function logout() {
     </section>
 
     <section class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-      <div class="rounded-md border border-border-default bg-canvas p-4">
-        <h2 class="text-sm font-semibold text-fg-default">我的项目</h2>
-        <p class="mt-1 text-xs text-fg-muted">发布功能将在 D4 上线</p>
-      </div>
+      <NuxtLink
+        to="/me/projects"
+        class="rounded-md border border-border-default bg-canvas p-4 no-underline hover:border-accent"
+      >
+        <h2 class="text-sm font-semibold text-fg-default">我的项目 →</h2>
+        <p class="mt-1 text-xs text-fg-muted">查看与编辑已发布、待审核和草稿</p>
+      </NuxtLink>
       <div class="rounded-md border border-border-default bg-canvas p-4">
         <h2 class="text-sm font-semibold text-fg-default">我的收藏</h2>
         <p class="mt-1 text-xs text-fg-muted">收藏功能将在 D6 上线</p>

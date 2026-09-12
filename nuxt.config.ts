@@ -28,6 +28,12 @@ export default defineNuxtConfig({
     smtpUser: '',
     smtpPass: '',
     deepseekApiKey: '',
+    cosSecretId: '',
+    cosSecretKey: '',
+    cosBucket: '',
+    cosRegion: 'ap-beijing',
+    cosPublicBaseUrl: '',
+    uploadDir: '',
     public: {
       siteUrl: 'http://localhost:3000',
     },

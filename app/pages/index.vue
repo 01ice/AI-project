@@ -53,14 +53,12 @@ useHead({
         >
           只看 AI 项目
         </NuxtLink>
-        <button
-          type="button"
-          disabled
-          title="发布功能将在 D4 上线"
-          class="inline-flex h-8 cursor-not-allowed items-center rounded-md border border-border-default bg-canvas px-4 text-sm font-medium text-fg-default opacity-50"
+        <NuxtLink
+          to="/projects/new"
+          class="inline-flex h-8 items-center rounded-md border border-border-default bg-canvas px-4 text-sm font-medium text-fg-default no-underline hover:border-accent hover:text-accent"
         >
           发布我的项目
-        </button>
+        </NuxtLink>
       </div>
     </section>
 
