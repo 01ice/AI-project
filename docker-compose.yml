@@ -37,7 +37,8 @@ services:
       - "8080:3000"
     volumes:
       # 上传的图片放在数据卷里，重新构建镜像不会丢
-      - uploads:/app/public/uploads
+      # 路径必须在 .output 之外：运行时写入的文件不在构建产物里
+      - uploads:/app/.data/uploads
 
 volumes:
   pgdata:

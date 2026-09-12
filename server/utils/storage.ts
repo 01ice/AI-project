@@ -133,7 +133,10 @@ export async function saveUpload(data: Buffer, mimeType: string): Promise<SavedF
   }
 
   const config = useRuntimeConfig()
-  const baseDir = String(config.uploadDir || '') || path.join(process.cwd(), 'public', 'uploads')
+  // 不能用 public/uploads：生产环境只对外提供构建产物 .output/public 里的文件，
+  // 运行时写进去的图片不会被服务（这正是图片打不开的原因）。
+  // 上传目录放在构建产物之外，由 server/routes/uploads/[...path].ts 读取。
+  const baseDir = String(config.uploadDir || '') || path.join(process.cwd(), '.data', 'uploads')
   const targetDir = path.join(baseDir, relativeDir)
 
   await mkdir(targetDir, { recursive: true })
