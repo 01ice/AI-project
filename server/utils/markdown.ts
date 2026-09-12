@@ -3,7 +3,9 @@ import sanitizeHtml from 'sanitize-html'
 
 marked.setOptions({
   gfm: true,
-  breaks: false,
+  // 单个换行也渲染成 <br>：中文写作里习惯「按一次回车就换行」，
+  // 严格模式（需要空行或行尾两个空格）会让作者以为换行失效
+  breaks: true,
 })
 
 /**

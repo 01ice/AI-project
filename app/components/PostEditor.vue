@@ -163,23 +163,51 @@ async function onPickImage(event: Event) {
 /** 支持 Ctrl/⌘+V 直接粘贴截图 */
 async function onPaste(event: ClipboardEvent) {
   const items = event.clipboardData?.items
-  if (!items?.length) return
-
   const files: File[] = []
-  for (const item of items) {
-    if (item.kind === 'file' && item.type.startsWith('image/')) {
-      const file = item.getAsFile()
-      if (file) files.push(file)
+
+  if (items?.length) {
+    for (const item of items) {
+      if (item.kind === 'file' && item.type.startsWith('image/')) {
+        const file = item.getAsFile()
+        if (file) files.push(file)
+      }
     }
   }
 
-  // 没有图片就放行，正常粘贴文字
-  if (!files.length) return
+  if (files.length) {
+    event.preventDefault()
+    for (const file of files) {
+      await uploadImageFile(file)
+    }
+    return
+  }
+
+  // 粘贴的是一段纯链接时，转成 Markdown 链接
+  const text = event.clipboardData?.getData('text/plain')?.trim() ?? ''
+  if (!/^https?:\/\/\S+$/i.test(text)) return
 
   event.preventDefault()
-  for (const file of files) {
-    await uploadImageFile(file)
-  }
+  insertLink(text)
+}
+
+/** 选中文字时生成 [文字](链接)，否则插入 [](链接) 并把光标放进方括号 */
+function insertLink(url: string) {
+  const el = textareaRef.value
+  if (!el) return
+
+  const start = el.selectionStart
+  const end = el.selectionEnd
+  const selected = form.body.slice(start, end)
+  const snippet = selected ? `[${selected}](${url})` : `[](${url})`
+
+  form.body = form.body.slice(0, start) + snippet + form.body.slice(end)
+
+  nextTick(() => {
+    el.focus()
+    const caret = selected ? start + snippet.length : start + 1
+    el.setSelectionRange(caret, caret)
+    updateCursor()
+  })
 }
 
 /** 也支持把图片文件直接拖进编辑器 */
@@ -215,6 +243,21 @@ async function refreshPreview() {
 
 watch(mode, (value) => {
   if (value !== 'edit') refreshPreview()
+})
+
+// 实时预览：正文变化后 400ms 刷新一次，无需等待自动保存
+let previewTimer: ReturnType<typeof setTimeout> | null = null
+
+watch(() => form.body, () => {
+  if (mode.value === 'edit') return
+  if (previewTimer) clearTimeout(previewTimer)
+  previewTimer = setTimeout(() => {
+    refreshPreview()
+  }, 400)
+})
+
+onUnmounted(() => {
+  if (previewTimer) clearTimeout(previewTimer)
 })
 
 async function save(status: 'draft' | 'pending') {
