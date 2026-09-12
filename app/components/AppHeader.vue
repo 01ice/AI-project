@@ -5,6 +5,8 @@ const user = useAuthUser()
 const unread = useUnreadNotifications()
 const menuOpen = ref(false)
 const menuRef = ref<HTMLElement | null>(null)
+const menuButtonRef = ref<HTMLElement | null>(null)
+const menuStyle = ref<{ top: string, right: string }>({ top: '52px', right: '16px' })
 
 const navItems = [
   { label: '项目', to: '/projects' },
@@ -34,6 +36,23 @@ function onDocumentClick(event: MouseEvent) {
   }
 }
 
+/** 菜单贴着头像按钮定位：位置按按钮的实际位置算，窗口再窄也不会跑偏或被页头裁切 */
+function toggleMenu() {
+  if (menuOpen.value) {
+    menuOpen.value = false
+    return
+  }
+
+  const rect = menuButtonRef.value?.getBoundingClientRect()
+  if (rect) {
+    menuStyle.value = {
+      top: `${Math.round(rect.bottom + 8)}px`,
+      right: `${Math.max(8, Math.round(window.innerWidth - rect.right))}px`,
+    }
+  }
+  menuOpen.value = true
+}
+
 function onKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape') menuOpen.value = false
 }
@@ -50,6 +69,10 @@ onUnmounted(() => {
 
 watch(() => route.fullPath, () => {
   menuOpen.value = false
+})
+
+onMounted(() => {
+  window.addEventListener('resize', () => { menuOpen.value = false })
 })
 </script>
 
@@ -125,10 +148,11 @@ watch(() => route.fullPath, () => {
         </NuxtLink>
         <div ref="menuRef" class="relative">
           <button
+            ref="menuButtonRef"
             type="button"
             class="flex h-8 items-center gap-2 rounded-md px-2 text-sm text-fg-default hover:bg-border-muted/40"
             :class="menuOpen ? 'bg-border-muted/40' : ''"
-            @click="menuOpen = !menuOpen"
+            @click="toggleMenu"
           >
             <AppAvatar :name="user.nickname" :username="user.username" :size="20" :image-url="user.avatarUrl" />
             <span class="hidden max-w-24 truncate sm:inline">{{ user.nickname }}</span>
@@ -140,7 +164,8 @@ watch(() => route.fullPath, () => {
           <!-- 用 fixed 定位避开页头的层叠与裁切，右侧对齐头像按钮 -->
           <div
             v-if="menuOpen"
-            class="fixed right-4 top-[52px] z-50 w-48 overflow-hidden rounded-md border border-border-default bg-canvas py-1 shadow-lg"
+            class="fixed z-50 w-48 overflow-hidden rounded-md border border-border-default bg-canvas py-1 shadow-lg"
+            :style="{ top: menuStyle.top, right: menuStyle.right }"
           >
             <div class="border-b border-border-muted px-3 py-2">
               <p class="truncate text-sm font-medium text-fg-default">{{ user.nickname }}</p>
