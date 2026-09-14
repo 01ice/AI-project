@@ -1,0 +1,17 @@
+# 微信开发者工具
+project.private.config.json
+.DS_Store
+Thumbs.db
+
+# 依赖（本项目无 npm 依赖，留作兜底）
+node_modules/
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+
+# 开发期渲染自查产物（体积大，可本地重新生成）
+tools/preview*.html
+tools/shot-*.png
+tools/*-report.txt

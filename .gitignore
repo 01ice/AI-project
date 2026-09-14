@@ -1,17 +1,52 @@
-# 微信开发者工具
-project.private.config.json
-.DS_Store
-Thumbs.db
+# ===== 通用忽略（适用于所有子项目）=====
 
-# 依赖（本项目无 npm 依赖，留作兜底）
+# 依赖
 node_modules/
+venv/
+.venv/
+__pycache__/
+*.pyc
 
-# 编辑器
+# 构建产物
+dist/
+build/
+*.min.js
+*.min.css
+
+# 编辑器与系统
 .vscode/
 .idea/
 *.swp
+.DS_Store
+Thumbs.db
 
-# 开发期渲染自查产物（体积大，可本地重新生成）
-tools/preview*.html
+# 微信开发者工具私有配置
+project.private.config.json
+
+# 开发期产物（截图、渲染预览、测试报告）
 tools/shot-*.png
+tools/preview*.html
 tools/*-report.txt
+
+# ===== 本工作区专属 =====
+
+# 开发者工具 UserData 备份（体积大，与项目无关）
+.backup-*/
+
+# 本地工作区元数据
+.workbuddy/
+.wbapp_*.genie
+
+# 一次性整理脚本
+.restructure.py
+.cleanup.py
+
+# 预览站点与工作区工具（本地辅助，不随项目发布）
+preview-site/
+/tools/
+
+# 结构整理残留
+MovieTickets/MovieTickets/
+
+# 暂未纳入本仓库的其他项目
+LocalLifestyleServices/
