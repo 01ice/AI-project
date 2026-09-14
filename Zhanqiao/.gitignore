@@ -56,20 +56,16 @@ MovieTickets/MovieTickets/
 # 暂未纳入本仓库的其他项目
 LocalLifestyleServices/
 
-# ===== 仓库根目录兜底 =====
-# 各项目的 .env / 本地数据库 / 依赖目录应各自忽略；
-# 这里再兜一层，防止在仓库根误建同名文件时被提交
+# ===== Zhanqiao/（栈桥）专属 =====
 
-# 依赖
-/node_modules/
+# 本地数据库（PGlite 数据目录）
+.data/
 
-# 本地数据库与构建缓存
-/.data/
-/.nuxt/
-/.output/
+# 本地上传的图片（部署时会改由 COS 托管）
+public/uploads/
 
 # 环境变量（含密钥，禁止提交）
-/.env
-/.env.*
-!/.env.example
-!/.env.production.example
+.env
+.env.*
+!.env.example
+!.env.production.example
