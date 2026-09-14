@@ -1,0 +1,131 @@
+<!-- pages/movie/movie.wxml — 首页：城市 / 搜索 / 轮播 / 公告 / 影片列表 -->
+<view class="page">
+
+  <!-- ===== 顶部：城市 + 搜索 ===== -->
+  <view class="topbar">
+    <view class="city" bindtap="goCity">
+      <text class="city-name">{{city}}</text>
+      <text class="city-arrow">▾</text>
+    </view>
+    <view class="search-box" bindtap="goSearch">
+      <text class="search-icon">🔍</text>
+      <text class="search-ph">搜索电影</text>
+    </view>
+  </view>
+
+  <!-- ===== 轮播运营位 ===== -->
+  <swiper
+    class="banner"
+    circular
+    autoplay
+    interval="4000"
+    duration="420"
+    previous-margin="230rpx"
+    next-margin="230rpx"
+    bindchange="onBannerChange"
+  >
+    <swiper-item wx:for="{{banners}}" wx:key="id" data-index="{{index}}" bindtap="onBannerTap">
+      <view
+        class="banner-item {{bannerIndex === index ? 'is-active' : ''}}"
+        style="{{item.posterBg ? 'background:' + item.posterBg : ''}}"
+      >
+        <image wx:if="{{item.poster}}" class="poster-img" src="{{item.poster}}" mode="aspectFill" />
+        <block wx:else>
+          <text class="banner-emoji">{{item.posterEmoji}}</text>
+          <view class="banner-shade"></view>
+          <view class="banner-copy">
+            <text class="banner-t1">{{item.tagline}}</text>
+            <text class="banner-t2">{{item.taglineSub}}</text>
+          </view>
+        </block>
+      </view>
+    </swiper-item>
+  </swiper>
+
+  <!-- ===== 公告（跑马灯） ===== -->
+  <view class="notice">
+    <text class="notice-icon">🔊</text>
+    <view class="notice-track">
+      <view class="notice-marquee">
+        <text class="notice-text">{{notice}}</text>
+        <text class="notice-text">{{notice}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ===== 正在热映 / 即将上映 ===== -->
+  <view class="tabs">
+    <view class="tab {{tab === 'showing' ? 'tab-on' : ''}}" data-tab="showing" bindtap="onTab">
+      <text>正在热映</text>
+      <view class="tab-line" wx:if="{{tab === 'showing'}}"></view>
+    </view>
+    <view class="tab {{tab === 'upcoming' ? 'tab-on' : ''}}" data-tab="upcoming" bindtap="onTab">
+      <text>即将上映</text>
+      <view class="tab-line" wx:if="{{tab === 'upcoming'}}"></view>
+    </view>
+  </view>
+
+  <!-- ===== 影片列表 ===== -->
+  <view class="list">
+    <view
+      class="movie-card"
+      wx:for="{{list}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="goDetail"
+    >
+      <!-- 海报 -->
+      <view class="poster poster-sm" style="{{item.posterBg ? 'background:' + item.posterBg : ''}}">
+        <image wx:if="{{item.poster}}" class="poster-img" src="{{item.poster}}" mode="aspectFill" />
+        <block wx:else>
+          <text class="poster-emoji">{{item.posterEmoji}}</text>
+          <view class="poster-shade"></view>
+          <text class="poster-name">{{item.title}}</text>
+        </block>
+      </view>
+
+      <!-- 文字信息 -->
+      <view class="info">
+        <view class="row-title">
+          <block wx:if="{{item.scoreText}}">
+            <text class="score">{{item.score}}</text>
+            <text class="score-unit">分</text>
+          </block>
+          <text class="title">{{item.title}}</text>
+          <text class="tag {{item.formatClass}}">{{item.formatText}}</text>
+        </view>
+
+        <view class="row-meta">
+          <text class="meta">{{item.durationText}}</text>
+          <text class="meta">{{item.genres}}</text>
+          <text class="meta">{{item.language}}</text>
+        </view>
+
+        <view class="row-credit">
+          <text class="k">导演</text>
+          <text class="v v-dir">{{item.director}}</text>
+          <text class="sep">|</text>
+          <text class="k">主演</text>
+          <text class="v">{{item.actorText}}</text>
+        </view>
+
+        <view class="row-desc" wx:if="{{item.status === 'showing'}}">{{item.synopsis}}</view>
+        <view class="row-want" wx:else>{{item.wantText}}</view>
+      </view>
+
+      <!-- 购票按钮 -->
+      <view class="buy" catchtap="goBuy" data-id="{{item.id}}">
+        <text wx:if="{{item.status === 'showing'}}">购票</text>
+        <text wx:else>想看</text>
+      </view>
+    </view>
+
+    <!-- 空态 -->
+    <view class="mt-empty" wx:if="{{list.length === 0}}">
+      <text class="icon">🎬</text>
+      <text class="tip">暂无影片</text>
+    </view>
+  </view>
+
+  <view class="page-bottom"></view>
+</view>

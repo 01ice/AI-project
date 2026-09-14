@@ -1,0 +1,73 @@
+<!-- pages/profile/profile.wxml — 个人中心 -->
+<view class="page">
+
+  <!-- 红色渐变头图 -->
+  <view class="header"></view>
+
+  <!-- 用户卡片 -->
+  <view class="user-card" bindtap="onUserTap">
+    <view class="avatar">
+      <text class="avatar-icon">{{userInfo ? userInfo.avatarEmoji : '👤'}}</text>
+    </view>
+    <view class="user-main">
+      <view class="user-name">{{userInfo ? userInfo.nickName : '点击登录'}}</view>
+      <view class="user-tag" wx:if="{{userInfo && userInfo.isMember}}">影迷会员</view>
+      <view class="user-tip" wx:else>登录后查看订单与优惠</view>
+    </view>
+    <text class="arrow">›</text>
+  </view>
+
+  <!-- 我的订单 -->
+  <view class="mt-card order-card">
+    <view class="sec-title">
+      <view class="sec-bar"></view>
+      <text class="sec-text">我的订单</text>
+      <view class="sec-more" data-status="all" bindtap="goOrders">全部订单 ›</view>
+    </view>
+
+    <view class="grid">
+      <view
+        class="grid-item"
+        wx:for="{{orderTabs}}"
+        wx:key="key"
+        data-status="{{item.key}}"
+        bindtap="goOrders"
+      >
+        <view class="circle" style="background:{{item.bg}}">
+          <text class="circle-icon">{{item.icon}}</text>
+          <view class="badge" wx:if="{{item.count > 0}}">{{item.count}}</view>
+        </view>
+        <text class="grid-label">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 常用功能 -->
+  <view class="mt-card">
+    <view class="sec-title">
+      <view class="sec-bar"></view>
+      <text class="sec-text">常用功能</text>
+    </view>
+
+    <view class="grid">
+      <view
+        class="grid-item"
+        wx:for="{{tools}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onToolTap"
+      >
+        <view class="circle" style="background:{{item.bg}}">
+          <text class="circle-icon">{{item.icon}}</text>
+        </view>
+        <text class="grid-label">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 退出登录 -->
+  <view class="logout" wx:if="{{userInfo}}" bindtap="onLogout">退出登录</view>
+  <view class="login" wx:else bindtap="onUserTap">立即登录</view>
+
+  <view class="page-bottom"></view>
+</view>

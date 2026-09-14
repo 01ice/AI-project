@@ -1,0 +1,20 @@
+<!-- pages/agreement/agreement.wxml — 隐私协议 -->
+<view class="page">
+  <view class="mt-card">
+    <view class="title">特价电影票用户隐私协议</view>
+    <view class="update">更新日期：2026 年 9 月 1 日　生效日期：2026 年 9 月 1 日</view>
+
+    <view class="para">
+      本协议为演示文本，用于说明本小程序在提供服务过程中如何收集、使用、存储与保护你的个人信息。
+      你使用本小程序即表示已阅读并同意本协议的全部内容。
+    </view>
+
+    <block wx:for="{{sections}}" wx:key="index">
+      <view class="sub-title">{{item.title}}</view>
+      <view class="para" wx:for="{{item.paras}}" wx:for-item="p" wx:key="*this">{{p}}</view>
+    </block>
+
+    <view class="footer">本协议最终解释权归特价电影票所有</view>
+  </view>
+  <view class="page-bottom"></view>
+</view>

@@ -1,0 +1,287 @@
+/* pages/cinema-detail/cinema-detail.wxss — 影院选片 / 场次 */
+.page {
+  min-height: 100vh;
+  background: #F5F5F5;
+  padding-bottom: 40rpx;
+}
+
+/* ---------- 影片海报轮播 ---------- */
+.poster-swiper {
+  height: 400rpx;
+  background: #FFFFFF;
+}
+.poster-slide {
+  position: relative;
+  height: 360rpx;
+  margin: 20rpx 8rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #E8403A;
+  transform: scale(0.94);
+  transition: transform 0.2s;
+}
+.poster-slide.slide-on {
+  transform: scale(1);
+}
+.poster-img {
+  width: 100%;
+  height: 100%;
+}
+.poster-title {
+  position: absolute;
+  top: 20rpx;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1.3;
+  padding: 0 16rpx;
+}
+.poster-emoji {
+  font-size: 96rpx;
+  line-height: 1;
+  margin-top: 40rpx;
+}
+
+/* ---------- 影片信息 ---------- */
+.m-head {
+  background: #FFFFFF;
+  padding: 8rpx 28rpx 20rpx;
+  text-align: center;
+}
+.m-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.m-title {
+  font-size: 38rpx;
+  font-weight: 600;
+  color: #222222;
+  line-height: 1.4;
+}
+.m-score {
+  flex-shrink: 0;
+  margin-left: 14rpx;
+  padding: 2rpx 14rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  background: #FF9A1E;
+  border-radius: 8rpx;
+}
+.m-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10rpx;
+}
+.m-meta {
+  font-size: 25rpx;
+  color: #999999;
+}
+.m-expand {
+  margin-left: 12rpx;
+  font-size: 25rpx;
+  color: #E8403A;
+}
+.m-intro {
+  margin-top: 16rpx;
+  font-size: 25rpx;
+  color: #666666;
+  line-height: 1.6;
+  text-align: left;
+}
+
+/* ---------- 日期条 ---------- */
+.date-bar {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 28rpx 16rpx;
+  background: #FFFFFF;
+}
+.date-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: 44rpx;
+}
+.date-label {
+  font-size: 30rpx;
+  color: #666666;
+  line-height: 1.4;
+}
+.date-item.date-on .date-label {
+  color: #E8403A;
+  font-weight: 600;
+}
+.date-mmdd {
+  margin-top: 2rpx;
+  font-size: 22rpx;
+  color: #E8403A;
+}
+
+/* ---------- 场次概览 ---------- */
+.slot-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28rpx 20rpx;
+  background: #FFFFFF;
+}
+.ss-left {
+  font-size: 25rpx;
+  color: #333333;
+}
+.ss-right {
+  font-size: 23rpx;
+  color: #999999;
+}
+
+/* ---------- 场次列表 ---------- */
+.slot-list {
+  padding: 20rpx 24rpx 0;
+}
+.slot-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding: 26rpx 24rpx 66rpx;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.04);
+}
+.slot-row:active {
+  background: #FAFAFA;
+}
+
+/* 左：时间 / 标签 / 厅名 */
+.sr-left {
+  width: 210rpx;
+  flex-shrink: 0;
+}
+.sr-time {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #222222;
+  line-height: 1.2;
+}
+.sr-tag {
+  margin-top: 8rpx;
+  font-size: 23rpx;
+  color: #888888;
+}
+.sr-hall {
+  margin-top: 6rpx;
+  font-size: 23rpx;
+  color: #AAAAAA;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 中：价格 / 折扣 */
+.sr-mid {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding-right: 20rpx;
+}
+.sr-price {
+  color: #E8403A;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.sr-price .sym {
+  font-size: 24rpx;
+}
+.sr-price .num {
+  font-size: 42rpx;
+}
+.sr-discount {
+  display: flex;
+  align-items: center;
+  margin-top: 8rpx;
+}
+.disc-tag {
+  padding: 2rpx 10rpx;
+  font-size: 21rpx;
+  color: #FFFFFF;
+  background: #FF9A1E;
+  border-radius: 4rpx;
+}
+.disc-origin {
+  margin-left: 10rpx;
+  font-size: 22rpx;
+  color: #AAAAAA;
+  text-decoration: line-through;
+}
+
+/* 右：购票按钮 */
+.sr-right {
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+.buy-btn {
+  min-width: 130rpx;
+  padding: 14rpx 0;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  background: #E8403A;
+  border-radius: 34rpx;
+}
+.buy-btn:active {
+  opacity: 0.85;
+}
+.buy-disabled {
+  color: #FFFFFF;
+  background: #CCCCCC;
+}
+
+/* 底部停售提示（绝对定位到卡片底部） */
+.sr-warn {
+  position: absolute;
+  left: 24rpx;
+  right: 24rpx;
+  bottom: 16rpx;
+  display: flex;
+  align-items: center;
+  padding: 8rpx 16rpx;
+  background: #FDF0E4;
+  border-radius: 8rpx;
+}
+.warn-icon {
+  font-size: 22rpx;
+  margin-right: 8rpx;
+}
+.warn-text {
+  font-size: 21rpx;
+  color: #C8703A;
+  line-height: 1.5;
+}
+
+/* 已停售整行置灰 */
+.row-stopped {
+  opacity: 0.55;
+}
+.row-stopped .sr-price {
+  color: #999999;
+}
+
+.list-bottom {
+  text-align: center;
+  font-size: 24rpx;
+  color: #AAAAAA;
+  padding: 40rpx 0;
+}

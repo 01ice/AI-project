@@ -1,0 +1,219 @@
+/* pages/order-confirm/order-confirm.wxss — 确认订单 */
+.page {
+  min-height: 100vh;
+  background: #F5F5F5;
+  padding-top: 20rpx;
+}
+
+/* 影片行 */
+.movie-row {
+  display: flex;
+  align-items: center;
+  padding-bottom: 24rpx;
+  border-bottom: 1rpx solid #F2F2F2;
+}
+.poster-mid {
+  width: 120rpx;
+  height: 168rpx;
+  flex-shrink: 0;
+}
+.poster-mid .poster-emoji {
+  font-size: 54rpx;
+  transform: none;
+}
+.movie-info {
+  flex: 1;
+  min-width: 0;
+  padding-left: 22rpx;
+}
+.movie-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #222222;
+}
+.movie-meta {
+  margin-top: 10rpx;
+  font-size: 25rpx;
+  color: #888888;
+}
+.movie-format {
+  color: #AAAAAA;
+  font-size: 23rpx;
+}
+.movie-count {
+  flex-shrink: 0;
+  font-size: 26rpx;
+  color: #999999;
+}
+
+/* 信息行 */
+.info-line {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 18rpx;
+}
+.info-line .k {
+  flex-shrink: 0;
+  width: 78rpx;
+  font-size: 25rpx;
+  color: #999999;
+  line-height: 1.6;
+}
+.info-line .v {
+  flex: 1;
+  font-size: 25rpx;
+  color: #444444;
+  line-height: 1.6;
+}
+.seat-text {
+  color: #E8403A;
+  font-weight: 500;
+}
+
+/* 手机号 */
+.phone-row {
+  display: flex;
+  align-items: center;
+  margin-top: 24rpx;
+}
+.phone-label {
+  flex-shrink: 0;
+  width: 110rpx;
+  font-size: 27rpx;
+  color: #333333;
+}
+.phone-input {
+  flex: 1;
+  height: 72rpx;
+  font-size: 28rpx;
+  color: #333333;
+  background: #F7F7F7;
+  border-radius: 10rpx;
+  padding: 0 20rpx;
+}
+.phone-ph {
+  color: #BBBBBB;
+  font-size: 26rpx;
+}
+.phone-tip {
+  margin-top: 16rpx;
+  font-size: 22rpx;
+  color: #AAAAAA;
+  line-height: 1.5;
+}
+
+/* 价格明细 */
+.fee-line {
+  display: flex;
+  align-items: center;
+  margin-top: 22rpx;
+}
+.fee-k {
+  flex: 1;
+  font-size: 26rpx;
+  color: #666666;
+}
+.fee-v {
+  font-size: 26rpx;
+  color: #333333;
+}
+.fee-cut {
+  color: #FF7A33;
+}
+.fee-total {
+  margin-top: 26rpx;
+  padding-top: 22rpx;
+  border-top: 1rpx solid #F2F2F2;
+}
+.fee-total .fee-k {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #222222;
+}
+.fee-total-v {
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #E8403A;
+}
+.fee-total-v .sym {
+  font-size: 24rpx;
+}
+
+/* 提示 */
+.tips {
+  margin-top: 20rpx;
+}
+.tip-row {
+  display: flex;
+  margin-bottom: 12rpx;
+}
+.tip-dot {
+  color: #E8403A;
+  font-size: 28rpx;
+  margin-right: 10rpx;
+  line-height: 1.6;
+}
+.tip-text {
+  flex: 1;
+  font-size: 24rpx;
+  color: #777777;
+  line-height: 1.6;
+}
+
+/* 底部 */
+.bar-space {
+  height: 160rpx;
+}
+.bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  background: #FFFFFF;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.06);
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.bb-row {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 24rpx;
+}
+.bb-left {
+  flex: 1;
+  min-width: 0;
+}
+.bb-price {
+  color: #E8403A;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.bb-price .sym {
+  font-size: 24rpx;
+}
+.bb-price .num {
+  font-size: 40rpx;
+}
+.bb-count {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #999999;
+}
+.bb-btn {
+  flex-shrink: 0;
+  width: 280rpx;
+  height: 84rpx;
+  line-height: 84rpx;
+  text-align: center;
+  border-radius: 42rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #FF9440 0%, #FF7A33 100%);
+  box-shadow: 0 6rpx 16rpx rgba(255, 122, 51, 0.3);
+}
+.bb-btn-disabled {
+  background: #D8D8D8;
+  box-shadow: none;
+}

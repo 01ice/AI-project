@@ -1,0 +1,58 @@
+{
+  "pages": [
+    "pages/movie/movie",
+    "pages/cinema/cinema",
+    "pages/profile/profile",
+    "pages/movie-detail/movie-detail",
+    "pages/schedule/schedule",
+    "pages/cinema-detail/cinema-detail",
+    "pages/seat/seat",
+    "pages/order-confirm/order-confirm",
+    "pages/orders/orders",
+    "pages/order-detail/order-detail",
+    "pages/city/city",
+    "pages/search/search",
+    "pages/agreement/agreement"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#E8403A",
+    "navigationBarTitleText": "特价电影票",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F5F5F5"
+  },
+  "tabBar": {
+    "color": "#9B9B9B",
+    "selectedColor": "#FF9A1E",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/movie/movie",
+        "text": "电影",
+        "iconPath": "images/tab-movie.png",
+        "selectedIconPath": "images/tab-movie-on.png"
+      },
+      {
+        "pagePath": "pages/cinema/cinema",
+        "text": "影院",
+        "iconPath": "images/tab-cinema.png",
+        "selectedIconPath": "images/tab-cinema-on.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "images/tab-mine.png",
+        "selectedIconPath": "images/tab-mine-on.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于展示影院位置并为您规划导航路线"
+    }
+  }
+}

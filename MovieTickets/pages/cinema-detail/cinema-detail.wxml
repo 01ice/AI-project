@@ -1,0 +1,102 @@
+<!-- pages/cinema-detail/cinema-detail.wxml — 影院选片 / 场次 -->
+<view class="page" wx:if="{{cinema}}">
+
+  <!-- 影片海报轮播（左右露出相邻海报） -->
+  <swiper
+    class="poster-swiper"
+    previous-margin="60rpx"
+    next-margin="60rpx"
+    circular="{{false}}"
+    current="{{movieIndex}}"
+    bindchange="onMovieSwiper"
+  >
+    <swiper-item wx:for="{{movies}}" wx:key="id">
+      <view
+        class="poster-slide {{movieIndex === index ? 'slide-on' : ''}}"
+        style="{{item.posterBg ? 'background:' + item.posterBg : ''}}"
+        data-index="{{index}}"
+        bindtap="onPosterTap"
+      >
+        <image wx:if="{{item.poster}}" class="poster-img" src="{{item.poster}}" mode="aspectFill" />
+        <block wx:else>
+          <text class="poster-title">{{item.title}}</text>
+          <text class="poster-emoji">{{item.posterEmoji}}</text>
+        </block>
+      </view>
+    </swiper-item>
+  </swiper>
+
+  <!-- 影片信息 -->
+  <view class="m-head" wx:if="{{movie}}">
+    <view class="m-title-row">
+      <text class="m-title">{{movie.title}}</text>
+      <text class="m-score" wx:if="{{movie.scoreText}}">{{movie.scoreText}}</text>
+    </view>
+    <view class="m-meta-row">
+      <text class="m-meta">{{movie.durationText}} · {{movie.genres}}</text>
+      <text class="m-expand" bindtap="toggleIntro">{{expanded ? '收起' : '展开'}}</text>
+    </view>
+    <view class="m-intro" wx:if="{{expanded}}">{{movie.intro || movie.actorText}}</view>
+  </view>
+
+  <!-- 日期 -->
+  <view class="date-bar">
+    <view
+      class="date-item {{dayIndex === index ? 'date-on' : ''}}"
+      wx:for="{{dates}}"
+      wx:key="index"
+      data-index="{{index}}"
+      bindtap="onDay"
+    >
+      <text class="date-label">{{item.label}}</text>
+      <text class="date-mmdd" wx:if="{{item.label === '今天'}}">{{item.mmdd}}</text>
+    </view>
+  </view>
+
+  <!-- 场次概览 -->
+  <view class="slot-summary" wx:if="{{slots.length > 0}}">
+    <text class="ss-left">{{slots.length}}场 {{priceRange}}</text>
+    <text class="ss-right">原价{{originMinText}}起</text>
+  </view>
+
+  <!-- 场次列表（横向整行） -->
+  <view class="slot-list">
+    <view
+      class="slot-row {{item.stopped ? 'row-stopped' : ''}}"
+      wx:for="{{slots}}"
+      wx:key="id"
+      data-slot="{{item.index}}"
+      bindtap="goSeat"
+    >
+      <view class="sr-left">
+        <view class="sr-time">{{item.time}}</view>
+        <view class="sr-tag">{{item.tagText}}</view>
+        <view class="sr-hall">{{item.hall}}</view>
+      </view>
+      <view class="sr-mid">
+        <view class="sr-price">
+          <text class="sym">¥</text><text class="num">{{item.priceText}}</text>
+        </view>
+        <view class="sr-discount">
+          <text class="disc-tag">{{item.discountText}}</text>
+          <text class="disc-origin">原价¥{{item.originText}}</text>
+        </view>
+      </view>
+      <view class="sr-right">
+        <view class="buy-btn" wx:if="{{!item.stopped}}">购票</view>
+        <view class="buy-btn buy-disabled" wx:else>已停售</view>
+      </view>
+      <view class="sr-warn" wx:if="{{!item.stopped}}">
+        <text class="warn-icon">🕐</text>
+        <text class="warn-text">{{item.date}} {{item.stopSellText}} 停止售票</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="list-bottom" wx:if="{{slots.length === 0}}">当日暂无排片</view>
+</view>
+
+<view class="mt-empty" wx:else>
+  <text class="icon">🏢</text>
+  <text class="tip">影院不存在</text>
+</view>

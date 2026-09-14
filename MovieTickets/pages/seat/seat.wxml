@@ -1,0 +1,95 @@
+<!-- pages/seat/seat.wxml — 选座购票 -->
+<view class="page" wx:if="{{movie && cinema}}">
+
+  <!-- 场次信息 -->
+  <view class="show-bar">
+    <view class="sb-title">{{movie.title}}</view>
+    <view class="sb-sub">{{hall}} · {{dateText}} {{time}}（{{endTime}}散场）</view>
+    <view class="sb-sub">{{cinema.name}}</view>
+  </view>
+
+  <!-- 座位区 -->
+  <view class="hall">
+    <view class="screen">
+      <text class="screen-text">银幕中央</text>
+    </view>
+
+    <view class="seat-area">
+      <!-- 排号左列 -->
+      <view class="row-labels">
+        <view class="row-label" wx:for="{{rows}}" wx:key="rowNo" style="height:{{rowH}}rpx;line-height:{{rowH}}rpx;">{{item.rowNo}}</view>
+      </view>
+
+      <!-- 座位矩阵 -->
+      <view class="seat-body">
+        <view class="seat-row" wx:for="{{rows}}" wx:for-item="row" wx:key="rowNo" style="height:{{rowH}}rpx">
+          <view
+            class="seat {{seat.sold ? 'seat-sold' : ''}} {{seat.chosen ? 'seat-chosen' : ''}} {{seat.aisle ? 'seat-aisle' : ''}}"
+            wx:for="{{row.seats}}"
+            wx:for-item="seat"
+            wx:key="key"
+            style="width:{{seatSize}}rpx;height:{{seatSize}}rpx;"
+            data-row="{{seat.row}}"
+            data-col="{{seat.col}}"
+            data-sold="{{seat.sold}}"
+            bindtap="onSeatTap"
+          >
+            <text class="seat-no" wx:if="{{seat.chosen}}">{{seat.col}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 图例 -->
+    <view class="legend">
+      <view class="lg-item">
+        <view class="lg-box lg-free"></view>
+        <text class="lg-text">可选</text>
+      </view>
+      <view class="lg-item">
+        <view class="lg-box lg-chosen"></view>
+        <text class="lg-text">已选</text>
+      </view>
+      <view class="lg-item">
+        <view class="lg-box lg-sold"></view>
+        <text class="lg-text">已售</text>
+      </view>
+      <text class="lg-tip">每单最多选 4 个座位</text>
+    </view>  </view>
+
+  <!-- 已选座位 -->
+  <view class="chosen-box">
+    <view class="chosen-head">
+      <text class="chosen-title">已选座位</text>
+      <text class="chosen-clear" wx:if="{{chosen.length > 0}}" bindtap="clearChosen">清空</text>
+    </view>
+    <view class="chosen-list" wx:if="{{chosen.length > 0}}">
+      <view class="chosen-chip" wx:for="{{chosen}}" wx:key="key" data-key="{{item.key}}" bindtap="removeSeat">
+        <text>{{item.label}}</text>
+        <text class="chip-x">×</text>
+      </view>
+    </view>
+    <view class="chosen-empty" wx:else>请点击上方座位图中可选的座位</view>
+  </view>
+
+  <view class="bar-space"></view>
+
+  <!-- 底部结算条 -->
+  <view class="bottom-bar">
+    <view class="bb-row">
+      <view class="bb-left">
+        <view class="bb-price">
+          <text class="sym">¥</text><text class="num">{{totalText}}</text>
+        </view>
+        <view class="bb-count">已选 {{chosen.length}} 座 · {{priceText}}/张</view>
+      </view>
+      <view class="bb-btn {{chosen.length > 0 ? '' : 'bb-btn-disabled'}}" bindtap="goConfirm">确认选座</view>
+    </view>
+    <view class="safe-fix"></view>
+  </view>
+</view>
+
+<view class="mt-empty" wx:else>
+  <text class="icon">🪑</text>
+  <text class="tip">场次信息不存在</text>
+</view>
