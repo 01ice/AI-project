@@ -1,0 +1,187 @@
+/* pages/schedule/schedule.wxss — 选择影院与场次 */
+.page {
+  min-height: 100vh;
+  background: #F5F5F5;
+  padding-bottom: 40rpx;
+}
+
+/* 影片信息条 */
+.movie-bar {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  background: #FFFFFF;
+}
+.poster-mini {
+  width: 96rpx;
+  height: 132rpx;
+  flex-shrink: 0;
+}
+.poster-mini .poster-emoji {
+  font-size: 46rpx;
+  transform: none;
+}
+.mb-info {
+  flex: 1;
+  min-width: 0;
+  padding-left: 20rpx;
+}
+.mb-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #222222;
+}
+.mb-meta {
+  margin-top: 12rpx;
+  font-size: 25rpx;
+  color: #888888;
+}
+
+/* 日期 */
+.date-scroll {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #FFFFFF;
+  white-space: nowrap;
+  border-top: 1rpx solid #F2F2F2;
+}
+.date-list {
+  display: flex;
+  padding: 16rpx 16rpx 20rpx;
+}
+.date-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 150rpx;
+  height: 92rpx;
+  margin-right: 16rpx;
+  border-radius: 12rpx;
+  background: #F5F5F5;
+  flex-shrink: 0;
+}
+.date-item.date-on {
+  background: #FDEBEA;
+}
+.date-label {
+  font-size: 28rpx;
+  color: #555555;
+  font-weight: 500;
+}
+.date-on .date-label {
+  color: #E8403A;
+  font-weight: 600;
+}
+.date-mmdd {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #999999;
+}
+.date-on .date-mmdd {
+  color: #E8403A;
+}
+
+/* 影院块 */
+.cinema-block {
+  margin: 20rpx 24rpx 0;
+  padding: 26rpx 24rpx 12rpx;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.04);
+}
+.cb-head {
+  display: flex;
+  align-items: flex-start;
+}
+.cb-main {
+  flex: 1;
+  min-width: 0;
+  padding-right: 16rpx;
+}
+.cb-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #222222;
+  line-height: 1.4;
+}
+.cb-addr {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #999999;
+  line-height: 1.45;
+}
+.cb-dist {
+  flex-shrink: 0;
+  font-size: 24rpx;
+  color: #E8403A;
+  margin-top: 4rpx;
+}
+
+/* 场次 */
+.slots {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 22rpx;
+}
+.slot {
+  width: calc(33.33% - 14rpx);
+  margin: 0 21rpx 22rpx 0;
+  padding: 16rpx 10rpx 12rpx;
+  border: 1rpx solid #EEEEEE;
+  border-radius: 12rpx;
+  text-align: center;
+  background: #FFFFFF;
+}
+.slot:nth-child(3n) {
+  margin-right: 0;
+}
+.slot:active {
+  border-color: #FF7A33;
+  background: #FFF7F1;
+}
+.slot-time {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #222222;
+}
+.slot-hall {
+  margin-top: 8rpx;
+  font-size: 21rpx;
+  color: #888888;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.slot-format {
+  margin-top: 4rpx;
+  font-size: 21rpx;
+  color: #BBBBBB;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.slot-price {
+  margin-top: 8rpx;
+  color: #E8403A;
+  font-weight: 700;
+}
+.slot-price .sym {
+  font-size: 20rpx;
+}
+.slot-price .num {
+  font-size: 30rpx;
+}
+.slot-left {
+  margin-top: 4rpx;
+  font-size: 20rpx;
+  color: #AAAAAA;
+}
+
+.list-bottom {
+  text-align: center;
+  font-size: 22rpx;
+  color: #BBBBBB;
+  padding: 20rpx 0 40rpx;
+}

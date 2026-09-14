@@ -1,0 +1,38 @@
+/* pages/agreement/agreement.wxss — 隐私协议 */
+.page {
+  min-height: 100vh;
+  background: #F5F5F5;
+  padding: 20rpx 0;
+}
+.title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #222222;
+  line-height: 1.5;
+}
+.update {
+  margin-top: 14rpx;
+  font-size: 22rpx;
+  color: #AAAAAA;
+}
+.para {
+  margin-top: 22rpx;
+  font-size: 26rpx;
+  color: #555555;
+  line-height: 1.85;
+}
+.sub-title {
+  margin-top: 34rpx;
+  font-size: 29rpx;
+  font-weight: 600;
+  color: #222222;
+}
+.footer {
+  margin-top: 50rpx;
+  text-align: center;
+  font-size: 22rpx;
+  color: #BBBBBB;
+}
+.page-bottom {
+  height: 40rpx;
+}

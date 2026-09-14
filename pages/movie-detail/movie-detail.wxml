@@ -1,0 +1,121 @@
+<!-- pages/movie-detail/movie-detail.wxml — 影片详情 -->
+<view class="page" wx:if="{{movie}}">
+
+  <!-- 头部信息区 -->
+  <view class="hero">
+    <image wx:if="{{movie.poster}}" class="hero-bg" src="{{movie.poster}}" mode="aspectFill" />
+    <view class="hero-bg" wx:else style="background:{{movie.posterBg}}"></view>
+    <view class="hero-mask"></view>
+
+    <view class="hero-inner">
+      <view class="poster poster-lg" style="{{movie.posterBg ? 'background:' + movie.posterBg : ''}}">
+        <image wx:if="{{movie.poster}}" class="poster-img" src="{{movie.poster}}" mode="aspectFill" />
+        <block wx:else>
+          <text class="poster-emoji">{{movie.posterEmoji}}</text>
+          <view class="poster-shade"></view>
+          <text class="poster-name">{{movie.title}}</text>
+        </block>
+      </view>
+
+      <view class="hero-info">
+        <view class="h-title">{{movie.title}}</view>
+
+        <view class="h-score-line" wx:if="{{movie.scoreText}}">
+          <text class="h-score">{{movie.score}}</text>
+          <text class="h-score-unit">分</text>
+          <text class="h-score-tip">观众评分</text>
+        </view>
+        <view class="h-score-line" wx:else>
+          <text class="h-want">{{movie.wantText}}</text>
+        </view>
+
+        <view class="h-meta">{{movie.releaseText}}</view>
+        <view class="h-meta">{{movie.durationText}} · {{movie.genres}}</view>
+        <view class="h-meta">{{movie.language}}</view>
+        <view class="h-tags">
+          <text class="tag tag-light {{movie.formatClass}}">{{movie.formatText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 剧情简介 -->
+  <view class="mt-card">
+    <view class="sec-title">
+      <view class="sec-bar"></view>
+      <text class="sec-text">剧情简介</text>
+    </view>
+    <view class="desc {{descOpen ? 'desc-open' : ''}}">{{movie.synopsis}}</view>
+    <view class="desc-toggle" bindtap="toggleDesc">{{descOpen ? '收起' : '展开全部'}}</view>
+  </view>
+
+  <!-- 演职人员 -->
+  <view class="mt-card">
+    <view class="sec-title">
+      <view class="sec-bar"></view>
+      <text class="sec-text">演职人员</text>
+    </view>
+    <scroll-view class="cast-scroll" scroll-x enable-flex>
+      <view class="cast-item" wx:for="{{castList}}" wx:key="name">
+        <view class="cast-avatar" style="background:{{item.bg}}">
+          <text class="cast-emoji">{{item.emoji}}</text>
+        </view>
+        <text class="cast-name">{{item.name}}</text>
+        <text class="cast-role">{{item.role}}</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 剧照 -->
+  <view class="mt-card">
+    <view class="sec-title">
+      <view class="sec-bar"></view>
+      <text class="sec-text">剧照</text>
+      <text class="sec-more">共 {{movie.stills.length}} 张</text>
+    </view>
+    <view class="stills">
+      <view
+        class="still"
+        wx:for="{{movie.stills}}"
+        wx:key="index"
+        style="background:{{item.bg}}"
+      >
+        <text class="still-emoji">{{item.emoji}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 购票须知 -->
+  <view class="mt-card">
+    <view class="sec-title">
+      <view class="sec-bar"></view>
+      <text class="sec-text">购票须知</text>
+    </view>
+    <view class="tips">
+      <view class="tip-row" wx:for="{{tips}}" wx:key="index">
+        <text class="tip-dot">·</text>
+        <text class="tip-text">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="bar-space"></view>
+
+  <!-- 底部操作条 -->
+  <view class="bottom-bar">
+    <view class="bb-row">
+      <view class="bb-want" bindtap="onWant">
+        <text class="bb-heart">{{wanted ? '♥' : '♡'}}</text>
+        <text class="bb-want-text">想看</text>
+      </view>
+      <view class="bb-buy" wx:if="{{movie.status === 'showing'}}" bindtap="goBuy">特价购票</view>
+      <view class="bb-buy bb-disabled" wx:else>即将上映</view>
+    </view>
+    <view class="safe-fix"></view>
+  </view>
+</view>
+
+<view class="mt-empty" wx:else>
+  <text class="icon">🎬</text>
+  <text class="tip">影片不存在或已下映</text>
+</view>

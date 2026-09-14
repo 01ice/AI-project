@@ -1,0 +1,253 @@
+/* pages/seat/seat.wxss — 选座 */
+.page {
+  min-height: 100vh;
+  background: #F5F5F5;
+}
+
+/* 场次信息 */
+.show-bar {
+  padding: 26rpx 24rpx;
+  background: #FFFFFF;
+}
+.sb-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #222222;
+}
+.sb-sub {
+  margin-top: 10rpx;
+  font-size: 25rpx;
+  color: #888888;
+  line-height: 1.5;
+}
+
+/* 座位区 */
+.hall {
+  margin: 20rpx 24rpx;
+  padding: 30rpx 16rpx 22rpx;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.04);
+}
+.screen {
+  width: 62%;
+  height: 46rpx;
+  margin: 0 auto 10rpx;
+  background: linear-gradient(to bottom, #D6DDE6 0%, #F3F5F8 100%);
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
+  text-align: center;
+}
+.screen-text {
+  font-size: 22rpx;
+  color: #7E8A99;
+  line-height: 56rpx;
+  letter-spacing: 4rpx;
+}
+.screen-tip {
+  text-align: center;
+  font-size: 20rpx;
+  color: #C0C6CF;
+}
+
+.seat-area {
+  display: flex;
+  margin-top: 30rpx;
+}
+.row-labels {
+  flex-shrink: 0;
+  padding-right: 10rpx;
+}
+.row-label {
+  height: 60rpx;
+  line-height: 60rpx;
+  font-size: 20rpx;
+  color: #AAAAAA;
+  text-align: center;
+  width: 34rpx;
+}
+.seat-body {
+  flex: 1;
+  min-width: 0;
+}
+.seat-row {
+  display: flex;
+  align-items: center;
+  height: 60rpx;
+}
+.seat {
+  flex-shrink: 0;
+  margin-right: 6rpx;
+  border-radius: 8rpx 8rpx 4rpx 4rpx;
+  background: #FFFFFF;
+  border: 1rpx solid #C9CFD8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.seat-aisle {
+  margin-right: 30rpx;
+}
+.seat-sold {
+  background: #D5D9DE;
+  border-color: #D5D9DE;
+}
+.seat-chosen {
+  background: #FF7A33;
+  border-color: #FF7A33;
+}
+.seat-no {
+  font-size: 18rpx;
+  color: #FFFFFF;
+}
+
+/* 图例 */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 30rpx;
+  padding-top: 22rpx;
+  border-top: 1rpx solid #F2F2F2;
+}
+.lg-item {
+  display: flex;
+  align-items: center;
+  margin-right: 26rpx;
+}
+.lg-box {
+  width: 26rpx;
+  height: 26rpx;
+  border-radius: 6rpx;
+  margin-right: 8rpx;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.lg-free {
+  background: #FFFFFF;
+  border: 1rpx solid #C9CFD8;
+}
+.lg-chosen {
+  background: #FF7A33;
+}
+.lg-sold {
+  background: #D5D9DE;
+}
+.lg-text {
+  font-size: 22rpx;
+  color: #888888;
+}
+.lg-tip {
+  flex-basis: 100%;
+  margin-top: 16rpx;
+  font-size: 21rpx;
+  color: #BBBBBB;
+  text-align: center;
+}
+
+/* 已选座位 */
+.chosen-box {
+  margin: 0 24rpx 20rpx;
+  padding: 26rpx 24rpx;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.04);
+}
+.chosen-head {
+  display: flex;
+  align-items: center;
+}
+.chosen-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #222222;
+}
+.chosen-clear {
+  margin-left: auto;
+  font-size: 24rpx;
+  color: #999999;
+}
+.chosen-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 18rpx;
+}
+.chosen-chip {
+  display: flex;
+  align-items: center;
+  padding: 8rpx 16rpx;
+  margin: 0 14rpx 14rpx 0;
+  background: #FFF3EA;
+  border: 1rpx solid #FFD5B8;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  color: #FF7A33;
+}
+.chip-x {
+  margin-left: 10rpx;
+  font-size: 26rpx;
+  color: #FFA06B;
+}
+.chosen-empty {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #AAAAAA;
+}
+
+/* 底部结算 */
+.bar-space {
+  height: 150rpx;
+}
+.bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  background: #FFFFFF;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.06);
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.bb-row {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 24rpx;
+}
+.bb-left {
+  flex: 1;
+  min-width: 0;
+}
+.bb-price {
+  color: #E8403A;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.bb-price .sym {
+  font-size: 24rpx;
+}
+.bb-price .num {
+  font-size: 40rpx;
+}
+.bb-count {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #999999;
+}
+.bb-btn {
+  flex-shrink: 0;
+  width: 280rpx;
+  height: 84rpx;
+  line-height: 84rpx;
+  text-align: center;
+  border-radius: 42rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #FF9440 0%, #FF7A33 100%);
+  box-shadow: 0 6rpx 16rpx rgba(255, 122, 51, 0.3);
+}
+.bb-btn-disabled {
+  background: #D8D8D8;
+  box-shadow: none;
+}

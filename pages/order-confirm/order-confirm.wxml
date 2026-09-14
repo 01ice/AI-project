@@ -1,0 +1,125 @@
+<!-- pages/order-confirm/order-confirm.wxml — 确认订单 -->
+<view class="page" wx:if="{{booking}}">
+
+  <!-- 影片与场次 -->
+  <view class="mt-card">
+    <view class="movie-row">
+      <view class="poster poster-mid" style="{{booking.posterBg ? 'background:' + booking.posterBg : ''}}">
+        <image wx:if="{{booking.poster}}" class="poster-img" src="{{booking.poster}}" mode="aspectFill" />
+        <block wx:else>
+          <text class="poster-emoji">{{booking.posterEmoji}}</text>
+          <view class="poster-shade"></view>
+          <text class="poster-name">{{booking.movieTitle}}</text>
+        </block>
+      </view>
+      <view class="movie-info">
+        <view class="movie-title">{{booking.movieTitle}}</view>
+        <view class="movie-meta">{{booking.date}} · {{booking.time}}</view>
+        <view class="movie-meta movie-format">{{booking.formatText}} · {{booking.language}}</view>
+      </view>
+      <view class="movie-count">×{{booking.seatCount}}</view>
+    </view>
+
+    <view class="info-line">
+      <text class="k">影院</text>
+      <text class="v">{{booking.cinemaName}}</text>
+    </view>
+    <view class="info-line">
+      <text class="k">地址</text>
+      <text class="v">{{booking.cinemaAddress}}</text>
+    </view>
+    <view class="info-line">
+      <text class="k">影厅</text>
+      <text class="v">{{booking.hall}}</text>
+    </view>
+    <view class="info-line">
+      <text class="k">场次</text>
+      <text class="v">{{booking.dateText}} {{booking.time}} - {{booking.endTime}}</text>
+    </view>
+    <view class="info-line">
+      <text class="k">座位</text>
+      <text class="v seat-text">{{booking.seatsText}}</text>
+    </view>
+  </view>
+
+  <!-- 取票手机号 -->
+  <view class="mt-card">
+    <view class="sec-title">
+      <view class="sec-bar"></view>
+      <text class="sec-text">取票手机号</text>
+    </view>
+    <view class="phone-row">
+      <text class="phone-label">手机号</text>
+      <input
+        class="phone-input"
+        type="number"
+        maxlength="11"
+        placeholder="请输入接收取票码的手机号"
+        placeholder-class="phone-ph"
+        value="{{phone}}"
+        bindinput="onPhoneInput"
+      />
+    </view>
+    <view class="phone-tip">取票码将以短信形式发送至该手机号，请确认无误</view>
+  </view>
+
+  <!-- 价格明细 -->
+  <view class="mt-card">
+    <view class="sec-title">
+      <view class="sec-bar"></view>
+      <text class="sec-text">价格明细</text>
+    </view>
+    <view class="fee-line">
+      <text class="fee-k">票面总价（{{booking.seatCount}} 张 × ¥{{booking.priceText}}）</text>
+      <text class="fee-v">¥{{booking.ticketTotalText}}</text>
+    </view>
+    <view class="fee-line">
+      <text class="fee-k">服务费</text>
+      <text class="fee-v">¥{{booking.serviceFeeText}}</text>
+    </view>
+    <view class="fee-line">
+      <text class="fee-k">平台优惠</text>
+      <text class="fee-v fee-cut">-¥0.00</text>
+    </view>
+    <view class="fee-line fee-total">
+      <text class="fee-k">合计</text>
+      <text class="fee-total-v"><text class="sym">¥</text>{{booking.totalText}}</text>
+    </view>
+  </view>
+
+  <!-- 温馨提示 -->
+  <view class="mt-card">
+    <view class="sec-title">
+      <view class="sec-bar"></view>
+      <text class="sec-text">温馨提示</text>
+    </view>
+    <view class="tips">
+      <view class="tip-row" wx:for="{{tips}}" wx:key="index">
+        <text class="tip-dot">·</text>
+        <text class="tip-text">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="bar-space"></view>
+
+  <!-- 底部提交 -->
+  <view class="bottom-bar">
+    <view class="bb-row">
+      <view class="bb-left">
+        <view class="bb-price">
+          <text class="sym">¥</text><text class="num">{{booking.totalText}}</text>
+        </view>
+        <view class="bb-count">共 {{booking.seatCount}} 张票</view>
+      </view>
+      <view class="bb-btn {{submitting ? 'bb-btn-disabled' : ''}}" bindtap="onSubmit">提交订单</view>
+    </view>
+    <view class="safe-fix"></view>
+  </view>
+</view>
+
+<view class="mt-empty" wx:else>
+  <text class="icon">📄</text>
+  <text class="tip">订单信息已失效</text>
+  <text class="tip">请返回重新选座</text>
+</view>

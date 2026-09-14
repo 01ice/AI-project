@@ -1,0 +1,85 @@
+<!-- pages/city/city.wxml — 选择城市 -->
+<view class="page">
+
+  <!-- 搜索 -->
+  <view class="search-bar">
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索城市名"
+        placeholder-class="ph"
+        value="{{keyword}}"
+        bindinput="onInput"
+      />
+      <text class="clear" wx:if="{{keyword}}" bindtap="onClear">✕</text>
+    </view>
+  </view>
+
+  <!-- 搜索结果 -->
+  <block wx:if="{{keyword}}">
+    <view class="group" wx:if="{{result.length > 0}}">
+      <view class="group-title">搜索结果</view>
+      <view class="city-grid">
+        <view
+          class="city-item {{item === current ? 'city-on' : ''}}"
+          wx:for="{{result}}"
+          wx:key="*this"
+          data-name="{{item}}"
+          bindtap="onPick"
+        >{{item}}</view>
+      </view>
+    </view>
+    <view class="mt-empty" wx:else>
+      <text class="icon">🔍</text>
+      <text class="tip">没有找到「{{keyword}}」</text>
+      <text class="tip">换个关键词试试</text>
+    </view>
+  </block>
+
+  <!-- 默认视图 -->
+  <block wx:else>
+    <!-- 当前定位 -->
+    <view class="locate">
+      <view class="locate-left">
+        <text class="loc-icon">📍</text>
+        <view class="locate-city">
+          <text class="loc-name">{{current}}</text>
+          <text class="loc-label">当前城市</text>
+        </view>
+      </view>
+      <text class="locate-btn" bindtap="relocate">重新定位</text>
+    </view>
+
+    <!-- 热门城市 -->
+    <view class="group">
+      <view class="group-title">热门城市</view>
+      <view class="city-grid">
+        <view
+          class="city-item {{item === current ? 'city-on' : ''}}"
+          wx:for="{{hot}}"
+          wx:key="*this"
+          data-name="{{item}}"
+          bindtap="onPick"
+        >{{item}}</view>
+      </view>
+    </view>
+
+    <!-- 按字母 -->
+    <view class="group" wx:for="{{groups}}" wx:for-item="g" wx:key="letter">
+      <view class="group-title">{{g.letter}}</view>
+      <view class="city-grid">
+        <view
+          class="city-item {{c === current ? 'city-on' : ''}}"
+          wx:for="{{g.cities}}"
+          wx:for-item="c"
+          wx:key="*this"
+          data-name="{{c}}"
+          bindtap="onPick"
+        >{{c}}</view>
+      </view>
+    </view>
+  </block>
+
+  <view class="page-bottom"></view>
+</view>

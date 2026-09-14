@@ -1,0 +1,72 @@
+<!-- pages/schedule/schedule.wxml — 选择影院与场次 -->
+<view class="page" wx:if="{{movie}}">
+
+  <!-- 影片信息条 -->
+  <view class="movie-bar">
+    <view class="poster poster-mini" style="{{movie.posterBg ? 'background:' + movie.posterBg : ''}}">
+      <image wx:if="{{movie.poster}}" class="poster-img" src="{{movie.poster}}" mode="aspectFill" />
+      <block wx:else>
+        <text class="poster-emoji">{{movie.posterEmoji}}</text>
+      </block>
+    </view>
+    <view class="mb-info">
+      <view class="mb-title">{{movie.title}}</view>
+      <view class="mb-meta" wx:if="{{movie.scoreText}}">{{movie.scoreText}} · {{movie.durationText}} · {{movie.genres}}</view>
+      <view class="mb-meta" wx:else>{{movie.durationText}} · {{movie.genres}}</view>
+    </view>
+  </view>
+
+  <!-- 日期选择 -->
+  <scroll-view class="date-scroll" scroll-x enable-flex>
+    <view class="date-list">
+      <view
+        class="date-item {{dayIndex === index ? 'date-on' : ''}}"
+        wx:for="{{dates}}"
+        wx:key="index"
+        data-index="{{index}}"
+        bindtap="onDay"
+      >
+        <text class="date-label">{{item.label}}</text>
+        <text class="date-mmdd">{{item.mmdd}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 影院 + 场次 -->
+  <view class="cinema-block" wx:for="{{list}}" wx:for-item="row" wx:key="id">
+    <view class="cb-head" data-id="{{row.cinema.id}}" bindtap="goCinema">
+      <view class="cb-main">
+        <view class="cb-name">{{row.cinema.name}}</view>
+        <view class="cb-addr">{{row.cinema.address}}</view>
+      </view>
+      <view class="cb-dist">{{row.cinema.distanceText}}</view>
+    </view>
+
+    <view class="slots">
+      <view
+        class="slot"
+        wx:for="{{row.times}}"
+        wx:for-item="slot"
+        wx:key="id"
+        data-cinema="{{row.cinema.id}}"
+        data-slot="{{slot.index}}"
+        bindtap="goSeat"
+      >
+        <view class="slot-time">{{slot.time}}</view>
+        <view class="slot-hall">{{slot.hall}}</view>
+        <view class="slot-format">{{slot.formatText}}</view>
+        <view class="slot-price">
+          <text class="sym">¥</text><text class="num">{{slot.priceText}}</text>
+        </view>
+        <view class="slot-left">{{slot.seatsLeftText}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="list-bottom">— 已展示 {{list.length}} 家影院 · {{dates[dayIndex].week}} —</view>
+</view>
+
+<view class="mt-empty" wx:else>
+  <text class="icon">🎬</text>
+  <text class="tip">影片不存在或已下映</text>
+</view>

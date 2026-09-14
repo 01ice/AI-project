@@ -1,0 +1,133 @@
+/* pages/cinema/cinema.wxss — 影院列表 */
+.page {
+  min-height: 100vh;
+  background: #F5F5F5;
+}
+
+/* 吸顶栏 */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  height: 96rpx;
+  padding: 0 24rpx;
+  background: #FFFFFF;
+}
+.city {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding-right: 18rpx;
+}
+.city-name {
+  font-size: 32rpx;
+  color: #222;
+  font-weight: 500;
+}
+.city-arrow {
+  font-size: 22rpx;
+  color: #999;
+  margin-left: 6rpx;
+  line-height: 1;
+}
+.search-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  height: 68rpx;
+  padding: 0 24rpx;
+  background: #F2F3F5;
+  border-radius: 34rpx;
+}
+.search-icon {
+  font-size: 26rpx;
+  margin-right: 12rpx;
+  opacity: 0.55;
+}
+.search-ph {
+  font-size: 28rpx;
+  color: #A8A8A8;
+}
+
+/* 列表 */
+.list {
+  padding: 24rpx 0 0;
+}
+.cinema-card {
+  display: flex;
+  align-items: flex-start;
+  margin: 0 24rpx 24rpx;
+  padding: 30rpx 28rpx;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.04);
+}
+.cinema-card:active {
+  background: #FAFAFA;
+}
+.cinema-main {
+  flex: 1;
+  min-width: 0;
+  padding-right: 20rpx;
+}
+.cinema-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #222222;
+  line-height: 1.45;
+}
+.cinema-addr {
+  margin-top: 10rpx;
+  font-size: 26rpx;
+  color: #888888;
+  line-height: 1.5;
+}
+
+.cinema-side {
+  flex-shrink: 0;
+  width: 210rpx;
+  text-align: right;
+}
+.price-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  color: #E8403A;
+}
+.price-line .sym {
+  font-size: 22rpx;
+  font-weight: 600;
+}
+.price-line .num {
+  font-size: 36rpx;
+  font-weight: 700;
+  margin: 0 2rpx;
+}
+.price-line .unit {
+  font-size: 22rpx;
+  font-weight: 600;
+}
+.price-sub {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  margin-top: 12rpx;
+}
+.dist {
+  font-size: 22rpx;
+  color: #E8403A;
+  margin-right: 12rpx;
+}
+.origin {
+  font-size: 22rpx;
+  color: #AAAAAA;
+}
+
+.list-bottom {
+  text-align: center;
+  font-size: 22rpx;
+  color: #BBBBBB;
+  padding: 10rpx 0 40rpx;
+}

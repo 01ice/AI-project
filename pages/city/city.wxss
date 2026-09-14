@@ -1,0 +1,128 @@
+/* pages/city/city.wxss — 选择城市 */
+.page {
+  min-height: 100vh;
+  background: #F5F5F5;
+}
+
+.search-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  padding: 18rpx 24rpx;
+  background: #FFFFFF;
+}
+.search-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  height: 72rpx;
+  padding: 0 24rpx;
+  background: #F2F3F5;
+  border-radius: 36rpx;
+}
+.search-icon {
+  font-size: 26rpx;
+  margin-right: 12rpx;
+  opacity: 0.55;
+}
+.search-input {
+  flex: 1;
+  font-size: 28rpx;
+  height: 72rpx;
+}
+.ph {
+  color: #A8A8A8;
+}
+.clear {
+  font-size: 24rpx;
+  color: #AAAAAA;
+  padding: 8rpx 4rpx 8rpx 16rpx;
+}
+
+/* 定位 */
+.locate {
+  display: flex;
+  align-items: center;
+  margin: 20rpx 24rpx 0;
+  padding: 26rpx 28rpx;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+}
+.locate-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+.loc-icon {
+  font-size: 34rpx;
+  margin-right: 16rpx;
+}
+.locate-city {
+  display: flex;
+  flex-direction: column;
+}
+.loc-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #222222;
+}
+.loc-label {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #AAAAAA;
+}
+.locate-btn {
+  font-size: 24rpx;
+  color: #E8403A;
+  padding: 8rpx 24rpx;
+  border: 1rpx solid #E8403A;
+  border-radius: 28rpx;
+  line-height: 1.7;
+}
+
+/* 分组 */
+.group {
+  margin: 20rpx 24rpx 0;
+  padding: 24rpx 24rpx 8rpx;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+}
+.group-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 18rpx;
+}
+.city-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+.city-item {
+  width: calc(25% - 18rpx);
+  margin: 0 24rpx 22rpx 0;
+  height: 68rpx;
+  line-height: 68rpx;
+  text-align: center;
+  font-size: 27rpx;
+  color: #444444;
+  background: #F5F6F8;
+  border-radius: 10rpx;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
+.city-item:nth-child(4n) {
+  margin-right: 0;
+}
+.city-on {
+  color: #E8403A;
+  background: #FDEBEA;
+  font-weight: 600;
+}
+
+.page-bottom {
+  height: 40rpx;
+}

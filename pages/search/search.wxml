@@ -1,0 +1,86 @@
+<!-- pages/search/search.wxml — 搜索电影 / 影院 -->
+<view class="page">
+
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        focus
+        confirm-type="search"
+        placeholder="{{placeholder}}"
+        placeholder-class="ph"
+        value="{{keyword}}"
+        bindinput="onInput"
+        bindconfirm="onConfirm"
+      />
+      <text class="clear" wx:if="{{keyword}}" bindtap="onClear">✕</text>
+    </view>
+    <text class="cancel" bindtap="goBack">取消</text>
+  </view>
+
+  <!-- 未输入：热门 + 历史 -->
+  <block wx:if="{{!keyword}}">
+    <view class="group" wx:if="{{hot.length > 0}}">
+      <view class="group-title">热门搜索</view>
+      <view class="chip-wrap">
+        <view class="chip" wx:for="{{hot}}" wx:key="*this" data-word="{{item}}" bindtap="onChip">{{item}}</view>
+      </view>
+    </view>
+
+    <view class="group" wx:if="{{history.length > 0}}">
+      <view class="group-title">
+        <text>搜索历史</text>
+        <text class="clear-history" bindtap="clearHistory">清空</text>
+      </view>
+      <view class="chip-wrap">
+        <view class="chip" wx:for="{{history}}" wx:key="*this" data-word="{{item}}" bindtap="onChip">{{item}}</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 搜索结果 -->
+  <block wx:else>
+    <!-- 影片 -->
+    <view class="group" wx:if="{{movies.length > 0}}">
+      <view class="group-title">影片（{{movies.length}}）</view>
+      <view class="result-item" wx:for="{{movies}}" wx:key="id" data-id="{{item.id}}" bindtap="goMovie">
+        <view class="poster poster-tiny" style="{{item.posterBg ? 'background:' + item.posterBg : ''}}">
+          <image wx:if="{{item.poster}}" class="poster-img" src="{{item.poster}}" mode="aspectFill" />
+          <block wx:else>
+            <text class="poster-emoji">{{item.posterEmoji}}</text>
+          </block>
+        </view>
+        <view class="ri-info">
+          <view class="ri-title">{{item.title}}</view>
+          <view class="ri-meta" wx:if="{{item.scoreText}}">{{item.scoreText}} · {{item.genres}}</view>
+          <view class="ri-meta" wx:else>{{item.genres}}</view>
+          <view class="ri-meta">导演 {{item.director}}</view>
+        </view>
+        <text class="ri-arrow">›</text>
+      </view>
+    </view>
+
+    <!-- 影院 -->
+    <view class="group" wx:if="{{cinemas.length > 0}}">
+      <view class="group-title">影院（{{cinemas.length}}）</view>
+      <view class="result-item" wx:for="{{cinemas}}" wx:key="id" data-id="{{item.id}}" bindtap="goCinema">
+        <view class="ci-icon">🏢</view>
+        <view class="ri-info">
+          <view class="ri-title">{{item.name}}</view>
+          <view class="ri-meta">{{item.address}}</view>
+          <view class="ri-meta ri-price">¥{{item.priceText}}起 · {{item.distanceText}}</view>
+        </view>
+        <text class="ri-arrow">›</text>
+      </view>
+    </view>
+
+    <!-- 空态 -->
+    <view class="mt-empty" wx:if="{{movies.length === 0 && cinemas.length === 0}}">
+      <text class="icon">🔍</text>
+      <text class="tip">没有找到「{{keyword}}」</text>
+      <text class="tip">试试「{{hot[0]}}」</text>
+    </view>
+  </block>
+</view>

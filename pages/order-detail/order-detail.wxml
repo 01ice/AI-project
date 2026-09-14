@@ -1,0 +1,126 @@
+<!-- pages/order-detail/order-detail.wxml — 订单详情 -->
+<view class="page" wx:if="{{order}}">
+
+  <!-- 状态头 -->
+  <view class="status-card" style="background:{{statusBg}}">
+    <view class="st-left">
+      <text class="st-text">{{order.statusText}}</text>
+      <text class="st-desc">{{statusDesc}}</text>
+      <text class="st-count" wx:if="{{countdown}}">{{countdown}}</text>
+    </view>
+    <text class="st-icon">{{statusIcon}}</text>
+  </view>
+
+  <!-- 取票码 -->
+  <view class="mt-card code-card" wx:if="{{order.status === 'ticketed'}}">
+    <view class="code-label">取票码</view>
+    <view class="code-value">{{order.ticketCode}}</view>
+    <view class="code-tip">请在影院自助取票机输入以上取票码取票</view>
+  </view>
+
+  <!-- 影片与场次 -->
+  <view class="mt-card">
+    <view class="movie-row">
+      <view class="poster poster-mid" style="{{order.posterBg ? 'background:' + order.posterBg : ''}}">
+        <image wx:if="{{order.poster}}" class="poster-img" src="{{order.poster}}" mode="aspectFill" />
+        <block wx:else>
+          <text class="poster-emoji">{{order.posterEmoji}}</text>
+          <view class="poster-shade"></view>
+          <text class="poster-name">{{order.movieTitle}}</text>
+        </block>
+      </view>
+      <view class="movie-info">
+        <view class="movie-title">{{order.movieTitle}}</view>
+        <view class="movie-meta">{{order.formatText}} · {{order.language}}</view>
+        <view class="movie-meta">{{order.date}} {{order.time}} - {{order.endTime}}</view>
+      </view>
+    </view>
+
+    <view class="info-line">
+      <text class="k">影院</text>
+      <text class="v">{{order.cinemaName}}</text>
+    </view>
+    <view class="info-line">
+      <text class="k">地址</text>
+      <text class="v">{{order.cinemaAddress}}</text>
+    </view>
+    <view class="info-line">
+      <text class="k">影厅</text>
+      <text class="v">{{order.hall}}</text>
+    </view>
+    <view class="info-line">
+      <text class="k">座位</text>
+      <text class="v seat-text">{{order.seatsText}}</text>
+    </view>
+    <view class="info-line">
+      <text class="k">取票</text>
+      <text class="v">观影人手机号 {{order.phoneMask}}</text>
+    </view>
+  </view>
+
+  <!-- 价格明细 -->
+  <view class="mt-card">
+    <view class="sec-title">
+      <view class="sec-bar"></view>
+      <text class="sec-text">价格明细</text>
+    </view>
+    <view class="fee-line">
+      <text class="fee-k">票面总价（{{order.seatCount}} 张 × ¥{{order.priceText}}）</text>
+      <text class="fee-v">¥{{order.ticketTotalText}}</text>
+    </view>
+    <view class="fee-line">
+      <text class="fee-k">服务费</text>
+      <text class="fee-v">¥{{order.serviceFeeText}}</text>
+    </view>
+    <view class="fee-line fee-total">
+      <text class="fee-k">实付金额</text>
+      <text class="fee-total-v"><text class="sym">¥</text>{{order.totalText}}</text>
+    </view>
+  </view>
+
+  <!-- 订单信息 -->
+  <view class="mt-card">
+    <view class="sec-title">
+      <view class="sec-bar"></view>
+      <text class="sec-text">订单信息</text>
+    </view>
+    <view class="info-line">
+      <text class="k">订单号</text>
+      <text class="v">{{order.id}}</text>
+      <text class="copy" catchtap="copyOrderNo">复制</text>
+    </view>
+    <view class="info-line">
+      <text class="k">下单时间</text>
+      <text class="v">{{order.createdAt}}</text>
+    </view>
+    <view class="info-line" wx:if="{{order.paidAt}}">
+      <text class="k">支付时间</text>
+      <text class="v">{{order.paidAt}}</text>
+    </view>
+    <view class="info-line" wx:if="{{order.refundAt}}">
+      <text class="k">退款时间</text>
+      <text class="v">{{order.refundAt}}</text>
+    </view>
+  </view>
+
+  <view class="bar-space"></view>
+
+  <!-- 底部操作 -->
+  <view class="bottom-bar">
+    <view class="bb-row">
+      <view
+        class="bb-btn {{item.primary ? 'bb-btn-primary' : ''}}"
+        wx:for="{{actions}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onAction"
+      >{{item.label}}</view>
+    </view>
+    <view class="safe-fix"></view>
+  </view>
+</view>
+
+<view class="mt-empty" wx:else>
+  <text class="icon">🎫</text>
+  <text class="tip">订单不存在或已删除</text>
+</view>

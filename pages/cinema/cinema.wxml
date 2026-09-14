@@ -1,0 +1,50 @@
+<!-- pages/cinema/cinema.wxml — 影院列表 -->
+<view class="page">
+
+  <!-- 吸顶：城市 + 搜索 -->
+  <view class="topbar">
+    <view class="city" bindtap="goCity">
+      <text class="city-name">{{city}}</text>
+      <text class="city-arrow">▾</text>
+    </view>
+    <view class="search-box" bindtap="goSearch">
+      <text class="search-icon">🔍</text>
+      <text class="search-ph">搜索附近的影院</text>
+    </view>
+  </view>
+
+  <!-- 影院列表 -->
+  <view class="list">
+    <view
+      class="cinema-card"
+      wx:for="{{list}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="goDetail"
+    >
+      <view class="cinema-main">
+        <view class="cinema-name">{{item.name}}</view>
+        <view class="cinema-addr">{{item.address}}</view>
+      </view>
+
+      <view class="cinema-side">
+        <view class="price-line">
+          <text class="sym">¥</text>
+          <text class="num">{{item.priceText}}</text>
+          <text class="unit">起</text>
+        </view>
+        <view class="price-sub">
+          <text class="dist">{{item.distanceText}}</text>
+          <text class="origin">原价¥{{item.originText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="mt-empty" wx:if="{{list.length === 0}}">
+      <text class="icon">🏢</text>
+      <text class="tip">附近暂无合作影院</text>
+    </view>
+  </view>
+
+  <view class="list-bottom">— 已展示附近 {{list.length}} 家影院 —</view>
+</view>

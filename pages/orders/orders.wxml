@@ -1,0 +1,76 @@
+<!-- pages/orders/orders.wxml — 我的订单 -->
+<view class="page">
+
+  <!-- 状态筛选 -->
+  <scroll-view class="tab-scroll" scroll-x enable-flex>
+    <view class="tab-list">
+      <view
+        class="tab-item {{status === item.key ? 'tab-on' : ''}}"
+        wx:for="{{tabs}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onTab"
+      >
+        <text>{{item.label}}</text>
+        <view class="tab-line" wx:if="{{status === item.key}}"></view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 订单列表 -->
+  <view class="list">
+    <view class="order-card" wx:for="{{list}}" wx:key="id">
+      <!-- 头部 -->
+      <view class="oc-head">
+        <text class="oc-status" style="color:{{item.statusColor}}">{{item.statusText}}</text>
+        <text class="oc-no">订单号 {{item.id}}</text>
+      </view>
+
+      <!-- 主体 -->
+      <view class="oc-body" data-id="{{item.id}}" bindtap="goDetail">
+        <view class="poster poster-mini" style="{{item.posterBg ? 'background:' + item.posterBg : ''}}">
+          <image wx:if="{{item.poster}}" class="poster-img" src="{{item.poster}}" mode="aspectFill" />
+          <block wx:else>
+            <text class="poster-emoji">{{item.posterEmoji}}</text>
+          </block>
+        </view>
+        <view class="oc-info">
+          <view class="oc-title">{{item.movieTitle}}</view>
+          <view class="oc-line">{{item.cinemaName}}</view>
+          <view class="oc-line">{{item.dateText}} {{item.time}} · {{item.hall}}</view>
+          <view class="oc-line oc-seat">{{item.seatsText}}</view>
+        </view>
+        <text class="oc-arrow">›</text>
+      </view>
+
+      <!-- 金额 -->
+      <view class="oc-foot">
+        <text class="oc-count">共 {{item.seatCount}} 张</text>
+        <text class="oc-total">合计 <text class="oc-price">¥{{item.totalText}}</text></text>
+      </view>
+
+      <!-- 操作 -->
+      <view class="oc-actions" wx:if="{{item.actions.length > 0}}">
+        <view
+          class="oc-btn {{act.primary ? 'oc-btn-primary' : ''}}"
+          wx:for="{{item.actions}}"
+          wx:for-item="act"
+          wx:key="key"
+          data-key="{{act.key}}"
+          data-id="{{item.id}}"
+          bindtap="onAction"
+        >{{act.label}}</view>
+      </view>
+    </view>
+
+    <!-- 空态 -->
+    <view class="mt-empty" wx:if="{{list.length === 0}}">
+      <text class="icon">🎫</text>
+      <text class="tip">暂无相关订单</text>
+      <text class="tip">去挑一部电影看看吧</text>
+      <view class="empty-btn" bindtap="goMovie">去选电影</view>
+    </view>
+  </view>
+
+  <view class="page-bottom"></view>
+</view>

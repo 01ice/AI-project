@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "特价电影票",
+  "navigationBarBackgroundColor": "#E8403A",
+  "navigationBarTextStyle": "white",
+  "backgroundTextStyle": "dark",
+  "backgroundColor": "#F5F5F5",
+  "enablePullDownRefresh": true,
+  "usingComponents": {}
+}
