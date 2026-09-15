@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  内部服务器通常没有 HTTPS 证书，这里放开公司内网域名的明文访问。
+  上线到公网时请把 cleartextTrafficPermitted 改为 false 并使用 https。
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

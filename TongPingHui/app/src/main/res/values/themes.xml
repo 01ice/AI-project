@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+      基类主题用 Material3（继承 AppCompat），因为 TUIRoomKit 的页面用的是 AppCompat，
+      主题不兼容会直接崩在 "You need to use a Theme.AppCompat theme"。
+    -->
+    <style name="Theme.TongPingHui" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand_primary</item>
+        <item name="colorPrimaryDark">@color/brand_primary_dark</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <!-- 会议房间：全屏、常亮，横竖屏都不重建 -->
+    <style name="Theme.TongPingHui.FullScreen" parent="Theme.TongPingHui">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:keepScreenOn">true</item>
+    </style>
+
+</resources>

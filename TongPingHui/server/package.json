@@ -1,0 +1,20 @@
+{
+  "name": "tongpinghui-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "同屏会 App 的后端模板：登录鉴权 + 个人信息 + 会议 + 腾讯云 UserSig 签发",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "smoke": "node tools/smoke-test.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.0"
+  }
+}

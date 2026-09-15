@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">同屏会</string>
+
+    <!-- 登录 -->
+    <string name="login_title">同屏会</string>
+    <string name="login_subtitle">公司内部会议 · 仅限内部使用</string>
+    <string name="login_account">工号 / 手机号</string>
+    <string name="login_password">密码</string>
+    <string name="login_action">登录</string>
+    <string name="login_register">还没有账号？申请开通</string>
+
+    <!-- 会议列表 -->
+    <string name="meeting_list_title">我的会议</string>
+    <string name="meeting_create">新建会议</string>
+    <string name="meeting_join">加入会议</string>
+    <string name="meeting_room_id">房间号</string>
+    <string name="meeting_empty">暂无会议，点右下角新建一个</string>
+
+    <!-- 个人中心 -->
+    <string name="profile_title">个人信息</string>
+    <string name="profile_nickname">昵称</string>
+    <string name="profile_department">部门</string>
+    <string name="profile_account">账号</string>
+    <string name="profile_save">保存</string>
+    <string name="profile_logout">退出登录</string>
+
+    <!-- 会议中 -->
+    <string name="room_screen_share">共享屏幕</string>
+    <string name="room_screen_share_stop">停止共享</string>
+    <string name="screen_share_channel_name">屏幕共享</string>
+    <string name="screen_share_channel_desc">共享屏幕时保持会议连接</string>
+    <string name="screen_share_notification_title">同屏会正在共享屏幕</string>
+    <string name="screen_share_notification_text">点击返回会议</string>
+    <string name="screen_share_action_stop">停止共享</string>
+
+    <!-- 权限 -->
+    <string name="permission_denied">缺少必要权限，无法继续</string>
+</resources>

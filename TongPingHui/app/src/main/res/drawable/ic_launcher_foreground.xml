@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 自适应图标前景：一块屏幕 + 视频会议里的人像，纯矢量，不用切图。
+     画布 108×108，所有元素都以 (54,54) 为中轴对称 —— 之前屏幕中心在 x=50、
+     底座中心在 x=54，导致图标看着偏左。改动前请保持「x 中心 = 54」这个约束。 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- 屏幕：x 34~74，y 36~64（中心 54,50） -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M38,36h32a4,4 0 0 1 4,4v20a4,4 0 0 1 -4,4h-32a4,4 0 0 1 -4,-4v-20a4,4 0 0 1 4,-4z" />
+    <!-- 屏幕内的人像：头 -->
+    <path
+        android:fillColor="#1E6FFF"
+        android:pathData="M54,48m-5,0a5,5 0 1,0 10,0a5,5 0 1,0 -10,0" />
+    <!-- 屏幕内的人像：肩 -->
+    <path
+        android:fillColor="#1E6FFF"
+        android:pathData="M46,58c0,-4.4 3.6,-8 8,-8s8,3.6 8,8z" />
+    <!-- 屏幕底座横条：x 44~64 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M44,66h20v3h-20z" />
+    <!-- 屏幕底座立柱：x 52~56 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M52,69h4v4h-4z" />
+</vector>

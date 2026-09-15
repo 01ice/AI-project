@@ -1,0 +1,33 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# 所有构建产物（根目录与各模块）
+build/
+
+# 腾讯 TUIRoomKit 源码组件（体积大，不进 Git，用 tools/fetch_tuikit.sh 拉取）
+/room
+/atomic_x
+/chat
+/.tuikit_tmp
+
+# 后端
+server/node_modules
+server/.env
+server/data/
+
+# 签名文件
+*.jks
+*.keystore
+
+# 构建脚本产出的日志
+tools/build-log.txt
+
+# WorkBuddy 会话数据
+.workbuddy/

@@ -8,6 +8,7 @@
 | --- | --- | --- | --- | --- |
 | 特价电影票小程序 | [`MovieTickets/`](./MovieTickets) | 原生微信小程序（WXML/WXSS/JS） | 前端演示版 | 电影购票全流程演示，纯前端 + 本地存储，无后端依赖 |
 | 栈桥（项目收录社区） | [`Zhanqiao/`](./Zhanqiao) | Nuxt 4 + Vue 3 + Tailwind CSS 4 + PostgreSQL/Drizzle | 开发中 | 面向中文开发者的项目收录与分享社区：发布项目、评论互动、站主技术博客 |
+| 同屏会（内部多人视频会议） | [`TongPingHui/`](./TongPingHui) | Kotlin + Jetpack Compose + 腾讯云 TRTC/TUIRoomKit；Node.js 后端 | 开发中 | 多人视频会议 + 屏幕共享 + 登录/个人信息，内部打包 APK 分发 |
 
 ## 添加新项目
 
